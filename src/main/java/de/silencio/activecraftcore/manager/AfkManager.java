@@ -17,7 +17,7 @@ public class AfkManager {
         FileConfig mainConfig = new FileConfig("config.yml");
 
         //call event
-        PlayerAfkEvent event = new PlayerAfkEvent(player, afk);
+        PlayerAfkEvent event = new PlayerAfkEvent(profile, afk);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 

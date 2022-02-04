@@ -1,8 +1,10 @@
 package de.silencio.activecraftcore.manager;
 
+import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerWarpEvent;
 import de.silencio.activecraftcore.events.WarpCreateEvent;
 import de.silencio.activecraftcore.events.WarpDeleteEvent;
+import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,7 +79,7 @@ public class WarpManager {
 
     public static void warp(Player player, String warpName) {
         //call event
-        PlayerWarpEvent event = new PlayerWarpEvent(player, getWarp(warpName), warpName);
+        PlayerWarpEvent event = new PlayerWarpEvent(ActiveCraftCore.getProfile(player), getWarp(warpName), warpName);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
         //teleport

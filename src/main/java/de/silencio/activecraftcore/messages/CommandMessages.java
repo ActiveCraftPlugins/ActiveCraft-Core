@@ -265,10 +265,10 @@ public class CommandMessages {
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GOLD);
     }
 
-    public static String HOME_OTHERS_NOT_SET(Player target, String home) {
+    public static String HOME_OTHERS_NOT_SET(Profile profile, String home) {
         return ChatColor.GRAY + acm.getMessage(MessageType.COMMAND, CommandType.HOME, "home-others-not-set")
-                .replace("%t_playername%", ChatColor.DARK_AQUA + target.getName() + ChatColor.GRAY)
-                .replace("%t_displayname%", ChatColor.DARK_AQUA + target.getDisplayName() + ChatColor.GRAY)
+                .replace("%t_playername%", ChatColor.DARK_AQUA + profile.getName() + ChatColor.GRAY)
+                .replace("%t_displayname%", ChatColor.DARK_AQUA + profile.getNickname() + ChatColor.GRAY)
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GRAY);
     }
 
@@ -278,10 +278,10 @@ public class CommandMessages {
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GOLD);
     }
 
-    public static String HOME_OTHERS_SET(Player target, String home) {
+    public static String HOME_OTHERS_SET(Profile profile, String home) {
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.SETHOME, "home-others-set")
-                .replace("%t_displayname%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + target.getDisplayName() + ChatColor.GOLD)
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getName() + ChatColor.GOLD)
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD)
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GOLD);
     }
 
@@ -299,10 +299,10 @@ public class CommandMessages {
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GOLD);
     }
 
-    public static String HOME_OTHERS_DELETED(Player target, String home) {
+    public static String HOME_OTHERS_DELETED(Profile profile, String home) {
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.DELETEHOME, "home-others-deleted")
-                .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + target.getDisplayName() + ChatColor.GOLD)
+                .replace("%t_playername%", ChatColor.AQUA + profile.getName() + ChatColor.GOLD)
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD)
                 .replace("%home%", ChatColor.AQUA + home + ChatColor.GOLD);
     }
 
@@ -648,7 +648,7 @@ public class CommandMessages {
     public static String LASTONLINE_ONLINE(Profile target, String lastonline) {
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.LASTONLINE, "lastonline-online")
                 .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + target.getFullNickname() + ChatColor.GOLD)
+                .replace("%t_displayname%", ChatColor.AQUA + target.getNickname() + ChatColor.GOLD)
                 .replace("%lastonline%", ChatColor.GREEN + lastonline + ChatColor.GOLD);
     }
 
@@ -738,7 +738,7 @@ public class CommandMessages {
     public static String MSG_PREFIX_TO(Profile profile, String message) {
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.MSG, "msg-prefix-to")
                 .replace("%t_playername%", ChatColor.AQUA + profile.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + profile.getFullNickname() + ChatColor.GOLD)
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD)
                 .replace("%message%", ChatColor.WHITE + message + ChatColor.GOLD);
     }
 
@@ -1650,14 +1650,14 @@ public class CommandMessages {
         Profile profile = ActiveCraftCore.getProfile(target);
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.AFK, "now-afk")
                 .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + profile.getFullNickname() + ChatColor.GOLD);
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD);
     }
 
     public static String NOT_AFK(Player target) {
         Profile profile = ActiveCraftCore.getProfile(target);
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.AFK, "not-afk")
                 .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
-                .replace("%t_displayname%", ChatColor.AQUA + profile.getFullNickname() + ChatColor.GOLD);
+                .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD);
     }
 
     public static String NOW_AFK_TARGET() {

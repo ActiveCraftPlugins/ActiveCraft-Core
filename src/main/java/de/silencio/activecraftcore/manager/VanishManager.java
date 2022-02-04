@@ -35,7 +35,7 @@ public class VanishManager {
         Profile profile = ActiveCraftCore.getProfile(player);
         FileConfig mainConfig = new FileConfig("config.yml");
         if (hide) {
-            PlayerVanishEvent event = new PlayerVanishEvent(player);
+            PlayerVanishEvent event = new PlayerVanishEvent(profile);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
@@ -44,7 +44,7 @@ public class VanishManager {
 
             vanished.add(player);
         } else {
-            PlayerUnvanishEvent event = new PlayerUnvanishEvent(player);
+            PlayerUnvanishEvent event = new PlayerUnvanishEvent(profile);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 

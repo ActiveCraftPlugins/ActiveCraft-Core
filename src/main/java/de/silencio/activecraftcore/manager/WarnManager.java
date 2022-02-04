@@ -38,7 +38,7 @@ public class WarnManager {
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
         //call event
-        PlayerWarnAddEvent event = new PlayerWarnAddEvent(player.getName(), reason, new Date(), source);
+        PlayerWarnAddEvent event = new PlayerWarnAddEvent(profile, reason, new Date(), source);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
@@ -73,7 +73,7 @@ public class WarnManager {
 
     public void remove(String reason) {
         //call event
-        PlayerWarnRemoveEvent event = new PlayerWarnRemoveEvent(player.getName(), reason, new Date(), source);
+        PlayerWarnRemoveEvent event = new PlayerWarnRemoveEvent(profile, reason, new Date(), source);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
