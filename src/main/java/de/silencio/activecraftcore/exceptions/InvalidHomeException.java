@@ -1,20 +1,21 @@
 package de.silencio.activecraftcore.exceptions;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.entity.Player;
 
 public class InvalidHomeException extends ActiveCraftException {
 
     private final String invalidString;
-    private final Player player;
+    private final Profile profile;
 
-    public InvalidHomeException(String message, String invalidString, Player player) {
+    public InvalidHomeException(String message, String invalidString, Profile profile) {
         super(message);
         this.invalidString = invalidString;
-        this.player = player;
+        this.profile = profile;
     }
 
-    public InvalidHomeException(String invalidString, Player player) {
-        this(invalidString + " is not a home.", invalidString, player);
+    public InvalidHomeException(String invalidString, Profile profile) {
+        this(invalidString + " is not a home.", invalidString, profile);
     }
 
     public InvalidHomeException(String invalidString) {
@@ -25,7 +26,7 @@ public class InvalidHomeException extends ActiveCraftException {
         return invalidString;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Profile getProfile() {
+        return profile;
     }
 }
