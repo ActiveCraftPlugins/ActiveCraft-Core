@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,12 +9,12 @@ public class PlayerAfkEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Player player;
+    private Profile profile;
     private boolean isAfk;
     private boolean cancelled;
 
-    public PlayerAfkEvent(Player player, boolean isAfk) {
-        this.player = player;
+    public PlayerAfkEvent(Profile profile, boolean isAfk) {
+        this.profile = profile;
         this.isAfk = isAfk;
     }
 
@@ -41,7 +42,7 @@ public class PlayerAfkEvent extends Event {
         return handlers;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Profile getPlayer() {
+        return profile;
     }
 }

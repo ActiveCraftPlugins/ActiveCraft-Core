@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -10,11 +11,11 @@ public class MsgEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private CommandSender sender;
-    private Player target;
+    private Profile target;
     private String message;
     private boolean cancelled;
 
-    public MsgEvent(CommandSender sender, Player target, String message) {
+    public MsgEvent(CommandSender sender, Profile target, String message) {
         this.sender = sender;
         this.target = target;
         this.message = message;
@@ -24,7 +25,7 @@ public class MsgEvent extends Event {
         return sender;
     }
 
-    public Player getTarget() {
+    public Profile getTarget() {
         return target;
     }
 

@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,15 +9,15 @@ public class PlayerVanishEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Player player;
+    private Profile profile;
     private boolean cancelled;
     
-    public PlayerVanishEvent(Player player) {
-        this.player = player;
+    public PlayerVanishEvent(Profile profile) {
+        this.profile = profile;
     }
     
-    public Player getPlayer() {
-        return player;
+    public Profile getProfile() {
+        return profile;
     }
     
     public boolean isCancelled() {

@@ -40,7 +40,7 @@ public class MsgCommand extends ActiveCraftCommand {
             sendMessage(sender, CommandMessages.MSG_PREFIX_TO(profile, message));
             PlayerQueue.add(profile, () -> {
                 Player target = Bukkit.getPlayer(profile.getName());
-                MsgEvent event = new MsgEvent(sender, target, finalMessage);
+                MsgEvent event = new MsgEvent(sender, profile, finalMessage);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 sendMessage(target, CommandMessages.MSG_PREFIX_FROM(sender, event.getMessage()));
@@ -61,7 +61,7 @@ public class MsgCommand extends ActiveCraftCommand {
         } else {
             PlayerQueue.add(profile, () -> {
                 Player target = Bukkit.getPlayer(profile.getName());
-                MsgEvent event = new MsgEvent(sender, target, finalMessage);
+                MsgEvent event = new MsgEvent(sender, profile, finalMessage);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 sendMessage(target, CommandMessages.CONSOLE_MSG_PREFIX(event.getMessage()));

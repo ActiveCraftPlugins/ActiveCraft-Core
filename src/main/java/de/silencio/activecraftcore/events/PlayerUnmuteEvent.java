@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,14 +9,14 @@ public class PlayerUnmuteEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     
-    private Player target;
+    private Profile target;
     private boolean cancelled;
 
-    public PlayerUnmuteEvent(Player target) {
+    public PlayerUnmuteEvent(Profile target) {
         this.target = target;
     }
     
-    public Player getTarget() {
+    public Profile getTarget() {
         return target;
     }
 

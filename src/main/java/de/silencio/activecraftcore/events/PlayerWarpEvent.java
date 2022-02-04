@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,13 +10,13 @@ public class PlayerWarpEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Player player;
+    private Profile profile;
     private Location location;
     private String warpName;
     private boolean cancelled;
 
-    public PlayerWarpEvent(Player player, Location location, String warpName) {
-        this.player = player;
+    public PlayerWarpEvent(Profile profile, Location location, String warpName) {
+        this.profile = profile;
         this.location = location;
         this.warpName = warpName;
     }
@@ -36,8 +37,8 @@ public class PlayerWarpEvent extends Event {
         this.warpName = warpName;
     }
 
-    public Player getPlayer() {
-        return player;
+    public Profile getProfile() {
+        return profile;
     }
 
     public boolean isCancelled() {

@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.events;
 
+import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -9,12 +10,12 @@ public class PlayerWarnAddEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    private String target;
+    private Profile target;
     private String reason;
     private Date date;
     private boolean cancelled;
 
-    public PlayerWarnAddEvent(String target, String reason, Date date, String source) {
+    public PlayerWarnAddEvent(Profile target, String reason, Date date, String source) {
         this.target = target;
         this.reason = reason;
         this.date = date;
@@ -36,7 +37,7 @@ public class PlayerWarnAddEvent extends Event {
         this.reason = reason;
     }
 
-    public String getTarget() {
+    public Profile getTarget() {
         return target;
     }
 
