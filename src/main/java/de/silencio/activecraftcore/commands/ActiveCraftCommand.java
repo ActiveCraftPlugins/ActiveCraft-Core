@@ -19,6 +19,7 @@ import org.bukkit.permissions.Permissible;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class ActiveCraftCommand implements CommandExecutor, TabCompleter {
 
@@ -262,8 +263,8 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
                 case "InvalidColorException" -> commandSender.sendMessage(Errors.INVALID_COLOR());
                 case "InvalidEntityException" -> commandSender.sendMessage(Errors.INVALID_ENTITY());
                 case "InvalidHomeException" -> {
-                    if (((InvalidHomeException) e).getPlayer() != null)
-                        commandSender.sendMessage(CommandMessages.HOME_OTHERS_NOT_SET(((InvalidHomeException) e).getPlayer(), ((InvalidHomeException) e).getInvalidString()));
+                    if (((InvalidHomeException) e).getProfile().getPlayer() != commandSender)
+                        commandSender.sendMessage(CommandMessages.HOME_OTHERS_NOT_SET(((InvalidHomeException) e).getProfile(), ((InvalidHomeException) e).getInvalidString()));
                     else
                         commandSender.sendMessage(CommandMessages.HOME_NOT_SET(((InvalidHomeException) e).getInvalidString()));
                 }
@@ -280,6 +281,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
                     }
                 }
                 case "SelfTargetException" -> commandSender.sendMessage(Errors.CANNOT_TARGET_SELF());
+                case "MaxHomesException" -> commandSender.sendMessage(commandSender == ((MaxHomesException)e).getProfile().getPlayer() ? Errors.WARNING() + CommandMessages.MAX_HOMES() : CommandMessages.MAX_HOMES_OTHERS());
             }
         }
         return false;
@@ -291,29 +293,20 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> list = onTab(sender, command, alias, args);
         if (list == null) list = new ArrayList<>();
-
         ArrayList<String> completerList = new ArrayList<>();
         String currentarg = args[args.length - 1].toLowerCase();
-        for (String s : list) {
-            String s1 = s.toLowerCase();
-            if (s1.startsWith(currentarg))
+        for (String s : list)
+            if (s.toLowerCase().startsWith(currentarg))
                 completerList.add(s);
-        }
         return completerList;
     }
 
     protected List<String> getBukkitPlayernames() {
-        List<String> list = new ArrayList<>();
-        for (Player player : Bukkit.getOnlinePlayers())
-            list.add(player.getName());
-        return list;
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
     }
 
     protected List<String> getProfileNames() {
-        List<String> list = new ArrayList<>();
-        for (String playername : ActiveCraftCore.getProfiles().keySet())
-            list.add(ActiveCraftCore.getProfile(playername).getName());
-        return list;
+        return ActiveCraftCore.getProfiles().values().stream().map(Profile::getName).collect(Collectors.toList());
     }
 
     public String[] getCommands() {
