@@ -27,7 +27,7 @@ public class RealNameCommand extends ActiveCraftCommand {
         checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
         String displayname = combineArray(args, 0).trim();
         for (Profile profile : ActiveCraftCore.getProfiles().values())
-            if (displayname.equalsIgnoreCase(ColorUtils.removeColorAndFormat(profile.getNickname())))
+            if (displayname.equalsIgnoreCase(ColorUtils.removeColorAndFormat(profile.getRawNickname())))
                 associatedPlayerList.add(profile.getName());
         sendMessage(sender, CommandMessages.REALNAME_HEADER(combineList(associatedPlayerList, 0, ", "), displayname));
     }
@@ -37,7 +37,7 @@ public class RealNameCommand extends ActiveCraftCommand {
         ArrayList<String> list = new ArrayList<>();
         if (args.length == 1)
             for (Player player : Bukkit.getOnlinePlayers())
-                list.add(ColorUtils.removeColorAndFormat(getProfile(player).getNickname()));
+                list.add(ColorUtils.removeColorAndFormat(getProfile(player).getRawNickname()));
         return list;
     }
 }
