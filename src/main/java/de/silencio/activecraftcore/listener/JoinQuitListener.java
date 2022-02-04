@@ -107,8 +107,8 @@ public class JoinQuitListener implements Listener {
         if (profile.isVanished()) {
             vanishManager.setVanished(player, true);
             event.setJoinMessage(null);
-            Bukkit.broadcast((mainConfig.getString("join-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getFullNickname()), "activecraft.vanish.see");
-        } else event.setJoinMessage(mainConfig.getString("join-format").replace("%displayname%", profile.getFullNickname()));
+            Bukkit.broadcast((mainConfig.getString("join-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "activecraft.vanish.see");
+        } else event.setJoinMessage(mainConfig.getString("join-format").replace("%displayname%", profile.getNickname()));
         if (!player.hasPermission("vanish.see")) vanishManager.hideAll(player);
 
         //fly
@@ -134,14 +134,14 @@ public class JoinQuitListener implements Listener {
         FileConfig mainConfig = new FileConfig("config.yml");
 
         if (!profile.isVanished()) {
-            event.setQuitMessage(mainConfig.getString("quit-format").replace("%displayname%", profile.getFullNickname()));
+            event.setQuitMessage(mainConfig.getString("quit-format").replace("%displayname%", profile.getNickname()));
         } else {
             VanishManager vanishManager = ActiveCraftCore.getVanishManager();
             List<Player> vanishedList = vanishManager.getVanished();
             vanishedList.remove(player);
             vanishManager.setVanishedList(vanishedList);
             event.setQuitMessage(null);
-            Bukkit.broadcast((mainConfig.getString("quit-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getFullNickname()), "vanish.see");
+            Bukkit.broadcast((mainConfig.getString("quit-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "vanish.see");
         }
     }
 }
