@@ -1470,7 +1470,7 @@ sv:
       tpa-accept: '[GODTA]'
       tpa-accept-hover: 'Tryck här för att godta.'
       tpa-deny: '[NEKA]'
-      tpa-deny-hover: 'Tryck hät föt att neka.'
+      tpa-deny-hover: 'Tryck här föt att neka.'
       cannot-tpa-self: 'Du kan inte tpa till digsjälv'
     tpaccept:
       tpaccept-accepted: 'Accepterade TPA förfrågan.'
