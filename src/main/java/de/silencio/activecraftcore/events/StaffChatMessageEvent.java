@@ -10,7 +10,6 @@ public class StaffChatMessageEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private CommandSender sender;
-    private Player target;
     private String message;
     private boolean cancelled;
 
