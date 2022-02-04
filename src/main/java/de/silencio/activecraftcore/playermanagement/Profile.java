@@ -3,6 +3,7 @@ package de.silencio.activecraftcore.playermanagement;
 import de.silencio.activecraftcore.utils.FileConfig;
 import de.silencio.activecraftcore.utils.StringUtils;
 import org.bukkit.*;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -137,8 +138,10 @@ public final class Profile {
             lastLocations.put(world.getName(), fileConfig.getLocation("last-location." + world.getName()));
 
         homeList = new HashMap<>();
-        for (String homeName : homeConfig.getStringList(name + ".home_list"))
-            homeList.put(homeName, homeConfig.getLocation(name + "." + homeName));
+        ConfigurationSection homeConfigSection = homeConfig.getConfigurationSection(uuid.toString());
+        if (homeConfigSection != null)
+            for (String homename : homeConfigSection.getKeys(false))
+                homeList.put(homename, homeConfigSection.getLocation(homename));
 
         effects = new HashMap<>();
         for (Effect effect : Effect.values())
@@ -252,7 +255,7 @@ public final class Profile {
         return name;
     }
 
-    public String getNickname() {
+    public String getRawNickname() {
         return nickname;
     }
 
@@ -372,9 +375,17 @@ public final class Profile {
         return prefix;
     }
 
-    public String getFullNickname() {
+    public String getNickname() {
         if (prefix == null) prefix = "";
         prefix = prefix.strip() + (prefix.strip().equals("") ? "" : " ");
         return prefix + color_nick + nickname;
+    }
+
+    public Player getPlayer() {
+        return Bukkit.getPlayer(name);
+    }
+
+    public OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(uuid);
     }
 }
