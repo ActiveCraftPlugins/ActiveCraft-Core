@@ -16,7 +16,7 @@ public class NickEvent extends Event {
     public NickEvent(Profile profile, String newName) {
         this.profile = profile;
         this.newName = newName;
-        this.oldName = profile.getNickname();
+        this.oldName = profile.getRawNickname();
     }
 
     public boolean isCancelled() {
