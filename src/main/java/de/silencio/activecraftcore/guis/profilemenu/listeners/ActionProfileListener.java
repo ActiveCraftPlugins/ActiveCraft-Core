@@ -13,7 +13,7 @@ public class ActionProfileListener implements Listener {
     public void onGuiClick(GuiClickEvent event) {
         if (!ActiveCraftCore.getProfileMenuList().containsKey((Player) event.getView().getPlayer())) return;
         Player player = (Player) event.getView().getPlayer();
-        ProfileMenu profileMenu = ActiveCraftCore.getFromProfileMenuList(player);
+        ProfileMenu profileMenu = ActiveCraftCore.getProfileMenuList().get(player);
         Gui gui = event.getGui();
 
         if (!event.getGui().getAssociatedGuiCreator().getInternalName().equals("action_profile")) return;
@@ -73,7 +73,7 @@ public class ActionProfileListener implements Listener {
     public void onConfirm(GuiConfirmEvent event) {
         if (!ActiveCraftCore.getProfileMenuList().containsKey(event.getPlayer())) return;
         Player player = event.getPlayer();
-        ProfileMenu profileMenu = ActiveCraftCore.getFromProfileMenuList(player);
+        ProfileMenu profileMenu = ActiveCraftCore.getProfileMenuList().get(player);
         Gui gui = event.getGui();
 
         if (!event.getGui().getAssociatedGuiCreator().getInternalName().startsWith("confirmation_action_profile.")) return;

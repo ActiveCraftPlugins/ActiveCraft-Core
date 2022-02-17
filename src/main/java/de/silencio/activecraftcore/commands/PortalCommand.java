@@ -4,7 +4,7 @@ import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ComparisonType;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.EndGateway;
@@ -72,7 +72,7 @@ public class PortalCommand extends ActiveCraftCommand {
                 } else sendMessage(sender,Errors.WARNING() + CommandMessages.PORTAL_DOESNT_EXIST());
             }
             case "list" -> {
-                checkPermission(sender, "portals.destroy");
+                checkPermission(sender, "portals.list");
                 if (!portalList.isEmpty()) {
                     sendMessage(sender, CommandMessages.PORTAL_LIST());
                     StringBuilder messageBuilder = new StringBuilder();
@@ -107,7 +107,7 @@ public class PortalCommand extends ActiveCraftCommand {
             list.add("list");
         }
         if (args[0].equals("create")) {
-            if (p.getTargetBlock(9999) == null) return null;
+            if (p.getTargetBlock(120) == null) return null;
             switch (args.length) {
                 case 3, 6 -> list.add(p.getTargetBlock(5).getX() + "");
                 case 4, 7 -> list.add(p.getTargetBlock(5).getY() + "");

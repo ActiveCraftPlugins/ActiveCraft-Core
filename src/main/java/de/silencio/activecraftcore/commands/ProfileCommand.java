@@ -21,12 +21,12 @@ public class ProfileCommand extends ActiveCraftCommand {
         checkPermission(sender, "profile");
         if (args.length == 0) {
             ProfileMenu profileMenu = new ProfileMenu(player, player);
-            ActiveCraftCore.addToProfileMenuList(player, profileMenu);
+            ActiveCraftCore.getProfileMenuList().put(player, profileMenu);
             player.openInventory(profileMenu.getMainProfile().build().getInventory());
         } else if (args.length == 1) {
             Player target = getPlayer(args[0]);
             ProfileMenu profileMenu = new ProfileMenu(player, target);
-            ActiveCraftCore.addToProfileMenuList(player, profileMenu);
+            ActiveCraftCore.getProfileMenuList().put(player, profileMenu);
             player.openInventory(profileMenu.getMainProfile().build().getInventory());
         }
     }

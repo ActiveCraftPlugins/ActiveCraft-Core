@@ -1,7 +1,7 @@
 package de.silencio.activecraftcore.manager;
 
 import de.silencio.activecraftcore.events.LockdownEvent;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 
 public class LockdownManager {
@@ -12,9 +12,7 @@ public class LockdownManager {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        FileConfig fileConfig = new FileConfig("config.yml");
-        fileConfig.set("lockdown", lockdown);
-        fileConfig.saveConfig();
+        ConfigManager.mainConfig.set("lockdown.enabled", lockdown);
     }
 
 }

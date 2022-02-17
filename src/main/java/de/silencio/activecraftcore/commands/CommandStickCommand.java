@@ -3,7 +3,8 @@ package de.silencio.activecraftcore.commands;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ColorUtils;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -148,9 +149,8 @@ public class CommandStickCommand extends ActiveCraftCommand implements Listener 
         ArrayList<String> list = new ArrayList<>();
         if (args.length == 0) return list;
         if (args.length == 1) {
-            FileConfig mainConfig = new FileConfig("config.yml");
 
-            if (mainConfig.getBoolean("hide-commands-after-plugin-name.enable")) {
+            if (ConfigManager.mainConfig.hideCommandsAfterPluginName()) {
 
                 List<String> pluginNames = new ArrayList<>();
                 pluginNames.add("minecraft");

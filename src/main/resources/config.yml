@@ -7,34 +7,40 @@ join-format: "§b» §f%displayname%"
 quit-format: "§c« §f%displayname%"
 
 # Teleportation Timers
-use-timer-on-tpa: true
-use-timer-on-spawn: true
-use-timer-on-home: true
-use-timer-on-warp: true
+tpa-timer: true
+spawn-timer: true
+home-timer: true
+warp-timer: true
 
 # Default Mute
+default-mute:
 # When activated, players who join for the first time cannot speak in chat.
-mute-new-players: false
+  enabled: false
 # Set the time a new player should be muted for.
-remove-default-mute-after: 10 #in minutes | 0 to disable
+  duration: 10 #in minutes | 0 to disable
 
 # Vanish Settings
-# Set if the vanish tag should be shown behind player names in tab.
-enable-vanish-format: true
+vanish-tag:
+  # Set if the vanish tag should be shown behind player names in tab.
+  enabled: true
 # The tag that is shown behind player names in tab, assuming 'enable-vanish-format' is true.
-vanish-format: '[V]'
+  vanish-tag-format: '[V]'
 
 # AFK Settings
+afk:
 # If players enabling / disabling afk mode should be broadcasted in chat.
-announce-afk: true
+  announce: true
 # The tag that is shown behind player names in tab.
-afk-format: '[AFK]'
+  format: '[AFK]'
 
 # Lockdown Settings
+lockdown:
+# Whether lockdown is enabled or not
+  enabled: false
 # The server modt (Multiplayer Menu) when lockdown is activated.
-lockdown-modt: "This server is in lockdown mode. You are not able to join until this is disabled."
+  modt: "This server is in lockdown mode. You are not able to join until this is disabled."
 # The kick message when players attempt to join during lockdown mode.
-lockdown-kick-message: "This server is in lockdown mode. You are not able to join until this is disabled."
+  kick-message: "This server is in lockdown mode. You are not able to join until this is disabled."
 
 # Misc Settings
 # If player to player messages should be broadcasted to the server console.
@@ -42,13 +48,15 @@ socialspy-to-console: false
 # If command targets should recieve messages in chat when someone executes a command targetted at them (I.E. /feed -> >You were fed by %displayname%).
 silent-mode: false
 # If players should drop all, not some, EXP on death.
-drop-all-exp-on-death: true
+drop-all-exp: true
+# The plugin language
+language: 'en'
 
 # Clear Tab Completer
 # remove commands from tab complete which have the following format: "pluginname:command"
 hide-commands-after-plugin-name:
   # If this setting should be enabled.
-  enable: true
+  enabled: true
   # All commands that should not be removed from the tab complete.
   except:
     - 'minecraft:enchant'
@@ -57,6 +65,5 @@ hide-commands:
   - 'command'
 
 # Do not edit!
-lockdown: false
+lockdown-enabled: false
 old-modt: ''
-language: 'en'

@@ -5,7 +5,8 @@ import de.silencio.activecraftcore.events.PlayerAfkEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ColorUtils;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,7 +15,6 @@ public class AfkManager {
 
     public static void setAfk(Player player, boolean afk) {
         Profile profile = ActiveCraftCore.getProfile(player);
-        FileConfig mainConfig = new FileConfig("config.yml");
 
         //call event
         PlayerAfkEvent event = new PlayerAfkEvent(profile, afk);
@@ -28,7 +28,7 @@ public class AfkManager {
 
             //send messages
             player.sendMessage(CommandMessages.NOW_AFK_TARGET());
-            if(mainConfig.getBoolean("announce-afk"))
+            if(ConfigManager.mainConfig.announceAfk())
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                     if (onlinePlayer != player)
                         onlinePlayer.sendMessage(ChatColor.GRAY + "" + ColorUtils.removeColorAndFormat(CommandMessages.NOW_AFK(player)));
@@ -39,7 +39,7 @@ public class AfkManager {
 
             //send messages
             player.sendMessage(CommandMessages.NOT_AFK_TARGET());
-            if (mainConfig.getBoolean("announce-afk"))
+            if (ConfigManager.mainConfig.announceAfk())
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                     if (onlinePlayer != player)
                         onlinePlayer.sendMessage(ChatColor.GRAY + "" + ColorUtils.removeColorAndFormat(CommandMessages.NOT_AFK(player)));

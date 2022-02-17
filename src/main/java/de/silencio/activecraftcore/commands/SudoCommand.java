@@ -2,7 +2,8 @@ package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.Errors;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -32,8 +33,7 @@ public class SudoCommand extends ActiveCraftCommand {
 
         if (args.length == 1) list.addAll(getBukkitPlayernames());
         else if (args.length == 2) {
-            FileConfig mainConfig = new FileConfig("config.yml");
-            if (mainConfig.getBoolean("hide-commands-after-plugin-name.enable")) {
+            if (ConfigManager.mainConfig.hideCommandsAfterPluginName()) {
                 List<String> pluginNames = new ArrayList<>();
                 pluginNames.add("minecraft");
                 pluginNames.add("bukkit");

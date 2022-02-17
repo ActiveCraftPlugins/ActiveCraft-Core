@@ -5,15 +5,15 @@ import de.silencio.activecraftcore.guicreator.GuiCreator;
 import de.silencio.activecraftcore.guicreator.GuiData;
 import de.silencio.activecraftcore.guis.ProfileMenu;
 import de.silencio.activecraftcore.manager.DialogueManager;
-import de.silencio.activecraftcore.manager.VanishManager;
 import de.silencio.activecraftcore.messages.ActiveCraftMessage;
 import de.silencio.activecraftcore.messages.Language;
+import de.silencio.activecraftcore.messages.MiscMessage;
 import de.silencio.activecraftcore.playermanagement.PlayerQueue;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.UpdateChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,24 +22,21 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Level;
 
 public final class ActiveCraftCore extends JavaPlugin {
 
-    public static String PREFIX = ChatColor.GOLD + "[ActiveCraft-Core] ";
     private static ActiveCraftCore plugin;
-    private static VanishManager vanishManager;
-    private static HashMap<Player, Profile> msgPlayerStoring = new HashMap<>();
     private static Language language;
     private static ActiveCraftMessage activeCraftMessage;
-    private static HashMap<Player, ProfileMenu> profileMenuList;
-    private static HashMap<String, Profile> profiles;
-    private static HashMap<GuiCreator, GuiData> guiDataMap;
-    private static HashMap<Integer, Gui> guiList;
-    private static HashMap<Player, Location> lastLocMap = new HashMap<>();
-    private static HashMap<CommandSender, DialogueManager> dialogueManagerList;
+    private static final HashMap<Player, Profile> msgPlayerStoring = new HashMap<>();
+    private static final HashMap<Player, ProfileMenu> profileMenuList = new HashMap<>();
+    private static final HashMap<String, Profile> profiles = new HashMap<>();
+    private static final HashMap<GuiCreator, GuiData> guiDataMap = new HashMap<>();
+    private static final HashMap<Integer, Gui> guiList = new HashMap<>();
+    private static final HashMap<Player, Location> lastLocMap = new HashMap<>();
+    private static final HashMap<CommandSender, DialogueManager> dialogueManagerList = new HashMap<>();
 
     public ActiveCraftCore() {
         plugin = this;
@@ -47,38 +44,36 @@ public final class ActiveCraftCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        dialogueManagerList = new HashMap<>();
-        vanishManager = new VanishManager(this);
+        // load from config
+        loadConfigs();
+        loadWarpPermissions();
 
-        profileMenuList = new HashMap<>();
-
-        profiles = new HashMap<>();
+        // Playermanagement
         createProfiles();
-
         PlayerQueue.initialize();
 
-        //guicreator creator stuff
-        guiDataMap = new HashMap<>();
-        guiList = new HashMap<>();
+        // Initialize bStats
+        Metrics metrics = new Metrics(this, 12627);
 
-        int pluginId = 12627;
-        Metrics metrics = new Metrics(this, pluginId);
-
+        // Load commmands and events
         PluginManager.init();
+
+        // start playtime timer
         startTimer();
 
-        saveDefaultConfig();
+        // check for new plugin version
+        new UpdateChecker(this, 95488).getVersion(version -> {
+            if (!this.getDescription().getVersion().equals(version))
+                getLogger().info("There is a new update available.");
+        });
 
-        File file = new File(getDataFolder(), "messages.yml");
-        if(!file.exists()) {
-            saveResource("messages.yml", false);
-        }
+        log("Plugin loaded.");
 
-        language = Language.valueOf(new FileConfig("config.yml").getString("language").toUpperCase());
-        activeCraftMessage = new ActiveCraftMessage();
+        System.out.println(ConfigManager.mainConfig);
+    }
 
-        FileConfig warplistConfig = new FileConfig("warplist.yml");
-        for (String s : warplistConfig.getStringList("warplist")) {
+    private void loadWarpPermissions() {
+        for (String s : ConfigManager.warpsConfig.warps().keySet()) {
             Map<String, Boolean> childMap = new HashMap<>();
             childMap.put("activecraft.warp.self", true);
             childMap.put("activecraft.warp", true);
@@ -87,16 +82,10 @@ public final class ActiveCraftCore extends JavaPlugin {
             childMap.clear();
             childMap.put("activecraft.warp.others", true);
 
-            if (Bukkit.getPluginManager().getPermission("activecraft.warp.others." + s) != null)childMap.put("activecraft.warp", true);
-                Bukkit.getPluginManager().addPermission(new Permission("activecraft.warp.others." + s, "Permission to warp another player to a specific warp.", PermissionDefault.OP, childMap));
+            if (Bukkit.getPluginManager().getPermission("activecraft.warp.others." + s) != null)
+                childMap.put("activecraft.warp", true);
+            Bukkit.getPluginManager().addPermission(new Permission("activecraft.warp.others." + s, "Permission to warp another player to a specific warp.", PermissionDefault.OP, childMap));
         }
-
-        log("Plugin loaded.");
-
-        new UpdateChecker(this, 95488).getVersion(version -> {
-            if (!this.getDescription().getVersion().equals(version))
-                getLogger().info("There is a new update available.");
-        });
     }
 
     @Override
@@ -105,41 +94,28 @@ public final class ActiveCraftCore extends JavaPlugin {
     }
 
     public void log(String text) {
-        Bukkit.getConsoleSender().sendMessage(PREFIX + text);
+        Bukkit.getLogger().log(Level.INFO, text);
     }
 
     public static ActiveCraftCore getPlugin() {
         return plugin;
     }
 
-    public static VanishManager getVanishManager() {
-        return vanishManager;
-    }
-
     public void startTimer() {
-
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-
             for (Player player : Bukkit.getOnlinePlayers()) {
-
                 Profile profile = getProfile(player);
-                FileConfig mainConfig = new FileConfig("config.yml");
 
-                int hours = profile.getPlaytimeHours();
                 int minutes = profile.getPlaytimeMinutes();
-
+                int hours = profile.getPlaytimeHours();
                 minutes++;
-                profile.set(Profile.Value.PLAYTIME_MINUTES, minutes);
 
-                if (minutes == 60) {
-                    profile.set(Profile.Value.PLAYTIME_MINUTES, 0);
-                    hours++;
-                    profile.set(Profile.Value.PLAYTIME_HOURS, hours);
-                }
+                profile.set(Profile.Value.PLAYTIME_MINUTES, minutes < 60 ? minutes : 0);
+                profile.set(Profile.Value.PLAYTIME_HOURS, minutes == 60 ? hours++ : hours);
 
-                if (minutes + hours * 60 >= mainConfig.getInt("remove-default-mute-after") * 60 && mainConfig.getInt("remove-default-mute-after") >= 0) {
+                if (minutes + hours * 60 >= ConfigManager.mainConfig.defaultMuteDuration() && ConfigManager.mainConfig.defaultMuteDuration() >= 0) {
                     if (profile.isDefaultmuted()) {
-                        player.sendMessage(ChatColor.GOLD + "Your default-mute has been removed. You are now able to talk.");
+                        player.sendMessage(MiscMessage.DEFAULT_MUTE_REMOVE());
                         profile.set(Profile.Value.DEFAULTMUTED, false);
                     }
                 }
@@ -152,9 +128,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     }
 
     public void setLanguage(Language language) {
-        FileConfig mainConfig = new FileConfig("config.yml");
-        mainConfig.set("language", language.getCode().toLowerCase());
-        mainConfig.saveConfig();
+        ConfigManager.mainConfig.set("language", language.getCode().toLowerCase());
         ActiveCraftCore.language = language;
     }
 
@@ -170,14 +144,6 @@ public final class ActiveCraftCore extends JavaPlugin {
         return dialogueManagerList;
     }
 
-    public static void setLastLocationForPlayer(Player player, Location loc) {
-        lastLocMap.put(player, loc);
-    }
-
-    public static Location getLastLocationForPlayer(Player player) {
-        return lastLocMap.get(player);
-    }
-
     public static HashMap<Player, Location> getLastLocMap() {
         return lastLocMap;
     }
@@ -186,24 +152,8 @@ public final class ActiveCraftCore extends JavaPlugin {
         return guiDataMap;
     }
 
-    public static void addToGuiDataMap(GuiCreator guiCreator, GuiData guiData) {
-        guiDataMap.put(guiCreator, guiData);
-    }
-
-    public static void removeFromGuiDataMap(GuiCreator guiCreator) {
-        guiDataMap.remove(guiCreator);
-    }
-
-    public static GuiData getFromGuiDataMap(GuiCreator guiCreator) {
-        return guiDataMap.get(guiCreator);
-    }
-
     public static HashMap<Integer, Gui> getGuiList() {
         return guiList;
-    }
-
-    public static void setGuiList(HashMap<Integer, Gui> guiList) {
-        ActiveCraftCore.guiList = guiList;
     }
 
     public static Gui getGuiById(int id) {
@@ -214,39 +164,16 @@ public final class ActiveCraftCore extends JavaPlugin {
         return profileMenuList;
     }
 
-    public static void setProfileMenuList(HashMap<Player, ProfileMenu> profileMenuList) {
-        ActiveCraftCore.profileMenuList = profileMenuList;
-    }
-
-    public static void addToProfileMenuList(Player player, ProfileMenu profileMenu) {
-        profileMenuList.put(player, profileMenu);
-    }
-
-    public static void removeFromProfileMenuList(Player player) {
-        ActiveCraftCore.profileMenuList.remove(player);
-    }
-
-    public static ProfileMenu getFromProfileMenuList(Player player) {
-        return ActiveCraftCore.profileMenuList.get(player);
-    }
-
-    public static HashMap<String, UUID> getPlayerlist() {
+    public static Map<String, UUID> getPlayerlist() {
         FileConfig playerlistConfig = new FileConfig("playerlist.yml");
-        HashMap<String, UUID> playerlist = new HashMap<>();
-        for (String combinedString : playerlistConfig.getStringList("players")) {
-            playerlist.put(combinedString.split(",")[0], UUID.fromString(combinedString.split(",")[1]));
-        }
+        Map<String, UUID> playerlist = new HashMap<>();
+        for (String key : playerlistConfig.getKeys(false))
+            playerlist.put(playerlistConfig.getString(key), UUID.fromString(key));
         return playerlist;
     }
 
     public static String getPlayernameByUUID(String uuid) {
-        FileConfig playerlistConfig = new FileConfig("playerlist.yml");
-        for (String combinedString : playerlistConfig.getStringList("players")) {
-            if (combinedString.split(",")[1].equals(uuid)) {
-                return combinedString.split(",")[0];
-            }
-        }
-        return null;
+        return new FileConfig("playerlist.yml").getString(uuid);
     }
 
     public static String getPlayernameByUUID(UUID uuid) {
@@ -254,12 +181,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     }
 
     public static String getUUIDByPlayername(String playername) {
-        FileConfig playerlistConfig = new FileConfig("playerlist.yml");
-        for (String combinedString : playerlistConfig.getStringList("players")) {
-            if (combinedString.split(",")[0].equals(playername)) {
-                return combinedString.split(",")[1];
-            }
-        }
+        getPlayerlist().get(playername.toLowerCase());
         return null;
     }
 
@@ -267,16 +189,11 @@ public final class ActiveCraftCore extends JavaPlugin {
         return msgPlayerStoring;
     }
 
-    public static void setMsgPlayerStoring(HashMap<Player, Profile> msgPlayerStoring) {
-        ActiveCraftCore.msgPlayerStoring = msgPlayerStoring;
-    }
-
     public static void createProfiles() {
         profiles.clear();
-        for (String playername : getPlayerlist().keySet()) {
+        for (String playername : getPlayerlist().keySet())
             if (new File(ActiveCraftCore.getPlugin().getDataFolder() + File.separator + "playerdata" + File.separator + playername + ".yml").exists())
                 profiles.put(playername, new Profile(playername));
-        }
     }
 
     public static Profile getProfile(String playername) {
@@ -296,5 +213,20 @@ public final class ActiveCraftCore extends JavaPlugin {
 
     public static HashMap<String, Profile> getProfiles() {
         return profiles;
+    }
+
+    public void loadConfigs() {
+        saveDefaultConfig();
+        ConfigManager.loadConfigs();
+        File playerdataDir = new File(getDataFolder() + File.separator + "playerdata" + File.separator);
+        if (!playerdataDir.exists())
+            playerdataDir.mkdir();
+
+        File messagesYML = new File(getDataFolder(), "messages.yml");
+        if (!messagesYML.exists())
+            saveResource("messages.yml", false);
+
+        language = ConfigManager.mainConfig.language();
+        activeCraftMessage = new ActiveCraftMessage();
     }
 }

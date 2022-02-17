@@ -1,7 +1,7 @@
 package de.silencio.activecraftcore.messages;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 
 public class ActiveCraftMessage {
 

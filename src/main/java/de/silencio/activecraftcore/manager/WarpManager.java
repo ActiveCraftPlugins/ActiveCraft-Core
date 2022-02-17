@@ -4,8 +4,8 @@ import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerWarpEvent;
 import de.silencio.activecraftcore.events.WarpCreateEvent;
 import de.silencio.activecraftcore.events.WarpDeleteEvent;
-import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,14 +19,10 @@ import java.util.Map;
 public class WarpManager {
 
     public static Location getWarp(String name) {
-        FileConfig warpsConfig = new FileConfig("warps.yml");
-        return warpsConfig.getLocation(name);
+        return ConfigManager.warpsConfig.get(name);
     }
 
     public static void createWarp(String name, Location location) {
-        FileConfig warpListConfig = new FileConfig("warplist.yml");
-        FileConfig warpsConfig = new FileConfig("warps.yml");
-
         //call event
         WarpCreateEvent event = new WarpCreateEvent(location, name);
         Bukkit.getPluginManager().callEvent(event);
@@ -45,20 +41,10 @@ public class WarpManager {
                 "Permission to warp another player to a specific warp.", PermissionDefault.OP, childMap));
 
         //add warp to config
-        List<String> warpList = warpListConfig.getStringList("warplist");
-        if (!warpList.contains(name)) {
-            warpList.add(name);
-        }
-        warpListConfig.set("warplist", warpList);
-        warpListConfig.saveConfig();
-        warpsConfig.set(event.getWarpName(), event.getLocation());
-        warpsConfig.saveConfig();
+        ConfigManager.warpsConfig.set(event.getWarpName(), event.getLocation());
     }
 
     public static void deleteWarp(String name) {
-        FileConfig warpListConfig = new FileConfig("warplist.yml");
-        FileConfig warpsConfig = new FileConfig("warps.yml");
-
         //call event
         WarpDeleteEvent event = new WarpDeleteEvent(getWarp(name), name);
         Bukkit.getPluginManager().callEvent(event);
@@ -69,12 +55,7 @@ public class WarpManager {
         Bukkit.getPluginManager().removePermission("activecraft.warp.others." + name);
 
         //add warp to config
-        List<String> warpList = warpListConfig.getStringList("warplist");
-        warpList.remove(name);
-        warpListConfig.set("warplist", warpList);
-        warpListConfig.saveConfig();
-        warpsConfig.set(event.getWarpName(), null);
-        warpsConfig.saveConfig();
+        ConfigManager.warpsConfig.set(event.getWarpName(), null);
     }
 
     public static void warp(Player player, String warpName) {

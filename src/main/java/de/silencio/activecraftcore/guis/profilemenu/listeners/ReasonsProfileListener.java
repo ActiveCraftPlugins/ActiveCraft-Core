@@ -22,7 +22,7 @@ public class ReasonsProfileListener implements Listener {
     public void onSelect(GuiClickEvent event) {
         if (!ActiveCraftCore.getProfileMenuList().containsKey((Player) event.getView().getPlayer())) return;
         Player player = (Player) event.getView().getPlayer();
-        ProfileMenu profileMenu = ActiveCraftCore.getFromProfileMenuList(player);
+        ProfileMenu profileMenu = ActiveCraftCore.getProfileMenuList().get(player);
         Gui gui = event.getGui();
 
         if (!event.getGui().getAssociatedGuiCreator().getInternalName().equals("reasons_profile")) return;

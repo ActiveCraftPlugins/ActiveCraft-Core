@@ -1,13 +1,18 @@
-package de.silencio.activecraftcore.utils;
+package de.silencio.activecraftcore.utils.config;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FileConfig extends YamlConfiguration {
 
@@ -37,5 +42,9 @@ public class FileConfig extends YamlConfiguration {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public Set<ConfigurationSection> getSections() {
+        return getKeys(false).stream().map(this::getConfigurationSection).collect(Collectors.toSet());
     }
 }

@@ -6,7 +6,8 @@ import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ComparisonType;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,19 +27,18 @@ public class LockdownCommand extends ActiveCraftCommand {
         if (label.equalsIgnoreCase("lockdown")) {
             checkPermission(sender, "lockdown");
             checkArgsLength(args, ComparisonType.EQUAL, 1);
-            FileConfig fileConfig = new FileConfig("config.yml");
             if (args[0].equalsIgnoreCase("enable")) {
-                if (!fileConfig.getBoolean("lockdown")) {
+                if (!ConfigManager.mainConfig.lockdownEnabled()) {
                     LockdownManager.lockdown(true);
                     sendMessage(sender, CommandMessages.LOCKDOWN_ENABLED());
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         if (!player.hasPermission("activecraft.lockdown")) {
-                            player.kickPlayer(fileConfig.getString("lockdown-kick-message"));
+                            player.kickPlayer(ConfigManager.mainConfig.lockdownKickMessage());
                         }
                     }
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.LOCKDOWN_ALREADY_ENABLED());
             } else if (args[0].equalsIgnoreCase("disable")) {
-                if (fileConfig.getBoolean("lockdown")) {
+                if (ConfigManager.mainConfig.lockdownEnabled()) {
                     LockdownManager.lockdown(false);
                     sendMessage(sender, CommandMessages.LOCKDOWN_DISABLED());
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.LOCKDOWN_NOT_ENABLED());

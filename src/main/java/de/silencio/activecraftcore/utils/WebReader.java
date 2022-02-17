@@ -9,16 +9,6 @@ import java.net.URLConnection;
 import java.util.HashMap;
 
 public class WebReader {
-
-    private static String readAll(Reader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
-    }
-
     public static HashMap<String, Integer> getACVersionMap() throws IOException {
         HashMap<String, Integer> map = new HashMap<>();
         URL u = new URL("https://raw.githubusercontent.com/CPlaiz/ActiveCraft-Core/master/plugins.json");

@@ -1,6 +1,6 @@
 package de.silencio.activecraftcore.listener;
 
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,10 +16,9 @@ public class ClearTabCompleteListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClickTab(PlayerCommandSendEvent e) {
 
-        FileConfig mainConfig = new FileConfig("config.yml");
-        List<String> exceptionList = mainConfig.getStringList("hide-commands-after-plugin-name.except");
+        List<String> exceptionList = ConfigManager.mainConfig.hiddenCommandsAfterPluginNameExceptions();
 
-        if (!mainConfig.getBoolean("hide-commands-after-plugin-name.enable")) return;
+        if (!ConfigManager.mainConfig.hideCommandsAfterPluginName()) return;
 
         List<String> pluginNames = new ArrayList<>();
         pluginNames.add("minecraft");

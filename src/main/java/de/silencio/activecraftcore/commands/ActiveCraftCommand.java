@@ -6,6 +6,8 @@ import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.*;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -232,13 +234,11 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static void sendSilentMessage(CommandSender receiver, String message) {
-        FileConfig mainConfig = ConfigUtils.getMainConfig();
-        if (!mainConfig.getBoolean("silent-mode")) receiver.sendMessage(message);
+        if (!ConfigManager.mainConfig.silentMode()) receiver.sendMessage(message);
     }
 
     public static void sendSilentMessage(CommandSender receiver, BaseComponent... message) {
-        FileConfig mainConfig = ConfigUtils.getMainConfig();
-        if (!mainConfig.getBoolean("silent-mode")) receiver.sendMessage(message);
+        if (!ConfigManager.mainConfig.silentMode()) receiver.sendMessage(message);
     }
 
     public static ChatColor getChatColor(String name) throws InvalidColorException {

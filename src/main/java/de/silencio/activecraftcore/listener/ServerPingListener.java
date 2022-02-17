@@ -1,6 +1,7 @@
 package de.silencio.activecraftcore.listener;
 
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -12,15 +13,13 @@ public class ServerPingListener implements Listener {
     @EventHandler
     public void on(ServerListPingEvent event) {
         //set modt when locked down
-        FileConfig fileConfig = new FileConfig("config.yml");
-        if (fileConfig.getBoolean("lockdown")) {
-            fileConfig.set("old-modt", event.getMotd());
-            fileConfig.saveConfig();
-            event.setMotd(Objects.requireNonNull(fileConfig.getString("lockdown-modt")));
+        if (ConfigManager.mainConfig.lockdownEnabled()) {
+            ConfigManager.mainConfig.set("old-modt", event.getMotd());
+            event.setMotd(Objects.requireNonNull(ConfigManager.mainConfig.lockdownModt()));
         }
 
-        if (!fileConfig.getBoolean("lockdown") && fileConfig.get("lockdown") != null) {
-            event.setMotd(Objects.requireNonNull(fileConfig.getString("old-modt")));
+        if (!ConfigManager.mainConfig.lockdownEnabled()) {
+            event.setMotd(Objects.requireNonNull(ConfigManager.mainConfig.lockdownModt()));
         }
     }
 }

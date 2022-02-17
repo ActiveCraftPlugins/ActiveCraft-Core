@@ -4,7 +4,8 @@ import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.manager.DialogueManager;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ColorUtils;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,9 +38,7 @@ public class MessageListener implements Listener {
             boolean defaultMuted = profile.isDefaultmuted();
 
             if (!muted && !defaultMuted) {
-                FileConfig fileConfig = new FileConfig("config.yml");
-                //Bukkit.broadcastMessage(fileConfig.getString("chat-format").replace("%displayname%", player.getDisplayName()).replace("%message%", message));
-                Bukkit.broadcastMessage(fileConfig.getString("chat-format")
+                Bukkit.broadcastMessage(ConfigManager.mainConfig.chatFormat()
                         .replace("%displayname%", StringUtils.messageWithColor(player, profile.getNickname(), profile.getColorNick().name()))
                         .replace("%message%", message));
                 event.setCancelled(true);

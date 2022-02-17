@@ -5,7 +5,8 @@ import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.manager.VanishManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -22,16 +23,14 @@ public class VanishCommand extends ActiveCraftCommand {
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        VanishManager vanishManager = ActiveCraftCore.getVanishManager();
-        FileConfig fileConfig = new FileConfig("config.yml");
-        String joinFormat = fileConfig.getString("join-format");
-        String quitFormat = fileConfig.getString("quit-format");
+        String joinFormat = ConfigManager.mainConfig.joinFormat();
+        String quitFormat = ConfigManager.mainConfig.quitFormat();
         if (args.length == 0) {
             checkPermission(sender, "vanish.self");
             Player player = getPlayer(sender);
             Profile profile = getProfile(player);
             if (profile.isVanished()) {
-                vanishManager.setVanished(player, false);
+                VanishManager.setVanished(player, false);
                 sendMessage(sender, CommandMessages.NOW_VISIBLE());
                 for (Player forPlayer : Bukkit.getOnlinePlayers())
                     if (forPlayer.hasPermission("activecraft.vanish.see")) {
@@ -40,7 +39,7 @@ public class VanishCommand extends ActiveCraftCommand {
                     } else if (forPlayer != sender)
                         forPlayer.sendMessage(joinFormat.replace("%displayname%", StringUtils.joinQuitWithColor(player, profile.getNickname(), profile.getColorNick().name())));
             } else {
-                vanishManager.setVanished(player, true);
+                VanishManager.setVanished(player, true);
                 sendMessage(sender, CommandMessages.NOW_INVISIBLE());
                 for (Player forPlayer : Bukkit.getOnlinePlayers())
                     if (forPlayer.hasPermission("activecraft.vanish.see")) {
@@ -56,7 +55,7 @@ public class VanishCommand extends ActiveCraftCommand {
             if (profile.isVanished()) {
                 if (!checkTargetSelf(sender, target, "vanish.self")) target.sendMessage(CommandMessages.NOW_VISIBLE());
                 sendMessage(sender, CommandMessages.NOW_VISIBLE_OTHERS(target));
-                vanishManager.setVanished(target, false);
+                VanishManager.setVanished(target, false);
                 for (Player forPlayer : Bukkit.getOnlinePlayers())
                     if (forPlayer.hasPermission("activecraft.vanish.see")) {
                         if (forPlayer != sender && forPlayer != target)
@@ -66,7 +65,7 @@ public class VanishCommand extends ActiveCraftCommand {
             } else {
                 if (!checkTargetSelf(sender, target, "vanish.self")) target.sendMessage(CommandMessages.NOW_INVISIBLE());
                 sendMessage(sender, CommandMessages.NOW_INVISIBLE_OTHERS(target));
-                vanishManager.setVanished(target, true);
+                VanishManager.setVanished(target, true);
                 for (Player forPlayer : Bukkit.getOnlinePlayers())
                     if (forPlayer.hasPermission("activecraft.vanish.see")) {
                         if (forPlayer != sender && forPlayer != target)

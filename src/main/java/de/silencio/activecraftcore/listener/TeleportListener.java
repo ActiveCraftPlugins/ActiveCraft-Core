@@ -13,7 +13,7 @@ public class TeleportListener implements Listener {
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN || event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND){
-            ActiveCraftCore.getPlugin().setLastLocationForPlayer(player, event.getFrom());
+            ActiveCraftCore.getLastLocMap().put(player, event.getFrom());
         }
 
     }

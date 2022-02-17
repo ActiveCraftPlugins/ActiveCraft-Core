@@ -15,7 +15,7 @@ public class MainProfileListener implements Listener {
     public void onGuiClick(GuiClickEvent event) {
         if (!ActiveCraftCore.getProfileMenuList().containsKey((Player) event.getView().getPlayer())) return;
         Player player = (Player) event.getView().getPlayer();
-        ProfileMenu profileMenu = ActiveCraftCore.getFromProfileMenuList(player);
+        ProfileMenu profileMenu = ActiveCraftCore.getProfileMenuList().get(player);
         Gui gui = event.getGui();
 
         if (!event.getGui().getAssociatedGuiCreator().getInternalName().equals("main_profile")) return;

@@ -3,7 +3,8 @@ package de.silencio.activecraftcore.listener;
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.commands.SuicideCommand;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,13 +17,11 @@ public class DeathListener implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
 
-        FileConfig mainConfig = new FileConfig("config.yml");
-
         Player died = e.getEntity(); //in 1.17 gibt get player nen error deshalb IMMER get entity
         Profile profile = ActiveCraftCore.getProfile(died);
         Player killer = died.getKiller();
 
-        ActiveCraftCore.setLastLocationForPlayer(died, died.getLocation());
+        ActiveCraftCore.getLastLocMap().put(died, died.getLocation());
 
         if (died.hasPermission("activecraft.keepexp")) {
             e.setKeepLevel(true);
@@ -34,7 +33,7 @@ public class DeathListener implements Listener {
             e.getDrops().clear();
         }
 
-        if (mainConfig.getBoolean("drop-all-exp-on-death")) {
+        if (ConfigManager.mainConfig.dropAllExp()) {
             e.setDroppedExp(died.getTotalExperience());
         }
 
@@ -53,12 +52,12 @@ public class DeathListener implements Listener {
         if (killer != null && killer.getInventory().getItemInMainHand().getType() == Material.AIR) {
             String beforeBrackets = deathmessage.split("\\[")[0];
             beforeBrackets = beforeBrackets.replace(died.getName(), died.getDisplayName()
-                            .replace(" " + mainConfig.getString("vanish-format"), "")
-                            .replace(" " + mainConfig.getString("afk-format"), "")
+                            .replace(" " + ConfigManager.mainConfig.vanishTagFormat(), "")
+                            .replace(" " + ConfigManager.mainConfig.afkFormat(), "")
                             + ChatColor.WHITE)
                     .replace(killer.getName(), killer.getDisplayName()
-                            .replace(" " + mainConfig.getString("vanish-format"), "")
-                            .replace(" " + mainConfig.getString("afk-format"), "")
+                            .replace(" " + ConfigManager.mainConfig.vanishTagFormat(), "")
+                            .replace(" " + ConfigManager.mainConfig.afkFormat(), "")
                             + ChatColor.RESET);
             e.setDeathMessage(ChatColor.RED + "☠ " + beforeBrackets + killer.getInventory().getItemInMainHand().getItemMeta().getDisplayName());
         } else {

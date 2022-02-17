@@ -2,7 +2,7 @@ package de.silencio.activecraftcore.messages;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

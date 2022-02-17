@@ -5,7 +5,7 @@ import de.silencio.activecraftcore.events.PlayerWarnAddEvent;
 import de.silencio.activecraftcore.events.PlayerWarnRemoveEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

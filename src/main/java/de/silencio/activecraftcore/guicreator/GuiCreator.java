@@ -43,7 +43,7 @@ public abstract class GuiCreator {
         this.internalName = internalName;
         this.backgroundItem = new GuiItem(Material.GRAY_STAINED_GLASS_PANE).setDisplayName(" ");
         inventory = Bukkit.createInventory(holder, 9 * rows, title);
-        ActiveCraftCore.addToGuiDataMap(this, new GuiData());
+        ActiveCraftCore.getGuiDataMap().put(this, new GuiData());
     }
 
     public abstract void refresh();
@@ -157,11 +157,11 @@ public abstract class GuiCreator {
             GuiItem item = event.getItemInSlot()[i];
             inventory.setItem(i, item);
             if (item != null) {
-                ActiveCraftCore.getFromGuiDataMap(this).addToCorrespondingGuiItem(inventory.getItem(i), item);
+                ActiveCraftCore.getGuiDataMap().get(this).addToCorrespondingGuiItem(inventory.getItem(i), item);
             }
         }
 
-        ActiveCraftCore.getFromGuiDataMap(this).setGuiList(event.getItemInSlot());
+        ActiveCraftCore.getGuiDataMap().get(this).setGuiList(event.getItemInSlot());
         return new Gui(inventory, this);
     }
 }

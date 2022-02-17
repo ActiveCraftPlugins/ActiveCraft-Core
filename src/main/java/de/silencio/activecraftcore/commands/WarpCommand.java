@@ -4,7 +4,9 @@ import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.manager.WarpManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
+import de.silencio.activecraftcore.utils.config.WarpsConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -62,13 +64,10 @@ public class WarpCommand extends ActiveCraftCommand {
             }
             case "warps" -> {
                 checkPermission(sender, "warp.list");
-                FileConfig warpListConfig = new FileConfig("warplist.yml");
-                FileConfig warpsConfig = new FileConfig("warps.yml");
-                List<String> warpList = warpListConfig.getStringList("warplist");
-                if (!warpList.isEmpty()) {
+                if (!ConfigManager.warpsConfig.warps().keySet().isEmpty()) {
                     StringBuilder message = new StringBuilder();
-                    for (String s : warpList) {
-                        Location loc = warpsConfig.getLocation(s);
+                    for (String s : ConfigManager.warpsConfig.warps().keySet()) {
+                        Location loc = ConfigManager.warpsConfig.get(s);
                         if (sender.hasPermission("activecraft.warp.self." + s) || sender.hasPermission("activecraft.warp.others." + s)) {
                             message.append(ChatColor.GOLD + s + ": " + ChatColor.GRAY + loc.getWorld().getName() + "; " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
                             message.append("\n");

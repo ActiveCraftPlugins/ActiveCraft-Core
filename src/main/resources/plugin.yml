@@ -1136,3 +1136,6 @@ permissions:
   activecraft.version:
     description: Check the current version of all installed ActiveCraft Plugins.
     default: op
+  activecraft.reload-config:
+    description: Permission to reload the configuration files and load the changes into the game.
+    default: op

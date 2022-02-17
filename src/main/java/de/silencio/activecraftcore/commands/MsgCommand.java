@@ -9,7 +9,7 @@ import de.silencio.activecraftcore.playermanagement.PlayerQueue;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ColorUtils;
 import de.silencio.activecraftcore.utils.ComparisonType;
-import de.silencio.activecraftcore.utils.ConfigUtils;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -55,7 +55,7 @@ public class MsgCommand extends ActiveCraftCommand {
                     if (onlinePlayer != sender && onlinePlayer != target)
                         sendMessage(onlinePlayer, CommandMessages.SOCIALSPY_PREFIX_TO(target, sender, finalMessage));
                 }
-                if (ConfigUtils.getMainConfig().getBoolean("socialspy-to-console"))
+                if (ConfigManager.mainConfig.socialSpyToConsole())
                     sendMessage(Bukkit.getConsoleSender(), CommandMessages.SOCIALSPY_PREFIX_TO(target, sender, event.getMessage()));
             });
         } else {

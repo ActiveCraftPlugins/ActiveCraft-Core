@@ -5,7 +5,7 @@ import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ComparisonType;
-import de.silencio.activecraftcore.utils.ConfigUtils;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -64,7 +64,7 @@ public class TpaCommand extends ActiveCraftCommand {
                     Player target = tpaList.get(player);
                     Location loc = player.getLocation();
                     sendMessage(sender, CommandMessages.TPACCEPT_ACCEPTED());
-                    if (!ConfigUtils.getMainConfig().getBoolean("use-timer-on-tpa")) {
+                    if (!ConfigManager.mainConfig.timerTpa()) {
                         tpaList.get(player).sendActionBar(CommandMessages.TPACCEPT_ACTIONBAR());
                         tpaList.get(player).teleport(loc);
                         tpaList.remove(player);

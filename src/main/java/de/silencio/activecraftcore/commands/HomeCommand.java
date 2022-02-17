@@ -1,22 +1,13 @@
 package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
-import de.silencio.activecraftcore.exceptions.InvalidArgumentException;
-import de.silencio.activecraftcore.exceptions.InvalidHomeException;
 import de.silencio.activecraftcore.manager.HomeManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
-import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.ConfigUtils;
-import de.silencio.activecraftcore.utils.FileConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +20,6 @@ public class HomeCommand extends ActiveCraftCommand {
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        FileConfig homeConfig = ConfigUtils.getHomeConfig();
 
         switch (label.toLowerCase()) {
             case "home" -> {

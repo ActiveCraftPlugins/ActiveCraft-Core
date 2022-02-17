@@ -3,7 +3,8 @@ package de.silencio.activecraftcore.listener;
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.manager.VanishManager;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 public class JoinQuitListener implements Listener {
 
@@ -39,28 +41,16 @@ public class JoinQuitListener implements Listener {
         Player player = event.getPlayer();
 
         FileConfig playerlistConfig = new FileConfig("playerlist.yml");
-        FileConfig mainConfig = new FileConfig("config.yml");
-        FileConfig playerdataConfig = new FileConfig("playerdata" + File.separator + player.getName().toLowerCase() + ".yml");
 
-        VanishManager vanishManager = ActiveCraftCore.getVanishManager();
-
-        List<String> rawPlayerlist = playerlistConfig.getStringList("players");
-
-        if (!rawPlayerlist.contains(player.getName().toLowerCase() + "," + player.getUniqueId())) {
-            rawPlayerlist.add(player.getName().toLowerCase() + "," + player.getUniqueId());
-            playerlistConfig.set("players", rawPlayerlist);
+        Set<String> keys = playerlistConfig.getKeys(false);
+        if (!keys.contains(player.getUniqueId().toString())) {
+            playerlistConfig.set(player.getUniqueId().toString(), player.getName().toLowerCase());
             playerlistConfig.saveConfig();
         }
 
-        File file = new File(ActiveCraftCore.getPlugin().getDataFolder() + File.separator + "playerdata" + File.separator);
+        FileConfig playerdataConfig = new FileConfig("playerdata" + File.separator + player.getUniqueId() + ".yml");
 
-        FileConfig config;
-
-        if (!file.exists()) file.mkdir();
-
-        config = new FileConfig("playerdata" + File.separator + player.getName().toLowerCase() + ".yml");
-
-        if (config.getKeys(true).size() == 0) {
+        if (playerdataConfig.getKeys(true).size() == 0) {
             playerdataConfig.set("name", player.getName());
             playerdataConfig.set("nickname", player.getName());
             playerdataConfig.set("uuid", player.getUniqueId().toString());
@@ -72,10 +62,9 @@ public class JoinQuitListener implements Listener {
             playerdataConfig.set("fly", false);
             playerdataConfig.set("flyspeed", 1);
             playerdataConfig.set("muted", false);
-            playerdataConfig.set("default-mute", mainConfig.getBoolean("mute-new-players"));
+            playerdataConfig.set("default-mute", ConfigManager.mainConfig.defaultMuteEnabled());
             playerdataConfig.set("vanished", false);
             playerdataConfig.set("on-duty", false);
-            playerdataConfig.set("last-online", null);
             playerdataConfig.set("log-enabled", false);
             playerdataConfig.set("lockdown-bypass", false);
             playerdataConfig.set("edit-sign", false);
@@ -105,11 +94,12 @@ public class JoinQuitListener implements Listener {
 
         // vanish stuff
         if (profile.isVanished()) {
-            vanishManager.setVanished(player, true);
+            VanishManager.setVanished(player, true);
             event.setJoinMessage(null);
-            Bukkit.broadcast((mainConfig.getString("join-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "activecraft.vanish.see");
-        } else event.setJoinMessage(mainConfig.getString("join-format").replace("%displayname%", profile.getNickname()));
-        if (!player.hasPermission("vanish.see")) vanishManager.hideAll(player);
+            Bukkit.broadcast((ConfigManager.mainConfig.joinFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "activecraft.vanish.see");
+        } else
+            event.setJoinMessage(ConfigManager.mainConfig.joinFormat().replace("%displayname%", profile.getNickname()));
+        if (!player.hasPermission("vanish.see")) VanishManager.hideAll(player);
 
         //fly
         if (profile.canFly()) player.setAllowFlight(true);
@@ -131,17 +121,14 @@ public class JoinQuitListener implements Listener {
 
         profile.set(Profile.Value.LAST_LOCATION, "BEFORE_QUIT", playerLocation);
 
-        FileConfig mainConfig = new FileConfig("config.yml");
-
         if (!profile.isVanished()) {
-            event.setQuitMessage(mainConfig.getString("quit-format").replace("%displayname%", profile.getNickname()));
+            event.setQuitMessage(ConfigManager.mainConfig.quitFormat().replace("%displayname%", profile.getNickname()));
         } else {
-            VanishManager vanishManager = ActiveCraftCore.getVanishManager();
-            List<Player> vanishedList = vanishManager.getVanished();
+            List<Player> vanishedList = VanishManager.getVanished();
             vanishedList.remove(player);
-            vanishManager.setVanishedList(vanishedList);
+            VanishManager.setVanishedList(vanishedList);
             event.setQuitMessage(null);
-            Bukkit.broadcast((mainConfig.getString("quit-format") + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "vanish.see");
+            Bukkit.broadcast((ConfigManager.mainConfig.quitFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "vanish.see");
         }
     }
 }

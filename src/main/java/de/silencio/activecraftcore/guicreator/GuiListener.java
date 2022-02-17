@@ -40,7 +40,7 @@ public class GuiListener implements Listener {
         for (GuiCreator guiCreatorFromList : ActiveCraftCore.getGuiDataMap().keySet()) {
             if (guiCreatorFromList.getInventory() == event.getClickedInventory()) {
                 guiCreator = guiCreatorFromList;
-                GuiData guiData = ActiveCraftCore.getFromGuiDataMap(guiCreatorFromList);
+                GuiData guiData = ActiveCraftCore.getGuiDataMap().get(guiCreatorFromList);
                 guiItem = guiData.getFromCorrespondingGuiItem(itemStack);
             }
         }

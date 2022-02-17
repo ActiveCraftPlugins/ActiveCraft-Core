@@ -1,7 +1,10 @@
 package de.silencio.activecraftcore.playermanagement;
 
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.StringUtils;
+import de.silencio.activecraftcore.utils.config.HomesConfig;
+import it.unimi.dsi.fastutil.Hash;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -51,8 +54,7 @@ public final class Profile {
 
 
     private FileConfig playerdataConfig;
-    private FileConfig playtimeConfig;
-    private FileConfig homeConfig;
+
     private String name;
     private String nickname;
     private String prefix;
@@ -97,8 +99,6 @@ public final class Profile {
 
     public void refresh() {
         this.playerdataConfig = new FileConfig("playerdata" + File.separator + name.toLowerCase() + ".yml");
-        this.playtimeConfig = new FileConfig("playtime.yml");
-        this.homeConfig = new FileConfig("homes.yml");
         loadFromConfig(playerdataConfig);
     }
 
@@ -129,24 +129,18 @@ public final class Profile {
         tags = fileConfig.getStringList("tags");
         prefix = fileConfig.getString("prefix");
         receive_socialspy = fileConfig.getBoolean("receive-socialspy");
-
-        playtime_minutes = playtimeConfig.getInt(name + ".minutes");
-        playtime_hours = playtimeConfig.getInt(name + ".hours");
+        playtime_minutes = fileConfig.getInt("playtime.minutes");
+        playtime_hours = fileConfig.getInt("playtime.hours");
 
         lastLocations = new HashMap<>();
         for (World world : Bukkit.getWorlds())
             lastLocations.put(world.getName(), fileConfig.getLocation("last-location." + world.getName()));
 
-        homeList = new HashMap<>();
-        ConfigurationSection homeConfigSection = homeConfig.getConfigurationSection(uuid.toString());
-        if (homeConfigSection != null)
-            for (String homename : homeConfigSection.getKeys(false))
-                homeList.put(homename, homeConfigSection.getLocation(homename));
+        homeList = ConfigManager.homesConfig.get(this);
 
         effects = new HashMap<>();
         for (Effect effect : Effect.values())
             effects.put(effect, playerdataConfig.getBoolean("effects." + effect.name().toLowerCase()));
-
     }
 
     public void set(Value value, Object object) {
@@ -162,8 +156,8 @@ public final class Profile {
             case MUTES -> playerdataConfig.set("violations.mutes", object);
             case BANS -> playerdataConfig.set("violations.bans", object);
             case IP_BANS -> playerdataConfig.set("violations.ip-bans", object);
-            case PLAYTIME_MINUTES -> playtimeConfig.set(name + ".minutes", object);
-            case PLAYTIME_HOURS -> playtimeConfig.set(name + ".hours", object);
+            case PLAYTIME_MINUTES -> playerdataConfig.set("playtime.minutes", object);
+            case PLAYTIME_HOURS -> playerdataConfig.set("playtime.hours", object);
             case AFK -> playerdataConfig.set("afk", object);
             case OP -> playerdataConfig.set("op", object);
             case WHITELISTED -> playerdataConfig.set("whitelisted", object);
@@ -178,10 +172,7 @@ public final class Profile {
             case FORCE_MUTED -> playerdataConfig.set("forcemuted", object);
             case RECEIVE_SOCIALSPY -> playerdataConfig.set("receive-socialspy", object);
         }
-
         playerdataConfig.saveConfig();
-        playtimeConfig.saveConfig();
-
         refresh();
     }
 
@@ -189,10 +180,9 @@ public final class Profile {
         switch (value) {
             case EFFECTS -> playerdataConfig.set("effects." + deepPath, object);
             case LAST_LOCATION -> playerdataConfig.set("last-location." + deepPath, object);
-            case HOME_LIST -> homeConfig.set(name + "." + deepPath, object);
+            case HOME_LIST -> ConfigManager.homesConfig.set(uuid + "." + deepPath, object);
         }
         playerdataConfig.saveConfig();
-        homeConfig.saveConfig();
     }
 
     public void clearTags() {

@@ -3,7 +3,8 @@ package de.silencio.activecraftcore.commands;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.FileConfig;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,7 +23,6 @@ public class PlayerlistCommand extends ActiveCraftCommand {
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
         checkPermission(sender, "playerlist");
         StringBuilder stringBuilder = new StringBuilder();
-        FileConfig mainConfig = new FileConfig("config.yml");
         boolean isFirst = true;
         for (Player player : Bukkit.getOnlinePlayers()) {
             Profile profile = getProfile(player);
@@ -30,7 +30,7 @@ public class PlayerlistCommand extends ActiveCraftCommand {
                 if (sender.hasPermission("activecraft.vanish.see")) {
                     if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");
                     else isFirst = false;
-                    stringBuilder.append(player.getName() + ChatColor.GRAY + " " + mainConfig.getString("vanish-format"));
+                    stringBuilder.append(player.getName() + ChatColor.GRAY + " " + ConfigManager.mainConfig.vanishTagFormat());
                 }
             } else {
                 if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");

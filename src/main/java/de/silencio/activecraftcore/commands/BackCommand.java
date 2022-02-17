@@ -23,7 +23,7 @@ public class BackCommand extends ActiveCraftCommand {
 
         if (args.length == 0) {
             checkPermission(sender, "back.self");
-            Location lastLoc = ActiveCraftCore.getLastLocationForPlayer(player);
+            Location lastLoc = ActiveCraftCore.getLastLocMap().get(player);
             if (lastLoc != null) {
                 player.teleport(lastLoc);
                 sendMessage(sender, CommandMessages.TELEPORTED_BACK());
@@ -31,7 +31,7 @@ public class BackCommand extends ActiveCraftCommand {
         } else {
             checkPermission(sender, "back.others");
             Player target = getPlayer(args[0]);
-            Location lastLoc = ActiveCraftCore.getLastLocationForPlayer(target);
+            Location lastLoc = ActiveCraftCore.getLastLocMap().get(target);
 
             if (lastLoc != null) {
                 target.teleport(lastLoc);
