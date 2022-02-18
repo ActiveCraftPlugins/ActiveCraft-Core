@@ -180,7 +180,7 @@ public final class Profile {
         switch (value) {
             case EFFECTS -> playerdataConfig.set("effects." + deepPath, object);
             case LAST_LOCATION -> playerdataConfig.set("last-location." + deepPath, object);
-            case HOME_LIST -> ConfigManager.homesConfig.set(uuid + "." + deepPath, object);
+            case HOME_LIST -> ConfigManager.homesConfig.set(uuid + "." + deepPath, object, true);
         }
         playerdataConfig.saveConfig();
     }

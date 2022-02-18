@@ -4,6 +4,7 @@ import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.messages.Language;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import it.unimi.dsi.fastutil.Hash;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -15,12 +16,14 @@ public class ConfigManager {
     public static LocationsConfig locationsConfig;
     public static HomesConfig homesConfig;
     public static WarpsConfig warpsConfig;
+    public static PortalsConfig portalsConfig;
 
     public static void loadConfigs() {
         loadMainConfig();
         loadLocationsConfig();
         loadWarpsConfig();
         loadHomesConfig();
+        loadPortalsConfig();
     }
 
     public static void loadMainConfig() {
@@ -43,6 +46,7 @@ public class ConfigManager {
                 fileConfig.getString("afk.format"),
                 fileConfig.getBoolean("lockdown.enabled"),
                 fileConfig.getString("lockdown.modt"),
+                fileConfig.getString("lockdown.old-modt"),
                 fileConfig.getString("lockdown.kick-message"),
                 fileConfig.getBoolean("socialspy-to-console"),
                 fileConfig.getBoolean("silent-mode"),
@@ -82,6 +86,26 @@ public class ConfigManager {
         for (String key : fileConfig.getKeys(false))
             warps.put(key, fileConfig.getLocation(key));
         warpsConfig = new WarpsConfig(warps);
+    }
+
+    public static void loadPortalsConfig() {
+        FileConfig fileConfig = new FileConfig("portals.yml");
+        HashMap<String, Portal> portals = new HashMap<>();
+        for (String key : fileConfig.getKeys(false)) {
+            ConfigurationSection section = fileConfig.getConfigurationSection(key);
+                portals.put(key, new Portal(
+                        key,
+                        section.getInt("portal.x"),
+                        section.getInt("portal.y"),
+                        section.getInt("portal.z"),
+                        Bukkit.getWorld(section.getString("portal.world")),
+                        section.getInt("to.x"),
+                        section.getInt("to.y"),
+                        section.getInt("to.z"),
+                        Bukkit.getWorld(section.getString("to.world"))
+                ));
+        }
+        portalsConfig = new PortalsConfig(portals);
     }
 
 }

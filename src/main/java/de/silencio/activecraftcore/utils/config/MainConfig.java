@@ -11,7 +11,7 @@ public record MainConfig(
         boolean defaultMuteEnabled, int defaultMuteDuration,
         boolean vanishTagEnabled, String vanishTagFormat,
         boolean announceAfk, String afkFormat,
-        boolean lockdownEnabled, String lockdownModt, String lockdownKickMessage,
+        boolean lockdownEnabled, String lockdownModt, String oldModt, String lockdownKickMessage,
         boolean socialSpyToConsole, boolean silentMode, boolean dropAllExp, Language language,
         boolean hideCommandsAfterPluginName, List<String> hiddenCommandsAfterPluginNameExceptions,
         List<String> hiddenCommands) {

@@ -41,7 +41,7 @@ public class WarpManager {
                 "Permission to warp another player to a specific warp.", PermissionDefault.OP, childMap));
 
         //add warp to config
-        ConfigManager.warpsConfig.set(event.getWarpName(), event.getLocation());
+        ConfigManager.warpsConfig.set(event.getWarpName(), event.getLocation(), true);
     }
 
     public static void deleteWarp(String name) {
@@ -55,7 +55,7 @@ public class WarpManager {
         Bukkit.getPluginManager().removePermission("activecraft.warp.others." + name);
 
         //add warp to config
-        ConfigManager.warpsConfig.set(event.getWarpName(), null);
+        ConfigManager.warpsConfig.set(event.getWarpName(), null, true);
     }
 
     public static void warp(Player player, String warpName) {

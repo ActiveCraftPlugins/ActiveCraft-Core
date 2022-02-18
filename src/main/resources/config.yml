@@ -41,6 +41,8 @@ lockdown:
   modt: "This server is in lockdown mode. You are not able to join until this is disabled."
 # The kick message when players attempt to join during lockdown mode.
   kick-message: "This server is in lockdown mode. You are not able to join until this is disabled."
+# The modt is saved to this when locking down and restored after lockdown ended
+  old-modt: ''
 
 # Misc Settings
 # If player to player messages should be broadcasted to the server console.
@@ -63,7 +65,3 @@ hide-commands-after-plugin-name:
 # Remove any command from tab complete.
 hide-commands:
   - 'command'
-
-# Do not edit!
-lockdown-enabled: false
-old-modt: ''
