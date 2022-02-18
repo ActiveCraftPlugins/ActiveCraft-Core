@@ -96,11 +96,7 @@ public class PortalCommand extends ActiveCraftCommand {
 
     public static void cleanPortals() {
         for (Portal portal : ConfigManager.portalsConfig.portals().values()) {
-            System.out.println("KAMEHAMEHA oder so");
-            System.out.println(portal.name());
             World portalworld;
-            System.out.println(portal.world());
-            System.out.println(portal.to_world());
             if ((portalworld = portal.world()) != null && portal.to_world() != null && portalworld.getBlockAt(portal.x(), portal.y(), portal.z()).getType() == Material.END_GATEWAY) return;
             ConfigManager.portalsConfig.set(portal.name(), null, true);
         }

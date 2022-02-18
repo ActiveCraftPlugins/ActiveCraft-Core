@@ -68,8 +68,6 @@ public final class ActiveCraftCore extends JavaPlugin {
         });
 
         log("Plugin loaded.");
-
-        System.out.println(ConfigManager.mainConfig);
     }
 
     private void loadWarpPermissions() {

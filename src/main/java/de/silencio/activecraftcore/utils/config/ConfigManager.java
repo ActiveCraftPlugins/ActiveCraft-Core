@@ -56,7 +56,6 @@ public class ConfigManager {
                 fileConfig.getStringList("hide-commands-after-plugin-name.except"),
                 fileConfig.getStringList("hide-commands")
         );
-        System.out.println(mainConfig);
     }
 
     public static void loadLocationsConfig() {
