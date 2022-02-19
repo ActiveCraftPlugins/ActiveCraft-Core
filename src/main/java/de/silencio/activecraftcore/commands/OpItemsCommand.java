@@ -109,11 +109,12 @@ public class OpItemsCommand extends ActiveCraftCommand {
                 .addEnchant(Enchantment.PROTECTION_FALL)
                 .addEnchant(Enchantment.SOUL_SPEED, 5)
                 .addEnchant(Enchantment.DEPTH_STRIDER);
+        OpItem elytra = new OpItem(Material.ELYTRA, "OP Elytra", OpItem.Class.ARMOR);
         OpItem[] itemList;
         switch (args[0].toLowerCase()) {
-            case "all" -> itemList = new OpItem[]{sword, bow, crossbow, trident, pickaxe, axe, shovel, hoe, helmet, chestplate, leggins, boots};
+            case "all" -> itemList = new OpItem[]{sword, bow, crossbow, trident, pickaxe, axe, shovel, hoe, helmet, chestplate, leggins, boots, elytra};
             case "tools" -> itemList = new OpItem[]{pickaxe, axe, shovel, hoe};
-            case "armor" -> itemList = new OpItem[]{helmet, chestplate, leggins, boots};
+            case "armor" -> itemList = new OpItem[]{helmet, chestplate, leggins, boots, elytra};
             case "weapons" -> itemList = new OpItem[]{sword, bow, crossbow, trident};
             case "sword" -> itemList = new OpItem[]{sword};
             case "bow" -> itemList = new OpItem[]{bow};
@@ -127,6 +128,7 @@ public class OpItemsCommand extends ActiveCraftCommand {
             case "chestplate" -> itemList = new OpItem[]{chestplate};
             case "leggins" -> itemList = new OpItem[]{leggins};
             case "boots" -> itemList = new OpItem[]{boots};
+            case "elytra" -> itemList = new OpItem[]{elytra};
             default -> itemList = new OpItem[]{};
         }
         for (OpItem item : itemList) {
