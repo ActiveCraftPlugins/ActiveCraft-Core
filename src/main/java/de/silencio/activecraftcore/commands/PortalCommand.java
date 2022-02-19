@@ -1,6 +1,7 @@
 package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
+import de.silencio.activecraftcore.manager.PortalManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ComparisonType;
@@ -29,7 +30,6 @@ public class PortalCommand extends ActiveCraftCommand {
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
 
         Player player = getPlayer(sender);
-        PortalsConfig portalsConfig = ConfigManager.portalsConfig;
         cleanPortals();
         Set<String> portalList = ConfigManager.portalsConfig.portals().keySet();
 
@@ -37,36 +37,16 @@ public class PortalCommand extends ActiveCraftCommand {
             case "create" -> {
                 checkPermission(sender, "portals.create");
                 checkArgsLength(args, ComparisonType.GREATER_EQUAL, 8);
-                portalsConfig.set(args[1] + ".portal.x", parseInt(args[2]));
-                portalsConfig.set(args[1] + ".portal.y", parseInt(args[3]));
-                portalsConfig.set(args[1] + ".portal.z", parseInt(args[4]));
-                portalsConfig.set(args[1] + ".portal.world", player.getLocation().getWorld().getName());
-                portalsConfig.set(args[1] + ".to.x", parseInt(args[5]));
-                portalsConfig.set(args[1] + ".to.y", parseInt(args[6]));
-                portalsConfig.set(args[1] + ".to.z", parseInt(args[7]));
-                portalsConfig.set(args[1] + ".to.world", args.length == 9 ? getWorld(args[8]).getName() : player.getLocation().getWorld().getName());
-                Block block = player.getWorld().getBlockAt(Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
-                block.setType(Material.END_GATEWAY);
-                EndGateway endGateway = (EndGateway) block.getState();
-                endGateway.setExactTeleport(true);
-                Location loc = new Location(args.length == 9 ? getWorld(args[8]) : player.getWorld(), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]));
-                endGateway.setExitLocation(loc);
-                endGateway.setAge(-999999999);
-                endGateway.update();
-                portalsConfig.reload();
+                PortalManager.create(args[1], parseInt(args[2]), parseInt(args[3]), parseInt(args[4]), player.getWorld(),
+                        parseInt(args[5]), parseInt(args[6]), parseInt(args[7]), args.length == 9 ? getWorld(args[8]) : player.getWorld());
                 sendMessage(sender, CommandMessages.PORTAL_CREATED());
             }
             case "destroy" -> {
                 checkPermission(sender, "portals.destroy");
                 if (portalList.contains(args[1])) {
-                    Portal portal = portalsConfig.portals().get(args[1]);
-                    int portalx = portal.x();
-                    int portaly = portal.y();
-                    int portalz = portal.z();
-                    Block block = portal.world().getBlockAt(portalx, portaly, portalz);
-                    block.setType(Material.AIR);
-                    ConfigManager.portalsConfig.set(args[1], null, true);
-                    sendMessage(sender, CommandMessages.PORTAL_DESTROYED(args[1], portalx + portaly + portalz + ""));
+                    Portal portal = ConfigManager.portalsConfig.portals().get(args[1]);
+                    PortalManager.destroy(args[1]);
+                    sendMessage(sender, CommandMessages.PORTAL_DESTROYED(args[1], portal.x() + portal.y() + portal.z() + ""));
                 } else sendMessage(sender,Errors.WARNING() + CommandMessages.PORTAL_DOESNT_EXIST());
             }
             case "list" -> {
