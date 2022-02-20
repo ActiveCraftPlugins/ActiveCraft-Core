@@ -1,6 +1,7 @@
 package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
+import de.silencio.activecraftcore.exceptions.NotHoldingItemException;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ColorUtils;
@@ -62,7 +63,7 @@ public class ItemCommand extends ActiveCraftCommand {
                     checkPermission(sender, "item.lore");
                     checkArgsLength(args, ComparisonType.GREATER, 2);
                     if (player.getInventory().getItemInMainHand().getType() == Material.AIR)
-                        sendMessage(sender, Errors.NOT_HOLDING_ITEM());
+                        throw new NotHoldingItemException(player, NotHoldingItemException.ExpectedItem.ANY);
                     ItemStack stack = player.getInventory().getItemInMainHand();
                     ItemMeta meta = stack.getItemMeta();
                     List<String> stringList = new ArrayList<>();
