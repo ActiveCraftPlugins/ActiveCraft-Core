@@ -474,6 +474,7 @@ en:
         Reason: %reason%
         Warned by: %s_displayname%.
       warned-remove: 'Your warning %reason% has been removed.'
+      warn-doesnt-exist: 'This warn does not exist!'
     warp:
       warp-doesnt-exist: 'This warp does not exist!'
       warp-teleport: 'You warped to %warp%.'
@@ -983,7 +984,7 @@ de:
       walkspeed-set-others: 'Laufgeschwindigkeit zu %amount% für %t_displayname% gesetzt.'
       walkspeed-set-others-message: 'Gehgeschwindigkeit zu %amount% von %s_displayname% gesetzt.'
     warn:
-      default-warn-reason: 'Durch einen Moderator gewarnt'
+      default-warn-reason: 'Durch einen Moderator verwarnt'
       warn-add: |
         Du hast %t_displayname% gewarnt.
         Grund: %reason%.
@@ -994,11 +995,12 @@ de:
         Erstelldatum: %date-created%
         Warner: %s_displayname%
         ID: %warn-id%
-      warned-header: 'Du wurdest gewarnt!'
+      warned-header: 'Du wurdest verwarnt!'
       warned: |
         Grund: %reason%
         Gewarnt von: %s_displayname%.
-      warned-remove: 'Deine Warnung %reason% wurde entfernt.'
+      warned-remove: 'Deine Verarnung %reason% wurde entfernt.'
+      warn-doesnt-exist: 'Diese Verwarnung existiert nicht!'
     warp:
       warp-doesnt-exist: 'Dieser Warp existiert nicht'
       warp-teleport: 'Du hast dich zu %warp% teleportiert.'
@@ -1524,6 +1526,7 @@ sv:
         Andledning: %reason%
         Varnad av: %s_displayname%.
       warned-remove: 'Din varning %reason% har blevit bort tagen.'
+      warn-doesnt-exist: 'Denna warn finns inte!'
     warp:
       warp-doesnt-exist: 'Denna warp finns inte!'
       warp-teleport: 'Du teleporterade till %warp%.'

@@ -1337,6 +1337,10 @@ public class CommandMessages {
         return ChatColor.RED + acm.getMessage(MessageType.COMMAND, CommandType.WARN, "warned-header");
     }
 
+    public static String WARN_DOESNT_EXIST() {
+        return ChatColor.RED + acm.getMessage(MessageType.COMMAND, CommandType.WARN, "warn-doesnt-exist");
+    }
+
     public static String WARNED(String source, String reason) {
         String msg = ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.WARN, "warned")
                 .replace("%reason%", ChatColor.AQUA + reason + ChatColor.GOLD);
