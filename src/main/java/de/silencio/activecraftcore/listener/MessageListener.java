@@ -33,33 +33,25 @@ public class MessageListener implements Listener {
 
         Profile profile = Profile.fromPlayer(player);
 
-            boolean muted = profile.isMuted();
-            boolean forcemuted = profile.isForcemuted();
-            boolean defaultMuted = profile.isDefaultmuted();
+        boolean muted = profile.isMuted();
+        boolean forcemuted = profile.isForcemuted();
+        boolean defaultMuted = profile.isDefaultmuted();
 
-            if (!muted && !defaultMuted) {
-                Bukkit.broadcastMessage(ConfigManager.mainConfig.chatFormat()
-                        .replace("%displayname%", StringUtils.messageWithColor(player, profile.getNickname(), profile.getColorNick().name()))
-                        .replace("%message%", message));
-                event.setCancelled(true);
-            } else {
-                if (muted) {
-                    player.sendMessage(ChatColor.GOLD + "You are muted!");
+        if (muted) {
+            player.sendMessage(ChatColor.GOLD + "You are muted!");
+            if (!forcemuted)
+                Bukkit.broadcast(ChatColor.GOLD + "[Mute] " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GOLD + " tried to talk, but is muted. (" + ChatColor.AQUA + message + ChatColor.GOLD + ")", "activecraft.muted.see");
+        } else if (defaultMuted) {
+            player.sendMessage(ChatColor.GOLD + "You are new to this server so you cannot write in chat. Please contact a staff member to verify you.");
+            if (!forcemuted)
+                Bukkit.broadcast(ChatColor.GOLD + "[Mute] " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GOLD + " tried to talk, but is default muted. (" + ChatColor.AQUA + message + ChatColor.GOLD + ")", "activecraft.muted.see");
+        } else {
+            String format = ConfigManager.getMainConfig().getChatFormat()
+                    .replace("%displayname%", StringUtils.messageWithColor(player, profile.getNickname(), profile.getColorNick().name()))
+                    .replace("%message%", message);
 
-                    if (!forcemuted) {
-                        Bukkit.broadcast(ChatColor.GOLD + "[Mute] " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GOLD + " tried to talk, but is muted. (" + ChatColor.AQUA + message + ChatColor.GOLD + ")", "activecraft.muted.see");
-                    }
-                    event.setCancelled(true);
-
-
-                } else {
-                    player.sendMessage(ChatColor.GOLD + "You are new to this server so you cannot write in chat. Please contact a staff member to verify you.");
-
-                    if (!forcemuted) {
-                        Bukkit.broadcast(ChatColor.GOLD + "[Mute] " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GOLD + " tried to talk, but is default muted. (" + ChatColor.AQUA + message + ChatColor.GOLD + ")", "activecraft.muted.see");
-                    }
-                    event.setCancelled(true);
-                }
-            }
+            format = format.replace("%", "%%");
+            event.setFormat(format);
         }
     }
+}
