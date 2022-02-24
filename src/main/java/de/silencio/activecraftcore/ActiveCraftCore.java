@@ -71,7 +71,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     }
 
     private void loadWarpPermissions() {
-        for (String s : ConfigManager.warpsConfig.warps().keySet()) {
+        for (String s : ConfigManager.getWarpsConfig().getWarps().keySet()) {
             Map<String, Boolean> childMap = new HashMap<>();
             childMap.put("activecraft.warp.self", true);
             childMap.put("activecraft.warp", true);
@@ -102,7 +102,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     public void startTimer() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                Profile profile = getProfile(player);
+                Profile profile = Profile.fromPlayer(player);
 
                 int minutes = profile.getPlaytimeMinutes();
                 int hours = profile.getPlaytimeHours();
@@ -111,7 +111,7 @@ public final class ActiveCraftCore extends JavaPlugin {
                 profile.set(Profile.Value.PLAYTIME_MINUTES, minutes < 60 ? minutes : 0);
                 profile.set(Profile.Value.PLAYTIME_HOURS, minutes == 60 ? hours++ : hours);
 
-                if (minutes + hours * 60 >= ConfigManager.mainConfig.defaultMuteDuration() && ConfigManager.mainConfig.defaultMuteDuration() >= 0) {
+                if (minutes + hours * 60 >= ConfigManager.getMainConfig().getDefaultMuteDuration() && ConfigManager.getMainConfig().getDefaultMuteDuration() >= 0) {
                     if (profile.isDefaultmuted()) {
                         player.sendMessage(MiscMessage.DEFAULT_MUTE_REMOVE());
                         profile.set(Profile.Value.DEFAULTMUTED, false);
@@ -126,7 +126,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     }
 
     public void setLanguage(Language language) {
-        ConfigManager.mainConfig.set("language", language.getCode().toLowerCase());
+        ConfigManager.getMainConfig().set("language", language.getCode().toLowerCase());
         ActiveCraftCore.language = language;
     }
 
@@ -178,9 +178,8 @@ public final class ActiveCraftCore extends JavaPlugin {
         return getPlayernameByUUID(uuid.toString());
     }
 
-    public static String getUUIDByPlayername(String playername) {
-        getPlayerlist().get(playername.toLowerCase());
-        return null;
+    public static UUID getUUIDByPlayername(String playername) {
+        return getPlayerlist().get(playername.toLowerCase());
     }
 
     public static HashMap<Player, Profile> getMsgPlayerStoring() {
@@ -194,28 +193,13 @@ public final class ActiveCraftCore extends JavaPlugin {
                 profiles.put(playername, new Profile(playername));
     }
 
-    public static Profile getProfile(String playername) {
-        Profile profile = profiles.get(playername.toLowerCase());
-        if (profile == null) return null;
-        profile.refresh();
-        return profile;
-    }
-
-    public static Profile getProfile(Player player) {
-        return getProfile(player.getName());
-    }
-
-    public static Profile getProfile(CommandSender sender) {
-        return getProfile(sender.getName());
-    }
-
     public static HashMap<String, Profile> getProfiles() {
         return profiles;
     }
 
     public void loadConfigs() {
         saveDefaultConfig();
-        ConfigManager.loadConfigs();
+        ConfigManager.reloadAll();
         File playerdataDir = new File(getDataFolder() + File.separator + "playerdata" + File.separator);
         if (!playerdataDir.exists())
             playerdataDir.mkdir();
@@ -224,7 +208,7 @@ public final class ActiveCraftCore extends JavaPlugin {
         if (!messagesYML.exists())
             saveResource("messages.yml", false);
 
-        language = ConfigManager.mainConfig.language();
+        language = ConfigManager.getMainConfig().getLanguage();
         activeCraftMessage = new ActiveCraftMessage();
     }
 }

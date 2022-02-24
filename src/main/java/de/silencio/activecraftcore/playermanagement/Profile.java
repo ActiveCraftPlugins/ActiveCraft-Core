@@ -1,19 +1,18 @@
 package de.silencio.activecraftcore.playermanagement;
 
-import de.silencio.activecraftcore.utils.config.ConfigManager;
+import de.silencio.activecraftcore.ActiveCraftCore;
+import de.silencio.activecraftcore.manager.HomeManager;
+import de.silencio.activecraftcore.manager.WarnManager;
 import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.StringUtils;
-import de.silencio.activecraftcore.utils.config.HomesConfig;
-import it.unimi.dsi.fastutil.Hash;
+import de.silencio.activecraftcore.utils.config.Warn;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class Profile {
 
@@ -43,6 +42,7 @@ public final class Profile {
         BYPASS_LOCKDOWN,
         EDIT_SIGN,
         HOME_LIST,
+        WARN_LIST,
         RECEIVE_SOCIALSPY,
         LAST_LOCATION,
         EFFECTS,
@@ -85,8 +85,12 @@ public final class Profile {
     private List<String> tags;
 
     private HashMap<String, Location> homeList;
+    private HashMap<String, Warn> warnList;
     private HashMap<String, Location> lastLocations;
     private HashMap<Effect, Boolean> effects;
+
+    private WarnManager warnManager;
+    private HomeManager homeManager;
 
     public Profile(Player player) {
         this(player.getName());
@@ -94,12 +98,36 @@ public final class Profile {
 
     public Profile(String playername) {
         name = playername;
+        warnManager = new WarnManager(this);
+        homeManager = new HomeManager(this);
         refresh();
     }
 
     public void refresh() {
-        this.playerdataConfig = new FileConfig("playerdata" + File.separator + name.toLowerCase() + ".yml");
+        this.playerdataConfig = new FileConfig("playerdata" + File.separator + ActiveCraftCore.getUUIDByPlayername(name) + ".yml");
         loadFromConfig(playerdataConfig);
+    }
+
+    public static Profile fromString(String profileName) {
+        Profile profile = ActiveCraftCore.getProfiles().get(profileName.toLowerCase());
+        if (profile != null) profile.refresh();
+        return profile;
+    }
+
+    public static Profile fromUUID(UUID uuid) {
+        return fromString(ActiveCraftCore.getPlayernameByUUID(uuid));
+    }
+
+    public static Profile fromUUID(String uuid) {
+        return fromString(ActiveCraftCore.getPlayernameByUUID(uuid));
+    }
+
+    public static Profile fromPlayer(Player player) {
+        return fromString(player.getName());
+    }
+
+    public static Profile fromCommandSender(CommandSender sender) {
+        return fromString(sender.getName());
     }
 
     private void loadFromConfig(FileConfig fileConfig) {
@@ -133,14 +161,26 @@ public final class Profile {
         playtime_hours = fileConfig.getInt("playtime.hours");
 
         lastLocations = new HashMap<>();
-        for (World world : Bukkit.getWorlds())
-            lastLocations.put(world.getName(), fileConfig.getLocation("last-location." + world.getName()));
+        Bukkit.getWorlds().forEach(world -> lastLocations.put(world.getName(), fileConfig.getLocation("last-location." + world.getName())));
 
-        homeList = ConfigManager.homesConfig.get(this);
+        homeList = new HashMap<>();
+        ConfigurationSection homesSection = playerdataConfig.getConfigurationSection("homes");
+        if (homesSection != null)
+            homesSection.getKeys(false).forEach(homeName -> homeList.put(homeName, homesSection.getLocation(homeName)));
+
+        warnList = new HashMap<>();
+        ConfigurationSection warnsSection = playerdataConfig.getConfigurationSection("warns");
+        if (warnsSection != null)
+            warnsSection.getKeys(false).forEach(warnId -> warnList.put(warnId, new Warn(
+                    this,
+                    warnsSection.getString(warnId + ".reason"),
+                    warnsSection.getString(warnId + ".created"),
+                    warnsSection.getString(warnId + ".source"),
+                    warnId
+            )));
 
         effects = new HashMap<>();
-        for (Effect effect : Effect.values())
-            effects.put(effect, playerdataConfig.getBoolean("effects." + effect.name().toLowerCase()));
+        Arrays.stream(Effect.values()).forEach(effect -> effects.put(effect, playerdataConfig.getBoolean("effects." + effect.name().toLowerCase())));
     }
 
     public void set(Value value, Object object) {
@@ -171,6 +211,7 @@ public final class Profile {
             case EDIT_SIGN -> playerdataConfig.set("edit-sign", object);
             case FORCE_MUTED -> playerdataConfig.set("forcemuted", object);
             case RECEIVE_SOCIALSPY -> playerdataConfig.set("receive-socialspy", object);
+            case HOME_LIST -> playerdataConfig.set("homes", object);
         }
         playerdataConfig.saveConfig();
         refresh();
@@ -180,10 +221,13 @@ public final class Profile {
         switch (value) {
             case EFFECTS -> playerdataConfig.set("effects." + deepPath, object);
             case LAST_LOCATION -> playerdataConfig.set("last-location." + deepPath, object);
-            case HOME_LIST -> ConfigManager.homesConfig.set(uuid + "." + deepPath, object, true);
+            case WARN_LIST -> playerdataConfig.set("warns." + deepPath, object);
         }
         playerdataConfig.saveConfig();
+        refresh();
     }
+
+
 
     public void clearTags() {
         tags.clear();
@@ -337,6 +381,10 @@ public final class Profile {
         return homeList;
     }
 
+    public HashMap<String, Warn> getWarnList() {
+        return warnList;
+    }
+
     public boolean isForcemuted() {
         return forcemuted;
     }
@@ -377,5 +425,13 @@ public final class Profile {
 
     public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uuid);
+    }
+
+    public WarnManager getWarnManager() {
+        return warnManager;
+    }
+
+    public HomeManager getHomeManager() {
+        return homeManager;
     }
 }

@@ -24,7 +24,7 @@ vanish-tag:
   # Set if the vanish tag should be shown behind player names in tab.
   enabled: true
 # The tag that is shown behind player names in tab, assuming 'enable-vanish-format' is true.
-  vanish-tag-format: '[V]'
+  format: '[V]'
 
 # AFK Settings
 afk:

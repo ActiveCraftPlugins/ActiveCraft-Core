@@ -26,7 +26,7 @@ public class SignInteractListener implements Listener {
         BlockState blockState = event.getClickedBlock().getState();
         if (blockState instanceof Sign) {
             if (player.isSneaking()) {
-                Profile profile = ActiveCraftCore.getProfile(player);
+                Profile profile = Profile.fromPlayer(player);
                 if (profile.canEditSign()) {
                     event.setCancelled(true);
                     Sign signBlock = (Sign) event.getClickedBlock().getState();

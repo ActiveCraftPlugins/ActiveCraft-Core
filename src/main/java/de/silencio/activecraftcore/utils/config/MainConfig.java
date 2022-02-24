@@ -1,25 +1,53 @@
 package de.silencio.activecraftcore.utils.config;
 
 import de.silencio.activecraftcore.messages.Language;
+import lombok.Getter;
 
 import java.util.List;
 
-public record MainConfig(
-        FileConfig fileConfig,
-        String chatFormat, String joinFormat, String quitFormat,
-        boolean timerTpa, boolean timerSpawn, boolean timerHome, boolean timerWarp,
-        boolean defaultMuteEnabled, int defaultMuteDuration,
-        boolean vanishTagEnabled, String vanishTagFormat,
-        boolean announceAfk, String afkFormat,
-        boolean lockdownEnabled, String lockdownModt, String oldModt, String lockdownKickMessage,
-        boolean socialSpyToConsole, boolean silentMode, boolean dropAllExp, Language language,
-        boolean hideCommandsAfterPluginName, List<String> hiddenCommandsAfterPluginNameExceptions,
-        List<String> hiddenCommands) {
+@Getter
+public class MainConfig extends ActiveCraftConfig {
 
-    public void set(String path, Object value) {
-        FileConfig fileConfig = new FileConfig("config.yml");
-        fileConfig.set(path, value);
-        fileConfig.saveConfig();
-        ConfigManager.loadMainConfig();
+    private String chatFormat, joinFormat, quitFormat,
+            lockdownModt, oldModt, lockdownKickMessage,
+            vanishTagFormat, afkFormat;
+    private int defaultMuteDuration;
+    private boolean timerTpa, timerSpawn, timerHome, timerWarp,
+            vanishTagEnabled, announceAfk, lockedDown,
+            socialSpyToConsole, inSilentMode, dropAllExp,
+            defaultMuteEnabled, hideCommandsAfterPluginName;
+    Language language;
+    List<String> hiddenCommandsAfterPluginNameExceptions, hiddenCommands;
+
+    public MainConfig() {
+        super(new FileConfig("config.yml"));
+    }
+
+    @Override
+    protected void load() {
+        chatFormat = fileConfig.getString("chat-format");
+        joinFormat = fileConfig.getString("join-format");
+        quitFormat = fileConfig.getString("quit-format");
+        timerTpa = fileConfig.getBoolean("tpa-timer");
+        timerSpawn = fileConfig.getBoolean("spawn-timer");
+        timerHome = fileConfig.getBoolean("home-timer");
+        timerWarp = fileConfig.getBoolean("warp-timer");
+        defaultMuteEnabled = fileConfig.getBoolean("default-mute.enabled");
+        defaultMuteDuration = fileConfig.getInt("default-mute.duration");
+        vanishTagEnabled = fileConfig.getBoolean("vanish-tag.enabled");
+        vanishTagFormat = fileConfig.getString("vanish-tag.format");
+        announceAfk = fileConfig.getBoolean("afk.announce");
+        afkFormat = fileConfig.getString("afk.format");
+        lockedDown = fileConfig.getBoolean("lockdown.enabled");
+        lockdownModt = fileConfig.getString("lockdown.modt");
+        oldModt = fileConfig.getString("lockdown.old-modt");
+        lockdownKickMessage = fileConfig.getString("lockdown.kick-message");
+        socialSpyToConsole = fileConfig.getBoolean("socialspy-to-console");
+        inSilentMode = fileConfig.getBoolean("silent-mode");
+        dropAllExp = fileConfig.getBoolean("drop-all-exp");
+        language = Language.valueOf(fileConfig.getString("language").toUpperCase());
+        hideCommandsAfterPluginName = fileConfig.getBoolean("hide-commands-after-plugin-name.enabled");
+        hiddenCommandsAfterPluginNameExceptions = fileConfig.getStringList("hide-commands-after-plugin-name.except");
+        hiddenCommands = fileConfig.getStringList("hide-commands");
     }
 }

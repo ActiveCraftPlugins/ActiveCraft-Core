@@ -7,7 +7,6 @@ import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.*;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -204,8 +203,8 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static Profile getProfile(String playername) throws InvalidPlayerException {
-        if (ActiveCraftCore.getProfile(playername) == null) throw new InvalidPlayerException(playername);
-        return ActiveCraftCore.getProfile(playername);
+        if (Profile.fromString(playername) == null) throw new InvalidPlayerException(playername);
+        return Profile.fromString(playername);
     }
 
     public static Color getColor(String input) throws InvalidColorException {
@@ -222,7 +221,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static Profile getProfile(Player player) {
-        return ActiveCraftCore.getProfile(player.getName());
+        return Profile.fromString(player.getName());
     }
 
     public static void sendMessage(CommandSender receiver, String message) {
@@ -234,11 +233,11 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static void sendSilentMessage(CommandSender receiver, String message) {
-        if (!ConfigManager.mainConfig.silentMode()) receiver.sendMessage(message);
+        if (!ConfigManager.getMainConfig().isInSilentMode()) receiver.sendMessage(message);
     }
 
     public static void sendSilentMessage(CommandSender receiver, BaseComponent... message) {
-        if (!ConfigManager.mainConfig.silentMode()) receiver.sendMessage(message);
+        if (!ConfigManager.getMainConfig().isInSilentMode()) receiver.sendMessage(message);
     }
 
     public static ChatColor getChatColor(String name) throws InvalidColorException {

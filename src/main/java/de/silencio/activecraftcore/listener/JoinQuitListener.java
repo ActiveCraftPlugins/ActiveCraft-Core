@@ -30,7 +30,7 @@ public class JoinQuitListener implements Listener {
     public void onPlayerWorldChange(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         Location playerLocation = player.getLocation();
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
 
         profile.set(Profile.Value.LAST_LOCATION, event.getFrom().getWorld().getName(), playerLocation);
     }
@@ -62,7 +62,7 @@ public class JoinQuitListener implements Listener {
             playerdataConfig.set("fly", false);
             playerdataConfig.set("flyspeed", 1);
             playerdataConfig.set("muted", false);
-            playerdataConfig.set("default-mute", ConfigManager.mainConfig.defaultMuteEnabled());
+            playerdataConfig.set("default-mute", ConfigManager.getMainConfig().isDefaultMuteEnabled());
             playerdataConfig.set("vanished", false);
             playerdataConfig.set("on-duty", false);
             playerdataConfig.set("log-enabled", false);
@@ -84,7 +84,7 @@ public class JoinQuitListener implements Listener {
         playerdataConfig.set("times-joined", playerdataConfig.getInt("times-joined") + 1);
 
 
-        Profile profile = ActiveCraftCore.getProfile(player.getName());
+        Profile profile = Profile.fromString(player.getName());
 
         playerdataConfig.saveConfig();
 
@@ -96,9 +96,9 @@ public class JoinQuitListener implements Listener {
         if (profile.isVanished()) {
             VanishManager.setVanished(player, true);
             event.setJoinMessage(null);
-            Bukkit.broadcast((ConfigManager.mainConfig.joinFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "activecraft.vanish.see");
+            Bukkit.broadcast((ConfigManager.getMainConfig().getJoinFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "activecraft.vanish.see");
         } else
-            event.setJoinMessage(ConfigManager.mainConfig.joinFormat().replace("%displayname%", profile.getNickname()));
+            event.setJoinMessage(ConfigManager.getMainConfig().getJoinFormat().replace("%displayname%", profile.getNickname()));
         if (!player.hasPermission("vanish.see")) VanishManager.hideAll(player);
 
         //fly
@@ -110,7 +110,7 @@ public class JoinQuitListener implements Listener {
         Player player = event.getPlayer();
         Location playerLocation = player.getLocation();
 
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
 
         OffsetDateTime now = OffsetDateTime.now();
         profile.set(Profile.Value.LAST_ONLINE, dtf.format(now));
@@ -122,13 +122,13 @@ public class JoinQuitListener implements Listener {
         profile.set(Profile.Value.LAST_LOCATION, "BEFORE_QUIT", playerLocation);
 
         if (!profile.isVanished()) {
-            event.setQuitMessage(ConfigManager.mainConfig.quitFormat().replace("%displayname%", profile.getNickname()));
+            event.setQuitMessage(ConfigManager.getMainConfig().getQuitFormat().replace("%displayname%", profile.getNickname()));
         } else {
             List<Player> vanishedList = VanishManager.getVanished();
             vanishedList.remove(player);
             VanishManager.setVanishedList(vanishedList);
             event.setQuitMessage(null);
-            Bukkit.broadcast((ConfigManager.mainConfig.quitFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "vanish.see");
+            Bukkit.broadcast((ConfigManager.getMainConfig().getQuitFormat() + ChatColor.GOLD + " (vanished)").replace("%displayname%", profile.getNickname()), "vanish.see");
         }
     }
 }

@@ -29,15 +29,15 @@ public class VanishManager {
     }
 
     public static void setVanished(Player player, boolean hide) {
-        Profile profile = ActiveCraftCore.getProfile(player);
-        MainConfig mainConfig = ConfigManager.mainConfig;
+        Profile profile = Profile.fromPlayer(player);
+        MainConfig mainConfig = ConfigManager.getMainConfig();
         if (hide) {
             PlayerVanishEvent event = new PlayerVanishEvent(profile);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
             profile.set(Profile.Value.VANISHED, true);
-            profile.addTag(ChatColor.GRAY + mainConfig.vanishTagFormat());
+            profile.addTag(ChatColor.GRAY + mainConfig.getVanishTagFormat());
 
             vanished.add(player);
         } else {
@@ -46,7 +46,7 @@ public class VanishManager {
             if (event.isCancelled()) return;
 
             profile.set(Profile.Value.VANISHED, false);
-            profile.removeTag(ChatColor.GRAY + mainConfig.vanishTagFormat());
+            profile.removeTag(ChatColor.GRAY + mainConfig.getVanishTagFormat());
 
             vanished.remove(player);
         }

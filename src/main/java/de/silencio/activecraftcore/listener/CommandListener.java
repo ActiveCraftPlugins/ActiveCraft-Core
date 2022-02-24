@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
         String eventMessage = event.getMessage();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Profile profile = ActiveCraftCore.getProfile(player);
+            Profile profile = Profile.fromPlayer(player);
             if (profile.hasLogEnabled()) {
                 if (player.hasPermission("activecraft.log")) {
                     player.sendMessage(CommandMessages.LOG_PREFIX(Bukkit.getPlayer(executingPlayer.getName()), eventMessage));

@@ -25,11 +25,11 @@ public class SpawnCommand extends ActiveCraftCommand {
         if (label.equalsIgnoreCase("setspawn")) {
             Player player = getPlayer(sender);
             checkPermission(sender, "spawn.set");
-            ConfigManager.locationsConfig.set("spawn", player.getLocation(), true);
+            ConfigManager.getLocationsConfig().set("spawn", player.getLocation(), true);
             sendMessage(sender, CommandMessages.SPAWN_SET());
         } else if (label.equalsIgnoreCase("spawn")) {
-            if (ConfigManager.locationsConfig.spawn() != null) {
-                Location spawn = ConfigManager.locationsConfig.spawn();
+            if (ConfigManager.getLocationsConfig().getSpawn() != null) {
+                Location spawn = ConfigManager.getLocationsConfig().getSpawn();
                 if (args.length == 0) {
                     Player player = getPlayer(sender);
                     checkPermission(sender, "spawn.self");

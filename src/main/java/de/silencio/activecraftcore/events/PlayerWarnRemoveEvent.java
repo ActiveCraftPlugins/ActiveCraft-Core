@@ -1,40 +1,24 @@
 package de.silencio.activecraftcore.events;
 
 import de.silencio.activecraftcore.playermanagement.Profile;
+import de.silencio.activecraftcore.utils.config.Warn;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 public class PlayerWarnRemoveEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
+    private Warn warn;
     private Profile target;
-    private String reason;
-    private Date date;
     private boolean cancelled;
 
-    public PlayerWarnRemoveEvent(Profile target, String reason, Date date, String source) {
+    public PlayerWarnRemoveEvent(Profile target, Warn warn) {
         this.target = target;
-        this.reason = reason;
-        this.date = date;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
+        this.warn = warn;
     }
 
     public Profile getTarget() {
@@ -47,6 +31,14 @@ public class PlayerWarnRemoveEvent extends Event {
 
     public void setCancelled(boolean cancel) {
         cancelled = true;
+    }
+
+    public Warn getWarn() {
+        return warn;
+    }
+
+    public void setWarn(Warn warn) {
+        this.warn = warn;
     }
 
     public HandlerList getHandlers() {

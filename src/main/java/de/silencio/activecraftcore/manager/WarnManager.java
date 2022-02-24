@@ -5,96 +5,82 @@ import de.silencio.activecraftcore.events.PlayerWarnAddEvent;
 import de.silencio.activecraftcore.events.PlayerWarnRemoveEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import de.silencio.activecraftcore.utils.config.FileConfig;
+import de.silencio.activecraftcore.utils.config.Warn;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class WarnManager {
 
-    private Player player;
-    public String reason;
-    public String source;
-    public int id;
-    public String created;
     private Profile profile;
-    private FileConfig warnsConfig;
-    private SimpleDateFormat sdf;
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public WarnManager(Player player) {
-        this.player = player;
-        sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        profile = ActiveCraftCore.getProfile(player);
-        warnsConfig = new FileConfig("warns.yml");
+    public WarnManager(Profile profile) {
+        this.profile = profile;
+    }
+
+    public void add() {
+        add(CommandMessages.DEFAULT_WARN_REASON(), "unknown");
+    }
+
+    public void add(String reason) {
+        add(reason, "unknown");
     }
 
     public void add(String reason, String source) {
-
+        HashMap<String, Warn> warns = profile.getWarnList();
         OffsetDateTime offsetDateTime = OffsetDateTime.now();
 
-        //call event
-        PlayerWarnAddEvent event = new PlayerWarnAddEvent(profile, reason, new Date(), source);
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
-
-        reason = reason.replace(".", "%dot%");
-
-        int nextId = warnsConfig.getInt("next-id");
-        List<String> warnsList = warnsConfig.getStringList(player.getName() + "." + "warn-list");
-
-        if ((warnsConfig.getString(player.getName() + "." + reason + ".id") == null) || reason.equalsIgnoreCase("warn-list")) {
-            if (!warnsList.contains(reason))
-                warnsList.add(reason);
-            warnsConfig.set(player.getName() + ".warn-list", warnsList);
-            warnsConfig.set(player.getName() + "." + reason + ".created", offsetDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-            warnsConfig.set(player.getName() + "." + reason + ".source", source);
-            warnsConfig.set(player.getName() + "." + reason + ".id", nextId);
-        } else {
-            if (!warnsList.contains(reason + "[" + nextId +"]"))
-                warnsList.add(reason + "[" + nextId +"]");
-            warnsConfig.set(player.getName() + ".warn-list", warnsList);
-            warnsConfig.set(player.getName() + "." + reason + "[" + nextId +"]" + ".created", offsetDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-            warnsConfig.set(player.getName() + "." + reason + "[" + nextId +"]" + ".source", source);
-            warnsConfig.set(player.getName() + "." + reason + "[" + nextId +"]" + ".id", nextId);
+        // create new id
+        Random random = new Random();
+        String id = String.format("%06x", random.nextInt(0xffffff + 1));
+        if (warns != null) {
+            while (warns.containsKey(id))
+                id = String.format("%06x", random.nextInt(0xffffff + 1));
+            // add id to reason to avoid duplicates
+            for (Warn w : warns.values()) {
+                if (w.reason().equals(reason)) {
+                    reason += " #" + id;
+                    break;
+                }
+            }
         }
-        warnsConfig.set("next-id", nextId + 1);
-        warnsConfig.saveConfig();
 
-        profile.set(Profile.Value.WARNS, profile.getWarns()+1);
-        player.sendMessage(CommandMessages.WARNED_HEADER() + "\n" +
-                CommandMessages.WARNED(source, reason.replace("%dot%", "."))
-        );
-    }
-
-    public void remove(String reason) {
         //call event
-        PlayerWarnRemoveEvent event = new PlayerWarnRemoveEvent(profile, reason, new Date(), source);
+        PlayerWarnAddEvent event = new PlayerWarnAddEvent(profile, new Warn(profile, reason, offsetDateTime.format(dtf), source, id));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        List<String> warnsList = warnsConfig.getStringList(player.getName() + "." + "warn-list");
-        warnsList.remove(reason.replace(".", "%dot%"));
+        Warn warn = event.getWarn();
 
-        warnsConfig.set(player.getName() + ".warn-list", warnsList);
-        warnsConfig.set(player.getName() + "." + reason.replace(".", "%dot%"), null);
-        warnsConfig.saveConfig();
-
-        profile.set(Profile.Value.WARNS, profile.getWarns()-1);
-        player.sendMessage(CommandMessages.WARNED_REMOVE(reason));
+        profile.set(Profile.Value.WARNS, profile.getWarns() + 1);
+        profile.set(Profile.Value.WARN_LIST, warn.id(), Map.of("reason", warn.reason(), "created", warn.created(), "source", warn.source()));
     }
 
-    public WarnManager getWarnEntry(String reason) {
-        reason = reason.replace("%dot%", ".");
-        this.reason = reason;
-        reason = reason.replace(".", "%dot%");
-        created = warnsConfig.getString(player.getName() + "." + reason + ".created");
-        source = warnsConfig.getString(player.getName() + "." + reason + ".source");
-        id = warnsConfig.getInt(player.getName() + "." + reason + ".id");
-        return this;
+    public void remove(Warn warn) {
+        //call event
+        PlayerWarnRemoveEvent event = new PlayerWarnRemoveEvent(profile, warn);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        profile.set(Profile.Value.WARNS, profile.getWarns() - 1);
+        profile.set(Profile.Value.WARN_LIST, warn.id(), null);
+    }
+
+    public Warn getWarnByReason(String reason) {
+        return profile.getWarnList().values().stream().filter(warn -> warn.reason().equals(reason)).findFirst().orElse(null);
+    }
+
+    public Warn getWarnById(String id) {
+        return profile.getWarnList().get(id);
+    }
+
+    public HashMap<String, Warn> getWarns() {
+        return profile.getWarnList();
     }
 }

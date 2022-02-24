@@ -1,6 +1,7 @@
 package de.silencio.activecraftcore.playermanagement;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
+import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,9 +34,9 @@ public class PlayerQueue {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (offlineQueue.get(ActiveCraftCore.getProfile(player)) == null) continue;
-                    if (offlineQueue.get(ActiveCraftCore.getProfile(player)).size() == 0) continue;
-                        execute(ActiveCraftCore.getProfile(player));
+                    if (offlineQueue.get(Profile.fromPlayer(player)) == null) continue;
+                    if (offlineQueue.get(Profile.fromPlayer(player)).size() == 0) continue;
+                        execute(Profile.fromPlayer(player));
                 }
             }
         };

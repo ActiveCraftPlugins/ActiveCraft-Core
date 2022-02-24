@@ -53,7 +53,7 @@ public class ReplyCommand extends ActiveCraftCommand {
                 if (onlinePlayer != sender && onlinePlayer != target)
                     sendMessage(onlinePlayer, CommandMessages.SOCIALSPY_PREFIX_TO(target, sender, finalMessage));
             }
-            if (ConfigManager.mainConfig.socialSpyToConsole())
+            if (ConfigManager.getMainConfig().isSocialSpyToConsole())
                 sendMessage(Bukkit.getConsoleSender(), CommandMessages.SOCIALSPY_PREFIX_TO(target, sender, event.getMessage()));
         });
 

@@ -4,6 +4,7 @@ import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerWarpEvent;
 import de.silencio.activecraftcore.events.WarpCreateEvent;
 import de.silencio.activecraftcore.events.WarpDeleteEvent;
+import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
 import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class WarpManager {
 
     public static Location getWarp(String name) {
-        return ConfigManager.warpsConfig.get(name);
+        return ConfigManager.getWarpsConfig().getWarps().get(name);
     }
 
     public static void createWarp(String name, Location location) {
@@ -41,7 +42,7 @@ public class WarpManager {
                 "Permission to warp another player to a specific warp.", PermissionDefault.OP, childMap));
 
         //add warp to config
-        ConfigManager.warpsConfig.set(event.getWarpName(), event.getLocation(), true);
+        ConfigManager.getWarpsConfig().set(event.getWarpName(), event.getLocation(), true);
     }
 
     public static void deleteWarp(String name) {
@@ -55,12 +56,12 @@ public class WarpManager {
         Bukkit.getPluginManager().removePermission("activecraft.warp.others." + name);
 
         //add warp to config
-        ConfigManager.warpsConfig.set(event.getWarpName(), null, true);
+        ConfigManager.getWarpsConfig().set(event.getWarpName(), null, true);
     }
 
     public static void warp(Player player, String warpName) {
         //call event
-        PlayerWarpEvent event = new PlayerWarpEvent(ActiveCraftCore.getProfile(player), getWarp(warpName), warpName);
+        PlayerWarpEvent event = new PlayerWarpEvent(Profile.fromPlayer(player), getWarp(warpName), warpName);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
         //teleport

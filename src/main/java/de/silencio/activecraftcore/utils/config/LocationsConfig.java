@@ -1,28 +1,24 @@
 package de.silencio.activecraftcore.utils.config;
 
+import lombok.Getter;
 import org.bukkit.Location;
 
 import java.util.HashMap;
 
-public record LocationsConfig(Location spawn, HashMap<String, Location> locations) {
+@Getter
+public class LocationsConfig extends ActiveCraftConfig {
 
-    static FileConfig fileConfig = new FileConfig("locations.yml");
+    private HashMap<String, Location> locations;
+    private Location spawn;
 
-    public void set(String path, Object value) {
-        set(path, value, false);
+    public LocationsConfig() {
+        super(new FileConfig("locations.yml"));
     }
 
-    public void set(String path, Object value, boolean reload) {
-        fileConfig.set(path, value);
-        fileConfig.saveConfig();
-        if (reload) reload();
-    }
-
-    public Location get(String name) {
-        return locations.get(name);
-    }
-
-    public void reload() {
-        ConfigManager.loadLocationsConfig();
+    @Override
+    protected void load() {
+        locations = new HashMap<>();
+        fileConfig.getKeys(false).forEach(key -> locations.put(key, fileConfig.getLocation(key)));
+        spawn = locations.get("spawn");
     }
 }

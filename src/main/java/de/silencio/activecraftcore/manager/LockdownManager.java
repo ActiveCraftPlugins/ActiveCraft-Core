@@ -12,7 +12,7 @@ public class LockdownManager {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        ConfigManager.mainConfig.set("lockdown.enabled", lockdown);
+        ConfigManager.getMainConfig().set("lockdown.enabled", lockdown);
     }
 
 }

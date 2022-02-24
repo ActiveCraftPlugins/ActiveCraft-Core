@@ -1,27 +1,34 @@
 package de.silencio.activecraftcore.utils.config;
 
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.HashMap;
 
-public record PortalsConfig(HashMap<String, Portal> portals) {
+@Getter
+public class PortalsConfig extends ActiveCraftConfig  {
 
-    static FileConfig fileConfig = new FileConfig("portals.yml");
+    private HashMap<String, Portal> portals;
 
-    public void set(String path, Object value) {
-        set(path, value, false);
+    public PortalsConfig() {
+        super(new FileConfig("portals.yml"));
     }
 
-    public void set(String path, Object value, boolean reload) {
-        fileConfig.set(path, value);
-        fileConfig.saveConfig();
-        if (reload) reload();
-    }
-
-    public Portal get(String key) {
-        return portals.get(key);
-    }
-
-    public void reload() {
-        ConfigManager.loadPortalsConfig();
+    @Override
+    protected void load() {
+        portals = new HashMap<>();
+        fileConfig.getSections().forEach(section -> portals.put(section.getName(), new Portal(
+                section.getName(),
+                section.getInt("x"),
+                section.getInt("y"),
+                section.getInt("z"),
+                Bukkit.getWorld(section.getString("world")),
+                section.getInt("to_x"),
+                section.getInt("to_y"),
+                section.getInt("to_z"),
+                Bukkit.getWorld(section.getString("to_world"))
+        )));
     }
 
 }

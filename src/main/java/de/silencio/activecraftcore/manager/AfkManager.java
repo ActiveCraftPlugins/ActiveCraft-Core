@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class AfkManager {
 
     public static void setAfk(Player player, boolean afk) {
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
 
         //call event
         PlayerAfkEvent event = new PlayerAfkEvent(profile, afk);
@@ -28,7 +28,7 @@ public class AfkManager {
 
             //send messages
             player.sendMessage(CommandMessages.NOW_AFK_TARGET());
-            if(ConfigManager.mainConfig.announceAfk())
+            if(ConfigManager.getMainConfig().isAnnounceAfk())
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                     if (onlinePlayer != player)
                         onlinePlayer.sendMessage(ChatColor.GRAY + "" + ColorUtils.removeColorAndFormat(CommandMessages.NOW_AFK(player)));
@@ -39,7 +39,7 @@ public class AfkManager {
 
             //send messages
             player.sendMessage(CommandMessages.NOT_AFK_TARGET());
-            if (ConfigManager.mainConfig.announceAfk())
+            if (ConfigManager.getMainConfig().isAnnounceAfk())
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                     if (onlinePlayer != player)
                         onlinePlayer.sendMessage(ChatColor.GRAY + "" + ColorUtils.removeColorAndFormat(CommandMessages.NOT_AFK(player)));

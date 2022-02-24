@@ -6,6 +6,7 @@ import de.silencio.activecraftcore.manager.BanManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.messages.Reasons;
+import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ComparisonType;
 import de.silencio.activecraftcore.utils.StringUtils;
 import de.silencio.activecraftcore.utils.TimeUtils;
@@ -47,7 +48,7 @@ public class BanCommand extends ActiveCraftCommand {
                 checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
                 if (BanManager.Name.isBanned(args[0])) {
                     BanManager.Name.unban(args[0]);
-                    sendMessage(sender, CommandMessages.UNBANNED_PLAYER(ActiveCraftCore.getProfile(args[0]) != null ? ActiveCraftCore.getProfile(args[0]).getName() : args[0]));
+                    sendMessage(sender, CommandMessages.UNBANNED_PLAYER(Profile.fromString(args[0]) != null ? Profile.fromString(args[0]).getName() : args[0]));
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.NOT_BANNED());
             }
             case "ban-ip" -> {

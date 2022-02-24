@@ -63,10 +63,10 @@ public class WarpCommand extends ActiveCraftCommand {
             }
             case "warps" -> {
                 checkPermission(sender, "warp.list");
-                if (!ConfigManager.warpsConfig.warps().keySet().isEmpty()) {
+                if (!ConfigManager.getWarpsConfig().getWarps().keySet().isEmpty()) {
                     StringBuilder message = new StringBuilder();
-                    for (String s : ConfigManager.warpsConfig.warps().keySet()) {
-                        Location loc = ConfigManager.warpsConfig.get(s);
+                    for (String s : ConfigManager.getWarpsConfig().getWarps().keySet()) {
+                        Location loc = ConfigManager.getWarpsConfig().getWarps().get(s);
                         if (sender.hasPermission("activecraft.warp.self." + s) || sender.hasPermission("activecraft.warp.others." + s)) {
                             message.append(ChatColor.GOLD + s + ": " + ChatColor.GRAY + loc.getWorld().getName() + "; " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
                             message.append("\n");
@@ -86,25 +86,24 @@ public class WarpCommand extends ActiveCraftCommand {
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
         ArrayList<String> list = new ArrayList<>();
-        FileConfig warpListConfig = new FileConfig("warplist.yml");
         switch (label) {
             case "warp" -> {
                 if (args.length == 1) {
-                    for (String s : warpListConfig.getStringList("warplist"))
+                    for (String s : ConfigManager.getWarpsConfig().getWarps().keySet())
                         if (sender.hasPermission("activecraft.warp.self." + s))
                             list.add(s);
                     list.addAll(getBukkitPlayernames());
                 } else if (args.length == 2) {
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         if (args[0].equalsIgnoreCase(player.getName())) {
-                            for (String s : warpListConfig.getStringList("warplist"))
+                            for (String s : ConfigManager.getWarpsConfig().getWarps().keySet())
                                 if (sender.hasPermission("activecraft.warp.others." + s))
                                     list.add(s);
                         }
                     }
                 }
             }
-            case "delwarp" -> list.addAll(warpListConfig.getStringList("warplist"));
+            case "delwarp" -> list.addAll(ConfigManager.getWarpsConfig().getWarps().keySet());
         }
         return list;
     }

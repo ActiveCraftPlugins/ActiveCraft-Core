@@ -35,7 +35,7 @@ public class HomeListProfileListener implements Listener {
             profileMenu.getHomeListProfile().setCurrentPage(profileMenu.getHomeListProfile().getCurrentPage() - 1);
         }
 
-        Profile profile = ActiveCraftCore.getProfile(profileMenu.getTarget());
+        Profile profile = Profile.fromPlayer(profileMenu.getTarget());
         if (event.getCurrentItem().getLore() == null) return;
         for (String homeName : profile.getHomeList().keySet()) {
             Location loc = profile.getHomeList().get(homeName);

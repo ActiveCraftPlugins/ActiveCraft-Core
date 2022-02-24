@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class MuteManager {
 
     public static void mutePlayer(Player player) {
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
         //call event
         PlayerUnmuteEvent event = new PlayerUnmuteEvent(profile);
         Bukkit.getPluginManager().callEvent(event);
@@ -20,7 +20,7 @@ public class MuteManager {
         profile.set(Profile.Value.MUTED, true);
     }
     public static void unmutePlayer(Player player) {
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
         //call event
         PlayerMuteEvent event = new PlayerMuteEvent(profile);
         Bukkit.getPluginManager().callEvent(event);

@@ -12,7 +12,7 @@ public class RespawnListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
         if (profile == null) return;
         if (!profile.canFly()) return;
         player.setAllowFlight(true);

@@ -1647,14 +1647,14 @@ public class CommandMessages {
     }
 
     public static String NOW_AFK(Player target) {
-        Profile profile = ActiveCraftCore.getProfile(target);
+        Profile profile = Profile.fromPlayer(target);
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.AFK, "now-afk")
                 .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
                 .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD);
     }
 
     public static String NOT_AFK(Player target) {
-        Profile profile = ActiveCraftCore.getProfile(target);
+        Profile profile = Profile.fromPlayer(target);
         return ChatColor.GOLD + acm.getMessage(MessageType.COMMAND, CommandType.AFK, "not-afk")
                 .replace("%t_playername%", ChatColor.AQUA + target.getName() + ChatColor.GOLD)
                 .replace("%t_displayname%", ChatColor.AQUA + profile.getNickname() + ChatColor.GOLD);

@@ -429,6 +429,10 @@ commands:
     description: Check the current version of all installed ActiveCraft Plugins.
     permission: activecraft.version
     permission-message: "§cWarning! §7You don't have the permission to do that!"
+  acreload:
+    description: Reloads the plugin's configuration files.
+    permission: activecraft.reload
+    permission-message: "§cWarning! §7You don't have the permission to do that!"
 
 permissions:
   activecraft.heal.self:
@@ -1136,6 +1140,6 @@ permissions:
   activecraft.version:
     description: Check the current version of all installed ActiveCraft Plugins.
     default: op
-  activecraft.reload-config:
+  activecraft.reload:
     description: Permission to reload the configuration files and load the changes into the game.
     default: op

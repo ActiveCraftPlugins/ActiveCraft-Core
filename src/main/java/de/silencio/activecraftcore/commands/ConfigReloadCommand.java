@@ -10,13 +10,13 @@ import java.util.List;
 public class ConfigReloadCommand extends ActiveCraftCommand {
 
     public ConfigReloadCommand() {
-        super("ac-reloadconfig");
+        super("acreload");
     }
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender, "reload-config");
-        ConfigManager.loadConfigs();
+        checkPermission(sender, "acreload");
+        ConfigManager.reloadAll();
     }
 
     @Override

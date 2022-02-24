@@ -32,7 +32,7 @@ public class SudoCommand extends ActiveCraftCommand {
 
         if (args.length == 1) list.addAll(getBukkitPlayernames());
         else if (args.length == 2) {
-            if (ConfigManager.mainConfig.hideCommandsAfterPluginName()) {
+            if (ConfigManager.getMainConfig().isHideCommandsAfterPluginName()) {
                 List<String> pluginNames = new ArrayList<>();
                 pluginNames.add("minecraft");
                 pluginNames.add("bukkit");

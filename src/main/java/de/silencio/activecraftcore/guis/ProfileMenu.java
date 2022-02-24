@@ -26,14 +26,14 @@ public class ProfileMenu {
     public ProfileMenu(Player player, Player target) {
         this.player = player;
         this.target = target;
-        profile = ActiveCraftCore.getProfile(target);
+        profile = Profile.fromPlayer(target);
         //playerhead
         playerHead = new GuiPlayerHead(4);
         playerHead.setOwner(target);
         playerHead.setLore(ChatColor.GRAY + "aka " + profile.getNickname(), ChatColor.AQUA + profile.getUuid().toString());
         playerHead.setDisplayName(ChatColor.GOLD + target.getName());
 
-        warnManager = new WarnManager(target);
+        warnManager = profile.getWarnManager();
         mainProfile = new MainProfile(this);
         actionProfile = new ActionProfile(this);
         reasonsProfile = new ReasonsProfile(this);

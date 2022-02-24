@@ -13,16 +13,16 @@ public class LockdownListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
 
-        if (ConfigManager.mainConfig.lockdownEnabled()) {
+        if (ConfigManager.getMainConfig().isLockedDown()) {
             String playername = event.getPlayerProfile().getName();
-            if (ActiveCraftCore.getProfile(playername) == null) {
+            if (Profile.fromString(playername) == null) {
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                event.setKickMessage(ConfigManager.mainConfig.lockdownKickMessage());
+                event.setKickMessage(ConfigManager.getMainConfig().getLockdownKickMessage());
             }
-            Profile profile = ActiveCraftCore.getProfile(playername);
+            Profile profile = Profile.fromString(playername);
             if(profile == null || !profile.canBypassLockdown()) {
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                event.setKickMessage(ConfigManager.mainConfig.lockdownKickMessage());
+                event.setKickMessage(ConfigManager.getMainConfig().getLockdownKickMessage());
             }
         }
     }

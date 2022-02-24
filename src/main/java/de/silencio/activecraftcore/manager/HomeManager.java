@@ -17,7 +17,13 @@ import java.util.HashMap;
 
 public class HomeManager {
 
-    public static void create(Profile profile, String name, Location location, boolean ignoreMaxHomes) throws ActiveCraftException {
+    private Profile profile;
+
+    public HomeManager(Profile profile) {
+        this.profile = profile;
+    }
+
+    public void create(String name, Location location, boolean ignoreMaxHomes) throws ActiveCraftException {
         Player target;
         HashMap<String, Location> homeList = profile.getHomeList();
         int maxHomes = 1;
@@ -40,23 +46,22 @@ public class HomeManager {
         profile.set(Profile.Value.HOME_LIST, homeList);
     }
 
-    public static void create(Profile profile, String name, Location location) throws ActiveCraftException {
-        create(profile, name, location, false);
+    public void create(String name, Location location) throws ActiveCraftException {
+        create(name, location, false);
     }
 
-    public static void remove(Profile profile, String name) throws ActiveCraftException {
+    public void remove(String name) throws ActiveCraftException {
         HashMap<String, Location> homeList = profile.getHomeList();
         if (!homeList.containsKey(name)) throw new InvalidHomeException(name, profile);
         homeList.remove(name);
         profile.set(Profile.Value.HOME_LIST, homeList);
     }
 
-    public static void teleportHome(Profile profile, String name) throws ActiveCraftException {
+    public void teleportHome(String name) throws ActiveCraftException {
         Player player = profile.getPlayer();
         HashMap<String, Location> homeList = profile.getHomeList();
         if (!homeList.containsKey(name)) throw new InvalidHomeException(name, profile);
         player.teleport(homeList.get(name));
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
     }
-
 }

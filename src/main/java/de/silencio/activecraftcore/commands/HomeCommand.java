@@ -28,7 +28,7 @@ public class HomeCommand extends ActiveCraftCommand {
                         checkPermission(sender, "home.self");
                         Player player = getPlayer(sender);
                         Profile profile = getProfile(player);
-                        HomeManager.teleportHome(profile, args[0]);
+                        profile.getHomeManager().teleportHome(args[0]);
                         sendMessage(sender, CommandMessages.TELEPORT_HOME_COMPLETE(args[0]));
                     }
                     case 2 -> {
@@ -36,7 +36,7 @@ public class HomeCommand extends ActiveCraftCommand {
                         Player target = getPlayer(args[0]);
                         Profile profile = getProfile(target);
                         checkTargetSelf(sender, target, "home.self");
-                        HomeManager.teleportHome(profile, args[1]);
+                        profile.getHomeManager().teleportHome(args[1]);
                         sendMessage(sender, CommandMessages.TELEPORT_HOME_OTHERS_COMPLETE(target, args[1]));
                     }
                 }
@@ -47,14 +47,14 @@ public class HomeCommand extends ActiveCraftCommand {
                     case 1 -> {
                         checkPermission(sender, "sethome.self");
                         Profile profile = getProfile(player);
-                        HomeManager.create(profile, args[0], player.getLocation(), false);
+                        profile.getHomeManager().create(args[0], player.getLocation(), false);
                         sendMessage(sender, CommandMessages.HOME_SET(args[0]));
                     }
                     case 2 -> {
                         checkPermission(sender, "sethome.others");
                         Profile profile = getProfile(args[0]);
                         checkTargetSelf(sender, profile.getName(), "sethome.self");
-                        HomeManager.create(profile, args[1], player.getLocation(), false);
+                        profile.getHomeManager().create(args[1], player.getLocation(), false);
                         sendMessage(sender, CommandMessages.HOME_OTHERS_SET(profile, args[1]));
                     }
                 }
@@ -65,14 +65,14 @@ public class HomeCommand extends ActiveCraftCommand {
                         checkPermission(sender, "delhome.self");
                         Player player = getPlayer(sender);
                         Profile profile = getProfile(player);
-                        HomeManager.remove(profile, args[0]);
+                        profile.getHomeManager().remove(args[0]);
                         sendMessage(sender, CommandMessages.HOME_DELETED(args[0]));
                     }
                     case 2 -> {
                         checkPermission(sender, "delhome.others");
                         Profile profile = getProfile(args[0]);
                         checkTargetSelf(sender, profile.getName(), "delhome.self");
-                        HomeManager.remove(profile, args[1]);
+                        profile.getHomeManager().remove(args[1]);
                         sendMessage(sender, CommandMessages.HOME_OTHERS_DELETED(profile, args[1]));
                     }
                 }

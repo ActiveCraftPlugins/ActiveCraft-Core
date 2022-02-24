@@ -23,8 +23,8 @@ public class VanishCommand extends ActiveCraftCommand {
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        String joinFormat = ConfigManager.mainConfig.joinFormat();
-        String quitFormat = ConfigManager.mainConfig.quitFormat();
+        String joinFormat = ConfigManager.getMainConfig().getJoinFormat();
+        String quitFormat = ConfigManager.getMainConfig().getQuitFormat();
         if (args.length == 0) {
             checkPermission(sender, "vanish.self");
             Player player = getPlayer(sender);

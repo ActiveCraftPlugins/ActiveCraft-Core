@@ -1,28 +1,22 @@
 package de.silencio.activecraftcore.utils.config;
 
+import lombok.Getter;
 import org.bukkit.Location;
 
 import java.util.HashMap;
 
-public record WarpsConfig(HashMap<String, Location> warps) {
+@Getter
+public class WarpsConfig extends ActiveCraftConfig {
 
-    static FileConfig fileConfig = new FileConfig("warps.yml");
+    private HashMap<String, Location> warps;
 
-    public void set(String path, Object value) {
-        set(path, value, false);
+    public WarpsConfig() {
+        super(new FileConfig("warps.yml"));
     }
 
-    public void set(String path, Object value, boolean reload) {
-        fileConfig.set(path, value);
-        fileConfig.saveConfig();
-        if (reload) reload();
-    }
-
-    public Location get(String name) {
-        return warps.get(name);
-    }
-
-    public void reload() {
-        fileConfig.saveConfig();
+    @Override
+    protected void load() {
+        warps = new HashMap<>();
+        fileConfig.getKeys(false).forEach(key -> warps.put(key, fileConfig.getLocation(key)));
     }
 }

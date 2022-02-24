@@ -30,7 +30,7 @@ public class PlayerlistCommand extends ActiveCraftCommand {
                 if (sender.hasPermission("activecraft.vanish.see")) {
                     if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");
                     else isFirst = false;
-                    stringBuilder.append(player.getName() + ChatColor.GRAY + " " + ConfigManager.mainConfig.vanishTagFormat());
+                    stringBuilder.append(player.getName() + ChatColor.GRAY + " " + ConfigManager.getMainConfig().getVanishTagFormat());
                 }
             } else {
                 if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");

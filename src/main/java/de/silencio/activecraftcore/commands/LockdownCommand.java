@@ -7,7 +7,6 @@ import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ComparisonType;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,17 +27,17 @@ public class LockdownCommand extends ActiveCraftCommand {
             checkPermission(sender, "lockdown");
             checkArgsLength(args, ComparisonType.EQUAL, 1);
             if (args[0].equalsIgnoreCase("enable")) {
-                if (!ConfigManager.mainConfig.lockdownEnabled()) {
+                if (!ConfigManager.getMainConfig().isLockedDown()) {
                     LockdownManager.lockdown(true);
                     sendMessage(sender, CommandMessages.LOCKDOWN_ENABLED());
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         if (!player.hasPermission("activecraft.lockdown")) {
-                            player.kickPlayer(ConfigManager.mainConfig.lockdownKickMessage());
+                            player.kickPlayer(ConfigManager.getMainConfig().getLockdownKickMessage());
                         }
                     }
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.LOCKDOWN_ALREADY_ENABLED());
             } else if (args[0].equalsIgnoreCase("disable")) {
-                if (ConfigManager.mainConfig.lockdownEnabled()) {
+                if (ConfigManager.getMainConfig().isLockedDown()) {
                     LockdownManager.lockdown(false);
                     sendMessage(sender, CommandMessages.LOCKDOWN_DISABLED());
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.LOCKDOWN_NOT_ENABLED());

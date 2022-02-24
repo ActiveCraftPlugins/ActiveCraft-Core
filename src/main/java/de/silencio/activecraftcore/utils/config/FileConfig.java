@@ -44,6 +44,14 @@ public class FileConfig extends YamlConfiguration {
         }
     }
 
+    public void reload() {
+        try {
+            load(this.path);
+        } catch (InvalidConfigurationException | IOException ex) {
+            if (!(ex instanceof FileNotFoundException)) ex.printStackTrace();
+        }
+    }
+
     public Set<ConfigurationSection> getSections() {
         return getKeys(false).stream().map(this::getConfigurationSection).collect(Collectors.toSet());
     }

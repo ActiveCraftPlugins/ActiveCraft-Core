@@ -31,7 +31,7 @@ public class PortalCommand extends ActiveCraftCommand {
 
         Player player = getPlayer(sender);
         cleanPortals();
-        Set<String> portalList = ConfigManager.portalsConfig.portals().keySet();
+        Set<String> portalList = ConfigManager.getPortalsConfig().getPortals().keySet();
 
         switch (args[0].toLowerCase()) {
             case "create" -> {
@@ -44,7 +44,7 @@ public class PortalCommand extends ActiveCraftCommand {
             case "destroy" -> {
                 checkPermission(sender, "portals.destroy");
                 if (portalList.contains(args[1])) {
-                    Portal portal = ConfigManager.portalsConfig.portals().get(args[1]);
+                    Portal portal = ConfigManager.getPortalsConfig().getPortals().get(args[1]);
                     PortalManager.destroy(args[1]);
                     sendMessage(sender, CommandMessages.PORTAL_DESTROYED(args[1], portal.x() + portal.y() + portal.z() + ""));
                 } else sendMessage(sender,Errors.WARNING() + CommandMessages.PORTAL_DOESNT_EXIST());
@@ -56,7 +56,7 @@ public class PortalCommand extends ActiveCraftCommand {
                     StringBuilder messageBuilder = new StringBuilder();
                     boolean isFirst = true;
                     for (String s : portalList) {
-                        Portal portal = ConfigManager.portalsConfig.portals().get(s);
+                        Portal portal = ConfigManager.getPortalsConfig().getPortals().get(s);
                         int x = portal.x();
                         int y = portal.x();
                         int z = portal.x();
@@ -75,10 +75,10 @@ public class PortalCommand extends ActiveCraftCommand {
     }
 
     public static void cleanPortals() {
-        for (Portal portal : ConfigManager.portalsConfig.portals().values()) {
+        for (Portal portal : ConfigManager.getPortalsConfig().getPortals().values()) {
             World portalworld;
             if ((portalworld = portal.world()) != null && portal.to_world() != null && portalworld.getBlockAt(portal.x(), portal.y(), portal.z()).getType() == Material.END_GATEWAY) return;
-            ConfigManager.portalsConfig.set(portal.name(), null, true);
+            ConfigManager.getPortalsConfig().set(portal.name(), null, true);
         }
     }
 
@@ -102,7 +102,7 @@ public class PortalCommand extends ActiveCraftCommand {
                 case 9 -> list.add(p.getWorld().getName());
             }
         } else if (args[0].equals("destroy"))
-            if (args.length == 2) list.addAll(ConfigManager.portalsConfig.portals().keySet());
+            if (args.length == 2) list.addAll(ConfigManager.getPortalsConfig().getPortals().keySet());
         return list;
     }
 }

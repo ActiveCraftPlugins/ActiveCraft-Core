@@ -13,11 +13,11 @@ public class ServerPingListener implements Listener {
     @EventHandler
     public void on(ServerListPingEvent event) {
         //set modt when locked down
-        if (ConfigManager.mainConfig.lockdownEnabled()) {
-            ConfigManager.mainConfig.set("old-modt", event.getMotd());
-            event.setMotd(ConfigManager.mainConfig.lockdownModt());
+        if (ConfigManager.getMainConfig().isLockedDown()) {
+            ConfigManager.getMainConfig().set("old-modt", event.getMotd());
+            event.setMotd(ConfigManager.getMainConfig().getLockdownModt());
         } else {
-            event.setMotd(ConfigManager.mainConfig.oldModt());
+            event.setMotd(ConfigManager.getMainConfig().getOldModt());
         }
     }
 }

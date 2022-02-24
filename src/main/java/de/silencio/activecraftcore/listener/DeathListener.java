@@ -18,7 +18,7 @@ public class DeathListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
 
         Player died = e.getEntity(); //in 1.17 gibt get player nen error deshalb IMMER get entity
-        Profile profile = ActiveCraftCore.getProfile(died);
+        Profile profile = Profile.fromPlayer(died);
         Player killer = died.getKiller();
 
         ActiveCraftCore.getLastLocMap().put(died, died.getLocation());
@@ -33,7 +33,7 @@ public class DeathListener implements Listener {
             e.getDrops().clear();
         }
 
-        if (ConfigManager.mainConfig.dropAllExp()) {
+        if (ConfigManager.getMainConfig().isDropAllExp()) {
             e.setDroppedExp(died.getTotalExperience());
         }
 
@@ -52,12 +52,12 @@ public class DeathListener implements Listener {
         if (killer != null && killer.getInventory().getItemInMainHand().getType() == Material.AIR) {
             String beforeBrackets = deathmessage.split("\\[")[0];
             beforeBrackets = beforeBrackets.replace(died.getName(), died.getDisplayName()
-                            .replace(" " + ConfigManager.mainConfig.vanishTagFormat(), "")
-                            .replace(" " + ConfigManager.mainConfig.afkFormat(), "")
+                            .replace(" " + ConfigManager.getMainConfig().getVanishTagFormat(), "")
+                            .replace(" " + ConfigManager.getMainConfig().getAfkFormat(), "")
                             + ChatColor.WHITE)
                     .replace(killer.getName(), killer.getDisplayName()
-                            .replace(" " + ConfigManager.mainConfig.vanishTagFormat(), "")
-                            .replace(" " + ConfigManager.mainConfig.afkFormat(), "")
+                            .replace(" " + ConfigManager.getMainConfig().getVanishTagFormat(), "")
+                            .replace(" " + ConfigManager.getMainConfig().getAfkFormat(), "")
                             + ChatColor.RESET);
             e.setDeathMessage(ChatColor.RED + "☠ " + beforeBrackets + killer.getInventory().getItemInMainHand().getItemMeta().getDisplayName());
         } else {

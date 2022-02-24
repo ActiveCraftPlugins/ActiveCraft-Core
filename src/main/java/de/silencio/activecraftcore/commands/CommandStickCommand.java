@@ -150,7 +150,7 @@ public class CommandStickCommand extends ActiveCraftCommand implements Listener 
         if (args.length == 0) return list;
         if (args.length == 1) {
 
-            if (ConfigManager.mainConfig.hideCommandsAfterPluginName()) {
+            if (ConfigManager.getMainConfig().isHideCommandsAfterPluginName()) {
 
                 List<String> pluginNames = new ArrayList<>();
                 pluginNames.add("minecraft");

@@ -56,6 +56,7 @@ public class PluginManager {
                 new ClearInvCommand(),
                 new ColorNickCommand(),
                 new CommandStickCommand(),
+                new ConfigReloadCommand(),
                 new DrainCommand(),
                 new EditSignCommand(),
                 new EnchantCommand(),

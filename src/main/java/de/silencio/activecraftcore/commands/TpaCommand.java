@@ -64,7 +64,7 @@ public class TpaCommand extends ActiveCraftCommand {
                     Player target = tpaList.get(player);
                     Location loc = player.getLocation();
                     sendMessage(sender, CommandMessages.TPACCEPT_ACCEPTED());
-                    if (!ConfigManager.mainConfig.timerTpa()) {
+                    if (!ConfigManager.getMainConfig().isTimerTpa()) {
                         tpaList.get(player).sendActionBar(CommandMessages.TPACCEPT_ACTIONBAR());
                         tpaList.get(player).teleport(loc);
                         tpaList.remove(player);

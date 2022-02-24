@@ -16,9 +16,9 @@ public class ClearTabCompleteListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerClickTab(PlayerCommandSendEvent e) {
 
-        List<String> exceptionList = ConfigManager.mainConfig.hiddenCommandsAfterPluginNameExceptions();
+        List<String> exceptionList = ConfigManager.getMainConfig().getHiddenCommandsAfterPluginNameExceptions();
 
-        if (!ConfigManager.mainConfig.hideCommandsAfterPluginName()) return;
+        if (!ConfigManager.getMainConfig().isHideCommandsAfterPluginName()) return;
 
         List<String> pluginNames = new ArrayList<>();
         pluginNames.add("minecraft");

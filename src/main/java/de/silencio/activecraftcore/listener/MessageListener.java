@@ -17,7 +17,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class MessageListener implements Listener {
 
-    @EventHandler (priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onChatMessage(AsyncPlayerChatEvent event) {
 
         String message = ColorUtils.replaceColor(event.getMessage());
@@ -31,7 +31,7 @@ public class MessageListener implements Listener {
             return;
         }
 
-            Profile profile = ActiveCraftCore.getProfile(player);
+        Profile profile = Profile.fromPlayer(player);
 
             boolean muted = profile.isMuted();
             boolean forcemuted = profile.isForcemuted();
