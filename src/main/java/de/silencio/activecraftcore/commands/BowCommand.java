@@ -1,6 +1,7 @@
 package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
+import de.silencio.activecraftcore.exceptions.InvalidNumberException;
 import de.silencio.activecraftcore.utils.ComparisonType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,12 +15,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class BowCommand extends ActiveCraftCommand implements Listener {
@@ -27,6 +31,8 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
     public BowCommand() {
         super("bow");
     }
+
+    private static final HashMap<Projectile, String> projectiles = new HashMap<>();
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
@@ -40,6 +46,8 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
                 ItemMeta boombowmeta = boombow.getItemMeta();
                 boombowmeta.setDisplayName(ChatColor.GOLD + "Boom Bow");
                 boombowmeta.setUnbreakable(true);
+                if (args.length > 1)
+                    boombowmeta.setLore(List.of(ChatColor.AQUA + "Power: " + parseFloat(args[1])));
                 boombow.setItemMeta(boombowmeta);
                 boombow.addUnsafeEnchantment(Enchantment.WATER_WORKER, 124);
                 boombow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
@@ -59,26 +67,17 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
                 lightningbow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
                 lightningbow.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 player.getInventory().addItem(lightningbow);
-
             }
         }
     }
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        Player p = (Player) sender;
-
-        if (args.length == 0) return list;
-        if (args.length == 1) {
-            list.add("explode");
-            list.add("lightning");
-        }
-        return list;
+        return args.length == 1 ? List.of("explode", "lightning") : null;
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onProjectileHit(ProjectileHitEvent event) {
+    @EventHandler
+    public void onBowShot(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
         ProjectileSource source = entity.getShooter();
 
@@ -94,12 +93,30 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
         if (!(itemMeta.getEnchantLevel(Enchantment.WATER_WORKER) == 124)) return;
 
         if (player.hasPermission("activecraft.bow.explode.trigger") && itemMeta.getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Boom Bow")) {
-            entity.getWorld().createExplosion(entity.getLocation(), 5F, false, true);
-            entity.remove();
+            float power = 4f;
+            List<String> lore = itemMeta.getLore();
+            if (lore != null && lore.size() > 0) {
+                try {
+                    power = parseFloat(lore.get(0).replace(ChatColor.AQUA + "Power: ", ""));
+                } catch (InvalidNumberException ignored) {
+                }
+            }
+            projectiles.put(entity, "e" + power);
         }
         if (player.hasPermission("activecraft.bow.lightning.trigger") && itemMeta.getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Lightning Bow")) {
-            entity.getWorld().strikeLightning(entity.getLocation());
-            entity.remove();
+            projectiles.put(entity, "l");
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Projectile entity = event.getEntity();
+        if (!projectiles.containsKey(entity)) return;
+
+        if (projectiles.get(entity).startsWith("e"))
+            entity.getWorld().createExplosion(entity.getLocation(), Float.parseFloat(projectiles.get(entity).replace("e", "")), false, true);
+        else if (projectiles.get(entity).startsWith("l"))
+            entity.getWorld().strikeLightning(entity.getLocation());
+        entity.remove();
     }
 }
