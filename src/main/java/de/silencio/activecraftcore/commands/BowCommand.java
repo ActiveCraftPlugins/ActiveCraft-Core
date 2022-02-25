@@ -48,7 +48,7 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
             }
             case "lightning" -> {
                 Player player = getPlayer(sender);
-                checkPermission(sender, "bow.explode");
+                checkPermission(sender, "bow.lightning");
 
                 ItemStack lightningbow = new ItemStack(Material.BOW);
                 ItemMeta lightningbowbowmeta = lightningbow.getItemMeta();
