@@ -1,8 +1,6 @@
 package de.silencio.activecraftcore.events;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
+import lombok.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -13,9 +11,18 @@ import java.util.Date;
 public class PlayerIpBanEvent extends ActiveCraftEvent {
 
     private final String target;
-    private @NonNull String reason;
-    private @NonNull Date expirationDate;
-    private @NonNull String source;
+    private boolean banned;
+    private String reason;
+    private Date expirationDate;
+    private String source;
     private boolean cancelled;
+
+    public PlayerIpBanEvent(String target, boolean banned, String reason, Date expirationDate, String source) {
+        this.target = target;
+        this.banned = banned;
+        this.reason = reason;
+        this.expirationDate = expirationDate;
+        this.source = source;
+    }
 
 }
