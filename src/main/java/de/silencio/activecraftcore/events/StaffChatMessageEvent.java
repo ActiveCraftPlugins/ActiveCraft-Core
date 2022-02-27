@@ -1,48 +1,19 @@
 package de.silencio.activecraftcore.events;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class StaffChatMessageEvent extends Event {
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class StaffChatMessageEvent extends ActiveCraftEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
-    private CommandSender sender;
-    private String message;
+    private final CommandSender sender;
+    private @NonNull String message;
     private boolean cancelled;
 
-    public StaffChatMessageEvent(CommandSender sender, String message) {
-        this.sender = sender;
-        this.message = message;
-    }
-
-    public CommandSender getSender() {
-        return sender;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancel) {
-        cancelled = true;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

@@ -1,37 +1,15 @@
 package de.silencio.activecraftcore.events;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class PlayerIpUnbanEvent extends Event {
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class PlayerIpUnbanEvent extends ActiveCraftEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
-    private String target;
+    private final String target;
     private boolean cancelled;
-
-    public PlayerIpUnbanEvent(String target) {
-        this.target = target;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancel) {
-        cancelled = true;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
 
 }

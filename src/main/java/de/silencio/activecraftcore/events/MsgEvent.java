@@ -1,56 +1,20 @@
 package de.silencio.activecraftcore.events;
 
 import de.silencio.activecraftcore.playermanagement.Profile;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class MsgEvent extends Event {
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class MsgEvent extends ActiveCraftEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
-    private CommandSender sender;
-    private Profile target;
-    private String message;
+    private final CommandSender sender;
+    private final Profile target;
+    private @NonNull String message;
     private boolean cancelled;
-
-    public MsgEvent(CommandSender sender, Profile target, String message) {
-        this.sender = sender;
-        this.target = target;
-        this.message = message;
-    }
-
-    public CommandSender getSender() {
-        return sender;
-    }
-
-    public Profile getTarget() {
-        return target;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancel) {
-        cancelled = true;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
 }

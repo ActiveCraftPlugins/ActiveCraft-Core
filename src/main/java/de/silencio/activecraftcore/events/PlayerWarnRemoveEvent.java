@@ -2,51 +2,21 @@ package de.silencio.activecraftcore.events;
 
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.Warn;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-public class PlayerWarnRemoveEvent extends Event {
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class PlayerWarnRemoveEvent extends ActiveCraftEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
-    private Warn warn;
-    private Profile target;
+    private final Profile target;
+    private @NonNull Warn warn;
     private boolean cancelled;
-
-    public PlayerWarnRemoveEvent(Profile target, Warn warn) {
-        this.target = target;
-        this.warn = warn;
-    }
-
-    public Profile getTarget() {
-        return target;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancel) {
-        cancelled = true;
-    }
-
-    public Warn getWarn() {
-        return warn;
-    }
-
-    public void setWarn(Warn warn) {
-        this.warn = warn;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
 
 }
