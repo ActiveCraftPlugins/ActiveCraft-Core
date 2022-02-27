@@ -46,7 +46,7 @@ public class WarnCommand extends ActiveCraftCommand {
                 if (args.length >= 3) {
                     Warn warn = warnManager.getWarnByReason(combineArray(args, 2));
                     if (warn == null) {
-                        sender.sendMessage(CommandMessages.WARN_DOESNT_EXIST());
+                        sendMessage(sender, CommandMessages.WARN_DOESNT_EXIST());
                         return;
                     }
                     sendMessage(sender, CommandMessages.WARN_REMOVE(target, warn.reason()));
@@ -57,7 +57,7 @@ public class WarnCommand extends ActiveCraftCommand {
                 if (args.length >= 3) {
                     Warn warn = warnManager.getWarnByReason(combineArray(args, 2));
                     if (warn == null) {
-                        sender.sendMessage(CommandMessages.WARN_DOESNT_EXIST());
+                        sendMessage(sender, CommandMessages.WARN_DOESNT_EXIST());
                         return;
                     }
                     sendMessage(sender,
