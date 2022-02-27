@@ -118,5 +118,6 @@ public class BowCommand extends ActiveCraftCommand implements Listener {
         else if (projectiles.get(entity).startsWith("l"))
             entity.getWorld().strikeLightning(entity.getLocation());
         entity.remove();
+        projectiles.remove(entity);
     }
 }
