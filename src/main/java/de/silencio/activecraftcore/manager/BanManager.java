@@ -3,7 +3,6 @@ package de.silencio.activecraftcore.manager;
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerBanEvent;
 import de.silencio.activecraftcore.events.PlayerIpBanEvent;
-import de.silencio.activecraftcore.events.PlayerIpUnbanEvent;
 import de.silencio.activecraftcore.events.PlayerUnbanEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
@@ -27,7 +26,7 @@ public class BanManager {
 
         public static void ban(String target, String reason, Date expires, String source) {
             Bukkit.getScheduler().runTask(ActiveCraftCore.getPlugin(), () -> {
-                PlayerIpBanEvent event = new PlayerIpBanEvent(target, reason, expires, source);
+                PlayerIpBanEvent event = new PlayerIpBanEvent(target, true, reason, expires, source);
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     Bukkit.getBanList(BanList.Type.IP).addBan(target, reason, expires, source);
@@ -57,7 +56,9 @@ public class BanManager {
             if (!StringUtils.isValidInet4Address(target)) {
                 return;
             }
-            PlayerIpUnbanEvent event = new PlayerIpUnbanEvent(target);
+            BanEntry entry = Bukkit.getBanList(BanList.Type.IP).getBanEntry(target);
+            if (entry == null) return;
+            PlayerIpBanEvent event = new PlayerIpBanEvent(target, false, entry.getReason(), entry.getExpiration(), entry.getSource());
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
             Bukkit.getBanList(BanList.Type.IP).pardon(target);

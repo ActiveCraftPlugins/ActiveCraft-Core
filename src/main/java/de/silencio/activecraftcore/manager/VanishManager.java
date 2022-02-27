@@ -1,11 +1,9 @@
 package de.silencio.activecraftcore.manager;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
-import de.silencio.activecraftcore.events.PlayerUnvanishEvent;
 import de.silencio.activecraftcore.events.PlayerVanishEvent;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,7 +30,7 @@ public class VanishManager {
         Profile profile = Profile.fromPlayer(player);
         MainConfig mainConfig = ConfigManager.getMainConfig();
         if (hide) {
-            PlayerVanishEvent event = new PlayerVanishEvent(profile);
+            PlayerVanishEvent event = new PlayerVanishEvent(profile, true);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
@@ -41,7 +39,7 @@ public class VanishManager {
 
             vanished.add(player);
         } else {
-            PlayerUnvanishEvent event = new PlayerUnvanishEvent(profile);
+            PlayerVanishEvent event = new PlayerVanishEvent(profile, false);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
