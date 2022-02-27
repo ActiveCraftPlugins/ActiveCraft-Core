@@ -28,6 +28,4 @@ public abstract class ActiveCraftConfig {
     }
 
     protected abstract void load();
-
-
 }
