@@ -24,52 +24,6 @@ public class StringUtils {
         return matcher.matches();
     }
 
-    public static String messageWithColor(Player p, String displayname, String colorname) {
-        String outputDisplayname = null;
-        for (ChatColor color : ChatColor.values()) {
-            if (colorname.equalsIgnoreCase(color.name())) {
-                if (!colorname.equals("BOLD") && !colorname.equals("MAGIC") && !colorname.equals("STRIKETHROUGH") &&
-                        !colorname.equals("ITALIC") && !colorname.equals("UNDERLINE") && !colorname.equals("RESET")) {
-                    outputDisplayname = color + displayname;
-                }
-            }
-        }
-        return outputDisplayname;
-    }
-
-    public static void setDisplaynameFromConfig(Player p, String colorname, String displayname) {
-        for (ChatColor color : ChatColor.values()) {
-            if (colorname.equalsIgnoreCase(color.name())) {
-                if (!colorname.equals("BOLD") && !colorname.equals("MAGIC") && !colorname.equals("STRIKETHROUGH") &&
-                        !colorname.equals("ITALIC") && !colorname.equals("UNDERLINE") && !colorname.equals("RESET")) {
-                    p.setDisplayName(color + displayname);
-                    p.setPlayerListName(color + displayname);
-                }
-            }
-        }
-    }
-
-    public static void setDisplaynameFromConfig(Player p, ChatColor color, String prefix, String displayname) {
-        if (!Arrays.stream(ColorUtils.getColorsOnly()).toList().contains(color)) return;
-        if (prefix == null) prefix = "";
-        prefix = prefix.strip() + (prefix.strip().equals("") ? "" : " ");
-        p.setDisplayName(prefix + color + displayname);
-        p.setPlayerListName(prefix + color + displayname);
-    }
-
-    public static String joinQuitWithColor(Player p, String displayname, String colorname) {
-        String outputDisplayname = null;
-        for (ChatColor color : ChatColor.values()) {
-            if (colorname.equalsIgnoreCase(color.name())) {
-                if (!colorname.equals("BOLD") && !colorname.equals("MAGIC") && !colorname.equals("STRIKETHROUGH") &&
-                        !colorname.equals("ITALIC") && !colorname.equals("UNDERLINE") && !colorname.equals("RESET")) {
-                    outputDisplayname = color + displayname;
-                }
-            }
-        }
-        return outputDisplayname;
-    }
-
     public static String combineArray(String[] args) {
         return combineArray(args, 0, args.length, " ");
     }
