@@ -72,7 +72,6 @@ public class TimeUtils {
                 }
             }
         }
-        // TODO: 07.09.2021 leap years
         Date nowDate = new Date();
         long nowMillis = nowDate.getTime();
         Date finalDate = null;
