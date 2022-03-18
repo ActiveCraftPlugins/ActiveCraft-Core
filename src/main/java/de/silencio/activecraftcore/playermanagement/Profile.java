@@ -88,10 +88,12 @@ public final class Profile {
     private boolean forcemuted;
     private boolean defaultmuted;
     private boolean vanished;
-    private boolean log_enabled;
-    private boolean bypass_lockdown;
-    private boolean edit_sign;
-    private boolean receive_socialspy;
+    private boolean logEnabled;
+    private @Getter(AccessLevel.NONE)
+    boolean bypassLockdown;
+    private @Getter(AccessLevel.NONE)
+    boolean receiveSocialspy;
+    private boolean editSign;
     private List<String> tags;
 
     private HashMap<String, Location> homeList;
@@ -146,7 +148,7 @@ public final class Profile {
         warns = fileConfig.getInt("violations.warns");
         mutes = fileConfig.getInt("violations.mutes");
         bans = fileConfig.getInt("violations.bans");
-        ip_bans = fileConfig.getInt("violations.ip-bans");
+        ipBans = fileConfig.getInt("violations.ip-bans");
         times_joined = fileConfig.getInt("times-joined");
         afk = fileConfig.getBoolean("afk");
         op = fileConfig.getBoolean("op");
@@ -326,19 +328,12 @@ public final class Profile {
         List<String> appliedTags = tags;
         Collections.sort(appliedTags);
         Collections.reverse(appliedTags);
-        StringUtils.setDisplaynameFromConfig(player, color_nick, prefix, nickname + (tags.size() > 0 ? " " : "") + StringUtils.combineList(appliedTags));
-    }
-
-    public String getProfileOwner() {
-        return name;
-    }
-
-    public FileConfig getPlayerdataConfig() {
-        return playerdataConfig;
-    }
-
-    public String getName() {
-        return name;
+        if ((player = getPlayer()) == null) return;
+        if (!Arrays.stream(ColorUtils.getColorsOnly()).toList().contains(colorNick)) return;
+        String displayedPrefix = prefix == null ? "" : prefix.strip() + (prefix.strip().equals("") ? "" : " ");
+        String displayname = nickname + (tags.size() > 0 ? " " : "") + StringUtils.combineList(appliedTags);
+        player.setDisplayName(displayedPrefix + colorNick + displayname);
+        player.setPlayerListName(displayedPrefix + colorNick + displayname);
     }
 
     public String getRawNickname() {
