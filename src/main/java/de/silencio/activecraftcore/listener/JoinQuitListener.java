@@ -90,7 +90,8 @@ public class JoinQuitListener implements Listener {
 
         if (profile.getLastLocationBeforeQuit() != null) player.teleport(profile.getLastLocationBeforeQuit());
 
-        profile.reloadDisplayname();
+        profile.updateDisplayname();
+        profile.refreshEffects();
 
         // vanish stuff
         if (profile.isVanished()) {
