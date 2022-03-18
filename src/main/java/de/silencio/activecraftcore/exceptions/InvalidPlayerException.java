@@ -1,5 +1,8 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class InvalidPlayerException extends ActiveCraftException {
 
     private final String invalidPlayername;
@@ -11,10 +14,6 @@ public class InvalidPlayerException extends ActiveCraftException {
 
     public InvalidPlayerException(String invalidPlayername) {
         this("No player with the name " + invalidPlayername + " could be found.", invalidPlayername);
-    }
-
-    public String getInvalidPlayername() {
-        return invalidPlayername;
     }
 
 }

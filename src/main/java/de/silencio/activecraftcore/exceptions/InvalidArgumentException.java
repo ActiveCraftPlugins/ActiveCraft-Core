@@ -1,6 +1,9 @@
 package de.silencio.activecraftcore.exceptions;
 
-public class InvalidArgumentException extends ActiveCraftException{
+import lombok.Getter;
+
+@Getter
+public class InvalidArgumentException extends ActiveCraftException {
 
     private ErrorType errorType;
 
@@ -15,10 +18,6 @@ public class InvalidArgumentException extends ActiveCraftException{
 
     public InvalidArgumentException() {
         this("Invalid arguments.", ErrorType.DEFAULT);
-    }
-
-    public ErrorType getErrorType() {
-        return errorType;
     }
 
     public enum ErrorType {

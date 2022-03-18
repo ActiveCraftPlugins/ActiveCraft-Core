@@ -1,5 +1,8 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class NoPlayerException extends ActiveCraftException {
 
     private final String wannabePlayer;
@@ -11,10 +14,6 @@ public class NoPlayerException extends ActiveCraftException {
 
     public NoPlayerException(String wannabePlayer) {
         this(wannabePlayer + " is not an instance of a player.", wannabePlayer);
-    }
-
-    public String getWannabePlayer() {
-        return wannabePlayer;
     }
 
 }

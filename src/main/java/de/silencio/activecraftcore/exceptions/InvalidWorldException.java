@@ -1,5 +1,8 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class InvalidWorldException extends ActiveCraftException {
 
     private final String invalidWorldname;
@@ -11,10 +14,6 @@ public class InvalidWorldException extends ActiveCraftException {
 
     public InvalidWorldException(String invalidWorldname) {
         this("No player with the name " + invalidWorldname + " could be found.", invalidWorldname);
-    }
-
-    public String getInvalidWorldname() {
-        return invalidWorldname;
     }
 
 }

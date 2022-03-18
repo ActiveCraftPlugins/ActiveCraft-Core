@@ -1,5 +1,8 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class InvalidNumberException extends ActiveCraftException {
 
     private final String invalidString;
@@ -11,11 +14,6 @@ public class InvalidNumberException extends ActiveCraftException {
 
     public InvalidNumberException(String invalidString) {
         this(invalidString + " cannot be converted into an Integer.", invalidString);
-    }
-
-
-    public String getInvalidString() {
-        return invalidString;
     }
 
 }

@@ -1,7 +1,9 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
+@Getter
 public class NotHoldingItemException extends ActiveCraftException {
 
     private final Player player;
@@ -15,14 +17,6 @@ public class NotHoldingItemException extends ActiveCraftException {
 
     public NotHoldingItemException(Player player, ExpectedItem expectedItem) {
         this(player + " is not holding the right item.", player, expectedItem);
-    }
-
-    public Player getInvalidString() {
-        return player;
-    }
-
-    public ExpectedItem getExpectedItem() {
-        return expectedItem;
     }
 
     public enum ExpectedItem {

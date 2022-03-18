@@ -1,5 +1,8 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
+
+@Getter
 public class InvalidEntityException extends ActiveCraftException {
 
     private final String invalidString;
@@ -11,10 +14,6 @@ public class InvalidEntityException extends ActiveCraftException {
 
     public InvalidEntityException(String invalidString) {
         this(invalidString + " isn't a valid name of an entity.", invalidString);
-    }
-
-    public String getInvalidString() {
-        return invalidString;
     }
 
 }

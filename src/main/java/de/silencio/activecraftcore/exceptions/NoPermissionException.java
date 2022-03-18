@@ -1,7 +1,9 @@
 package de.silencio.activecraftcore.exceptions;
 
+import lombok.Getter;
 import org.bukkit.permissions.Permissible;
 
+@Getter
 public class NoPermissionException extends ActiveCraftException {
 
     private final String permission;
@@ -21,13 +23,5 @@ public class NoPermissionException extends ActiveCraftException {
 
     public NoPermissionException(Permissible permissible, String permission) {
         this(permissible + "doesn't have the permission \"" + permission + "\"", permissible, permission, false);
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public Permissible getPermissible() {
-        return permissible;
     }
 }

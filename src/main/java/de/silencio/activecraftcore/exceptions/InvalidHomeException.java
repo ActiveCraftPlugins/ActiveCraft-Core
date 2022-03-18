@@ -1,8 +1,9 @@
 package de.silencio.activecraftcore.exceptions;
 
 import de.silencio.activecraftcore.playermanagement.Profile;
-import org.bukkit.entity.Player;
+import lombok.Getter;
 
+@Getter
 public class InvalidHomeException extends ActiveCraftException {
 
     private final String invalidString;
@@ -20,13 +21,5 @@ public class InvalidHomeException extends ActiveCraftException {
 
     public InvalidHomeException(String invalidString) {
         this(invalidString + " is not a home.", invalidString, null);
-    }
-    
-    public String getInvalidString() {
-        return invalidString;
-    }
-
-    public Profile getProfile() {
-        return profile;
     }
 }

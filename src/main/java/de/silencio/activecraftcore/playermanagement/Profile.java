@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.File;
 import java.util.*;
 
+@Getter
 public final class Profile {
 
     public enum Value {
@@ -344,100 +345,8 @@ public final class Profile {
         return nickname;
     }
 
-    public String getLastOnline() {
-        return last_online;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public ChatColor getColorNick() {
-        return color_nick;
-    }
-
-    public float getFlyspeed() {
-        return flyspeed;
-    }
-
-    public int getWarns() {
-        return warns;
-    }
-
-    public int getMutes() {
-        return mutes;
-    }
-
-    public int getBans() {
-        return bans;
-    }
-
-    public int getIpBans() {
-        return ip_bans;
-    }
-
-    public int getPlaytimeHours() {
-        return playtime_hours;
-    }
-
-    public int getPlaytimeMinutes() {
-        return playtime_minutes;
-    }
-
-    public boolean isAfk() {
-        return afk;
-    }
-
-    public boolean isOp() {
-        return op;
-    }
-
-    public boolean isWhitelisted() {
-        return whitelisted;
-    }
-
-    public boolean isGodmode() {
-        return godmode;
-    }
-
-    public boolean canFly() {
-        return fly;
-    }
-
-    public boolean isMuted() {
-        return muted;
-    }
-
-    public boolean isDefaultmuted() {
-        return defaultmuted;
-    }
-
-    public boolean isVanished() {
-        return vanished;
-    }
-
-    public boolean hasLogEnabled() {
-        return log_enabled;
-    }
-
     public boolean canBypassLockdown() {
-        return bypass_lockdown;
-    }
-
-    public boolean canEditSign() {
-        return edit_sign;
-    }
-
-    public HashMap<String, Location> getHomeList() {
-        return homeList;
-    }
-
-    public HashMap<String, Warn> getWarnList() {
-        return warnList;
-    }
-
-    public boolean isForcemuted() {
-        return forcemuted;
+        return bypassLockdown;
     }
 
     public boolean canReceiveSocialspy() {
@@ -452,18 +361,6 @@ public final class Profile {
         return playerdataConfig.getLocation("last-location.BEFORE_QUIT");
     }
 
-    public int getTimesJoined() {
-        return times_joined;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
     public String getNickname() {
         if (prefix == null) prefix = "";
         prefix = prefix.strip() + (prefix.strip().equals("") ? "" : " ");
@@ -476,13 +373,5 @@ public final class Profile {
 
     public OfflinePlayer getOfflinePlayer() {
         return Bukkit.getOfflinePlayer(uuid);
-    }
-
-    public WarnManager getWarnManager() {
-        return warnManager;
-    }
-
-    public HomeManager getHomeManager() {
-        return homeManager;
     }
 }
