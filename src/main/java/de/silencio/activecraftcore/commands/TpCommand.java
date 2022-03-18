@@ -34,7 +34,6 @@ public class TpCommand extends ActiveCraftCommand {
                 checkPermission(sender, "tp.self");
                 Player player = getPlayer(sender);
                 Player target = getPlayer(args[0]);
-                checkTargetSelf(sender, target);
                 player.teleport(target.getLocation());
                 sendMessage(sender, CommandMessages.TELEPORT_TO_PLAYER(target));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
@@ -43,7 +42,7 @@ public class TpCommand extends ActiveCraftCommand {
                 checkPermission(sender, "tp.others");
                 Player target1 = getPlayer(args[0]);
                 Player target2 = getPlayer(args[1]);
-                checkTargetSelf(target1, target2);
+                checkTargetSelf(target1, target2, "tp.self");
                 target1.teleport(target2.getLocation());
                 sendMessage(sender, CommandMessages.TELEPORT_PLAYER_TO_PLAYER(target1, target2));
                 target1.playSound(target1.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
