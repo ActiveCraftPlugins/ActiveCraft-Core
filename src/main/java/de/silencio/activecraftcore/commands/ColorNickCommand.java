@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ColorNickCommand extends ActiveCraftCommand {
@@ -34,7 +35,7 @@ public class ColorNickCommand extends ActiveCraftCommand {
             if (event.isCancelled()) return;
 
             profile.set(Profile.Value.COLOR_NICK, color.name());
-            profile.reloadDisplayname();
+            profile.updateDisplayname();
             sendMessage(sender, CommandMessages.COLORNICK_SELF(color + color.name()));
         } else if (args.length >= 2) {
             checkPermission(sender, "colornick.self");
@@ -49,7 +50,7 @@ public class ColorNickCommand extends ActiveCraftCommand {
 
             sendMessage(sender, CommandMessages.COLORNICK_OTHERS(target, color + color.name()));
             profile.set(Profile.Value.COLOR_NICK, color.name());
-            profile.reloadDisplayname();
+            profile.updateDisplayname();
             sendSilentMessage(target, CommandMessages.COLORNICK_OTHERS_MESSAGE(sender, color + color.name()));
         } else throw new InvalidArgumentException();
     }
@@ -61,10 +62,10 @@ public class ColorNickCommand extends ActiveCraftCommand {
             case 1 -> {
                 list.add("random");
                 list.addAll(getBukkitPlayernames());
-                for (ChatColor color : ColorUtils.getColorsOnly()) list.add(color.name().toLowerCase());
+                Arrays.stream(ColorUtils.getColorsOnly()).forEach(color ->  list.add(color.name().toLowerCase()));
             }
             case 2 -> {
-                for (ChatColor color : ColorUtils.getColorsOnly()) list.add(color.name().toLowerCase());
+                Arrays.stream(ColorUtils.getColorsOnly()).forEach(color ->  list.add(color.name().toLowerCase()));
             }
         }
         return list;

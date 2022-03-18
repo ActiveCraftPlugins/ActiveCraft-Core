@@ -15,7 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemCommand extends ActiveCraftCommand {
 
@@ -33,8 +35,10 @@ public class ItemCommand extends ActiveCraftCommand {
             ItemStack itemStack = new ItemStack(material);
             itemStack.setAmount(args.length >= 2 ? parseInt(args[1]) : 1);
             player.getInventory().addItem(itemStack);
-            if (args.length == 1) sendMessage(sender, CommandMessages.ITEM_GIVE(itemStack.getType().name().toLowerCase()));
-            else sendMessage(sender, CommandMessages.ITEM_GIVE_MULTIPLE(itemStack.getType().name().toLowerCase(), parseInt(args[1]) + ""));
+            if (args.length == 1)
+                sendMessage(sender, CommandMessages.ITEM_GIVE(itemStack.getType().name().toLowerCase()));
+            else
+                sendMessage(sender, CommandMessages.ITEM_GIVE_MULTIPLE(itemStack.getType().name().toLowerCase(), parseInt(args[1]) + ""));
             player.playSound(player.getLocation(), Sound.valueOf("BLOCK_AMETHYST_BLOCK_BREAK"), 1f, 1f);
         } else {
             checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
@@ -45,8 +49,10 @@ public class ItemCommand extends ActiveCraftCommand {
                     ItemStack itemStack = new ItemStack(material);
                     itemStack.setAmount(args.length >= 3 ? parseInt(args[2]) : 1);
                     player.getInventory().addItem(itemStack);
-                    if (args.length == 2) sendMessage(sender, CommandMessages.ITEM_GIVE(itemStack.getType().name().toLowerCase()));
-                    else sendMessage(sender, CommandMessages.ITEM_GIVE_MULTIPLE(itemStack.getType().name().toLowerCase(), parseInt(args[2]) + ""));
+                    if (args.length == 2)
+                        sendMessage(sender, CommandMessages.ITEM_GIVE(itemStack.getType().name().toLowerCase()));
+                    else
+                        sendMessage(sender, CommandMessages.ITEM_GIVE_MULTIPLE(itemStack.getType().name().toLowerCase(), parseInt(args[2]) + ""));
                     player.playSound(player.getLocation(), Sound.valueOf("BLOCK_AMETHYST_BLOCK_BREAK"), 1f, 1f);
                 }
                 case "name" -> {
@@ -55,7 +61,7 @@ public class ItemCommand extends ActiveCraftCommand {
                         sendMessage(sender, Errors.NOT_HOLDING_ITEM());
                     ItemStack stack = player.getInventory().getItemInMainHand();
                     ItemMeta meta = stack.getItemMeta();
-                    meta.setDisplayName(ColorUtils.replaceFormat(ColorUtils.replaceColor(combineArray(args, 1))));
+                    meta.setDisplayName(ColorUtils.replaceColorAndFormat(combineArray(args, 1)));
                     stack.setItemMeta(meta);
                     sendMessage(sender, CommandMessages.ITEM_RENAMED());
                 }
@@ -70,7 +76,7 @@ public class ItemCommand extends ActiveCraftCommand {
                     if (meta.getLore() != null) stringList.addAll(meta.getLore());
                     switch (args[1]) {
                         case "add" -> {
-                            stringList.add(ColorUtils.replaceFormat(ColorUtils.replaceColor(combineArray(args, 2))));
+                            stringList.add(ColorUtils.replaceColorAndFormat(combineArray(args, 2)));
                             sendMessage(sender, CommandMessages.ITEM_LORE_ADD());
                         }
                         case "clear" -> {
@@ -79,7 +85,7 @@ public class ItemCommand extends ActiveCraftCommand {
                         }
                         case "set" -> {
                             stringList.clear();
-                            stringList.add(ColorUtils.replaceFormat(ColorUtils.replaceColor(combineArray(args, 2))));
+                            stringList.add(ColorUtils.replaceColorAndFormat(combineArray(args, 2)));
                             sendMessage(sender, CommandMessages.ITEM_LORE_SET());
                         }
                         case "remove" -> {
@@ -100,23 +106,19 @@ public class ItemCommand extends ActiveCraftCommand {
         ArrayList<String> list = new ArrayList<>();
         if (label.equalsIgnoreCase("item")) {
             if (args.length == 1) {
-                if (sender.hasPermission("item.name")) list.add("name");
-                if (sender.hasPermission("item.lore")) list.add("lore");
-                if (sender.hasPermission("item.give")) list.add("give");
+                if (sender.hasPermission("activecraft.item.name")) list.add("name");
+                if (sender.hasPermission("activecraft.item.lore")) list.add("lore");
+                if (sender.hasPermission("activecraft.item.give")) list.add("give");
+            } else if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("give"))
+                    return sender.hasPermission("activecraft.item.give") ?
+                            Arrays.stream(Material.values()).map(material -> material.name().toLowerCase()).collect(Collectors.toList()) : null;
+                else if (args[0].equalsIgnoreCase("lore"))
+                    return sender.hasPermission("activecraft.item.lore") ? List.of("set", "add", "clear", "remove") : null;
             }
-            if (args[0].equalsIgnoreCase("give")) {
-                if (sender.hasPermission("item.give") && args.length == 2)
-                    for (Material material : Material.values()) list.add(material.name().toLowerCase());
-            } else if (args[0].equalsIgnoreCase("lore"))
-                if (sender.hasPermission("item.lore") && args.length == 2) {
-                    list.add("set");
-                    list.add("add");
-                    list.add("clear");
-                    list.add("remove");
-                }
         } else if (label.equalsIgnoreCase("i"))
             if (sender.hasPermission("item.give") && args.length == 1)
-                for (Material material : Material.values()) list.add(material.name().toLowerCase());
+                return Arrays.stream(Material.values()).map(material -> material.name().toLowerCase()).collect(Collectors.toList());
         return list;
     }
 }

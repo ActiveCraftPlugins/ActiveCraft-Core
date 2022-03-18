@@ -1,7 +1,8 @@
 package de.silencio.activecraftcore.events;
 
 import de.silencio.activecraftcore.playermanagement.Profile;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.Location;
 
 @Data

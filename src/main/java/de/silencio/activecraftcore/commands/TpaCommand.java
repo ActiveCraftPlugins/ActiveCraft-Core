@@ -55,7 +55,7 @@ public class TpaCommand extends ActiveCraftCommand {
                 sendMessage(sender, CommandMessages.TPA_REQUEST_TO(target));
                 target.sendMessage(" ");
                 target.sendMessage(CommandMessages.TPA_REQUEST_FROM(sender));
-                target.spigot().sendMessage(accept, deny);
+                target.sendMessage(accept, deny);
                 target.sendMessage(" ");
                 tpaList.put(target, player);
             }

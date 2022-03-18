@@ -3,8 +3,6 @@ package de.silencio.activecraftcore.events;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
 import java.util.Date;
 

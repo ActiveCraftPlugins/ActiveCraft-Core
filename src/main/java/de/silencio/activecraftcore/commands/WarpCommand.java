@@ -5,7 +5,6 @@ import de.silencio.activecraftcore.manager.WarpManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,11 +15,13 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WarpCommand extends ActiveCraftCommand {
 
     public WarpCommand() {
-        super("warp", "setwarp", "delwarp");
+        super("warp", "setwarp", "delwarp", "warps");
     }
 
     @Override
@@ -39,7 +40,8 @@ public class WarpCommand extends ActiveCraftCommand {
                     checkPermission(sender, "warp.others." + args[1]);
                     Player target = getPlayer(args[0]);
                     if (WarpManager.getWarp(args[1]) != null) {
-                        if (!checkTargetSelf(sender, target, "warp.self." + args[1])) sendSilentMessage(target, CommandMessages.WARP_TELEPORT_OTHERS_MESSAGE(sender, args[1]));
+                        if (!checkTargetSelf(sender, target, "warp.self." + args[1]))
+                            sendSilentMessage(target, CommandMessages.WARP_TELEPORT_OTHERS_MESSAGE(sender, args[1]));
                         WarpManager.warp(target, args[1]);
                         sendMessage(sender, CommandMessages.WARP_TELEPORT_OTHERS(target, args[1]));
                         target.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
@@ -67,10 +69,8 @@ public class WarpCommand extends ActiveCraftCommand {
                     StringBuilder message = new StringBuilder();
                     for (String s : ConfigManager.getWarpsConfig().getWarps().keySet()) {
                         Location loc = ConfigManager.getWarpsConfig().getWarps().get(s);
-                        if (sender.hasPermission("activecraft.warp.self." + s) || sender.hasPermission("activecraft.warp.others." + s)) {
-                            message.append(ChatColor.GOLD + s + ": " + ChatColor.GRAY + loc.getWorld().getName() + "; " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ());
-                            message.append("\n");
-                        }
+                        if (sender.hasPermission("activecraft.warp.self." + s) || sender.hasPermission("activecraft.warp.others." + s))
+                            message.append(ChatColor.GOLD + s + ": " + ChatColor.GRAY + loc.getWorld().getName() + "; " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "\n");
                     }
                     if (message.toString().equals("")) {
                         sendMessage(sender, Errors.WARNING() + CommandMessages.NO_WARPS());
@@ -85,26 +85,24 @@ public class WarpCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
         switch (label) {
             case "warp" -> {
                 if (args.length == 1) {
-                    for (String s : ConfigManager.getWarpsConfig().getWarps().keySet())
-                        if (sender.hasPermission("activecraft.warp.self." + s))
-                            list.add(s);
-                    list.addAll(getBukkitPlayernames());
-                } else if (args.length == 2) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (args[0].equalsIgnoreCase(player.getName())) {
-                            for (String s : ConfigManager.getWarpsConfig().getWarps().keySet())
-                                if (sender.hasPermission("activecraft.warp.others." + s))
-                                    list.add(s);
-                        }
-                    }
+                    return Stream.concat(ConfigManager.getWarpsConfig().getWarps().keySet().stream()
+                                    .filter(s -> sender.hasPermission("activecraft.warp.self." + s)), getBukkitPlayernames().stream())
+                            .collect(Collectors.toList());
+                } else if (args.length == 2 && Bukkit.getPlayer(args[0]) != null) {
+                    return ConfigManager.getWarpsConfig().getWarps().keySet().stream()
+                            .filter(s -> sender.hasPermission("activecraft.warp.others." + s))
+                            .collect(Collectors.toList());
+                } else {
+                    new ArrayList<>();
                 }
             }
-            case "delwarp" -> list.addAll(ConfigManager.getWarpsConfig().getWarps().keySet());
+            case "delwarp" -> {
+                return ConfigManager.getWarpsConfig().getWarps().keySet().stream().toList();
+            }
         }
-        return list;
+        return null;
     }
 }

@@ -11,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NickCommand extends ActiveCraftCommand {
@@ -36,7 +35,7 @@ public class NickCommand extends ActiveCraftCommand {
 
             profile.set(Profile.Value.NICKNAME, nickname);
             sendMessage(sender, CommandMessages.NICK_SET(nickname));
-            profile.reloadDisplayname();
+            profile.updateDisplayname();
         } else {
             checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
             checkPermission(sender, "nick.others");
@@ -52,12 +51,12 @@ public class NickCommand extends ActiveCraftCommand {
             if (!checkTargetSelf(sender, target, "nick.self")) sendSilentMessage(target, CommandMessages.NICK_SET_OTHERS_MESSAGE(sender, nickname));
             profile.set(Profile.Value.NICKNAME, nickname);
             sendMessage(sender, CommandMessages.NICK_SET_OTHERS(target, nickname));
-            profile.reloadDisplayname();
+            profile.updateDisplayname();
         }
     }
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? new ArrayList<>(getProfileNames()) : null;
+        return args.length == 1 ? getProfileNames() : null;
     }
 }

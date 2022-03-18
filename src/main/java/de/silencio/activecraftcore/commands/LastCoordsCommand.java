@@ -13,8 +13,8 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LastCoordsCommand extends ActiveCraftCommand {
 
@@ -59,12 +59,10 @@ public class LastCoordsCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
         if (args.length == 1)
-            list.addAll(getProfileNames());
+            return getProfileNames();
         else if (args.length == 2)
-            for (World world : Bukkit.getWorlds())
-                list.add(world.getName());
-        return list;
+            return Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList());
+        return null;
     }
 }

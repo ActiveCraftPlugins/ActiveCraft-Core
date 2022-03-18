@@ -7,7 +7,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FireBallCommand extends ActiveCraftCommand {
@@ -46,11 +45,6 @@ public class FireBallCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 2) {
-            list.add("true");
-            list.add("false");
-        }
-        return list;
+        return args.length == 2 ? List.of("true", "false") : null;
     }
 }

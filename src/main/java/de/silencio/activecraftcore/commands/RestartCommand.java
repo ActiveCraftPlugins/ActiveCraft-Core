@@ -35,7 +35,8 @@ public class RestartCommand extends ActiveCraftCommand {
             }
             this.time = parseInt(args[0]);
         }
-        if (runnable != null) if (!runnable.isCancelled()) runnable.cancel();
+        if (runnable != null && !runnable.isCancelled())
+            runnable.cancel();
 
         runnable = new BukkitRunnable() {
             @Override
@@ -68,16 +69,10 @@ public class RestartCommand extends ActiveCraftCommand {
     }
 
     private void cancelTimer(CommandSender sender) {
-
-        if (runnable != null) {
-            if (!runnable.isCancelled()) {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    Title title = new Title(CommandMessages.RESTART_TITLE(ChatColor.RED + "--"));
-                    p.sendTitle(title);
-                }
-                runnable.cancel();
-                sendMessage(sender, CommandMessages.RESTART_CANCEL());
-            }
-        }
+        if (runnable == null || runnable.isCancelled()) return;
+        Title title = new Title(CommandMessages.RESTART_TITLE(ChatColor.RED + "--"));
+        Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(title));
+        runnable.cancel();
+        sendMessage(sender, CommandMessages.RESTART_CANCEL());
     }
 }

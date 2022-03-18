@@ -12,8 +12,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OpItemsCommand extends ActiveCraftCommand {
@@ -144,8 +142,7 @@ public class OpItemsCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return new ArrayList<>(Arrays.stream(new String[]{
-                "sword", "bow", "crossbow", "pickaxe", "axe", "shovel", "hoe", "helmet", "chestplate", "leggins", "boots",
-                "tools", "tools", "armor", "weapons", "all"}).toList());
+        return List.of("sword", "bow", "crossbow", "pickaxe", "axe", "shovel", "hoe", "helmet",
+                "chestplate", "leggins", "boots", "tools", "tools", "armor", "weapons", "all");
     }
 }

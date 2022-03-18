@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DrainCommand extends ActiveCraftCommand {
@@ -61,9 +62,7 @@ public class DrainCommand extends ActiveCraftCommand {
                 Block zplus1 = world.getBlockAt(block.getX(), block.getY(), block.getZ() + 1);
                 Block zminus1 = world.getBlockAt(block.getX(), block.getY(), block.getZ() - 1);
                 Block[] neighbourBlocks = new Block[]{xplus1, xminus1, yplus1, yminus1, zplus1, zminus1};
-                for (Block neighbourBlock : neighbourBlocks)
-                    if ((types.contains(neighbourBlock.getType())) && !toBeAdded.contains(neighbourBlock))
-                        toBeAdded.add(neighbourBlock);
+                Arrays.stream(neighbourBlocks).filter(neighbourBlock -> types.contains(neighbourBlock.getType()) && !toBeAdded.contains(neighbourBlock)).forEach(toBeAdded::add);
                 if (!removeWaterlogged) continue;
                 for (Block neighbourBlock : neighbourBlocks)
                     if (neighbourBlock.getBlockData() instanceof Waterlogged)
@@ -87,12 +86,7 @@ public class DrainCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 2 || args.length == 3) {
-            list.add("true");
-            list.add("false");
-        }
-        return list;
+        return args.length == 2 || args.length == 3 ? List.of("true", "false") : null;
     }
 
 }

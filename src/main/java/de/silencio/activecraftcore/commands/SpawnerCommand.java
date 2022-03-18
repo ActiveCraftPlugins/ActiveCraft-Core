@@ -13,8 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SpawnerCommand extends ActiveCraftCommand {
 
@@ -41,7 +43,8 @@ public class SpawnerCommand extends ActiveCraftCommand {
             checkPermission(sender, "spawner.others");
             Player target = getPlayer(args[0]);
             String mobName = parseEntityType(args[1]).name().toUpperCase();
-            if (!checkTargetSelf(sender, target, "spawner.self")) sendSilentMessage(target, CommandMessages.SPAWNER_GIVE_OTHERS_MESSAGE(sender, mobName.toLowerCase()));
+            if (!checkTargetSelf(sender, target, "spawner.self"))
+                sendSilentMessage(target, CommandMessages.SPAWNER_GIVE_OTHERS_MESSAGE(sender, mobName.toLowerCase()));
             ItemStack spawner = new ItemStack(Material.SPAWNER);
             BlockStateMeta spawnermeta = (BlockStateMeta) spawner.getItemMeta();
             CreatureSpawner spawnerblock = (CreatureSpawner) spawnermeta.getBlockState();
@@ -56,18 +59,11 @@ public class SpawnerCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-
         if (args.length == 1) {
-            for (EntityType entityType : EntityType.values())
-                list.add(entityType.name());
-            list.addAll(getBukkitPlayernames());
-        } else if (args.length == 2) {
-            if (Bukkit.getPlayer(args[0]) != null)
-                for (EntityType entityType : EntityType.values())
-                    if (!entityType.name().equals("UNKNOWN"))
-                        list.add(entityType.name());
+            return Stream.concat(Arrays.stream(EntityType.values()).map(EntityType::name).filter("UNKNOWN"::equalsIgnoreCase), getBukkitPlayernames().stream()).collect(Collectors.toList());
+        } else if (args.length == 2 && Bukkit.getPlayer(args[0]) != null) {
+            return Arrays.stream(EntityType.values()).map(EntityType::name).filter("UNKNOWN"::equalsIgnoreCase).collect(Collectors.toList());
         }
-        return list;
+        return null;
     }
 }

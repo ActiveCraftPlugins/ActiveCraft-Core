@@ -1,13 +1,10 @@
 package de.silencio.activecraftcore.commands;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.manager.VanishManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
-import de.silencio.activecraftcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -37,7 +34,7 @@ public class VanishCommand extends ActiveCraftCommand {
                         if (forPlayer != sender)
                             forPlayer.sendMessage(CommandMessages.NOW_VISIBLE_OTHERS(player));
                     } else if (forPlayer != sender)
-                        forPlayer.sendMessage(joinFormat.replace("%displayname%", StringUtils.joinQuitWithColor(player, profile.getNickname(), profile.getColorNick().name())));
+                        forPlayer.sendMessage(joinFormat.replace("%displayname%", profile.getNickname()));
             } else {
                 VanishManager.setVanished(player, true);
                 sendMessage(sender, CommandMessages.NOW_INVISIBLE());
@@ -46,7 +43,7 @@ public class VanishCommand extends ActiveCraftCommand {
                         if (forPlayer != sender)
                             forPlayer.sendMessage(CommandMessages.NOW_INVISIBLE_OTHERS(player));
                     } else if (forPlayer != sender)
-                        forPlayer.sendMessage(quitFormat.replace("%displayname%", StringUtils.joinQuitWithColor(player, profile.getNickname(), profile.getColorNick().name())));
+                        forPlayer.sendMessage(quitFormat.replace("%displayname%", profile.getNickname()));
             }
         } else if (args.length == 1) {
             checkPermission(sender, "vanish.others");
@@ -61,7 +58,7 @@ public class VanishCommand extends ActiveCraftCommand {
                         if (forPlayer != sender && forPlayer != target)
                             forPlayer.sendMessage(CommandMessages.NOW_VISIBLE_OTHERS(target));
                     } else if (forPlayer != sender && forPlayer != target)
-                        forPlayer.sendMessage(joinFormat.replace("%displayname%", StringUtils.joinQuitWithColor(target, profile.getNickname(), profile.getColorNick().name())));
+                        forPlayer.sendMessage(joinFormat.replace("%displayname%", profile.getNickname()));
             } else {
                 if (!checkTargetSelf(sender, target, "vanish.self")) target.sendMessage(CommandMessages.NOW_INVISIBLE());
                 sendMessage(sender, CommandMessages.NOW_INVISIBLE_OTHERS(target));
@@ -71,7 +68,7 @@ public class VanishCommand extends ActiveCraftCommand {
                         if (forPlayer != sender && forPlayer != target)
                             forPlayer.sendMessage(CommandMessages.NOW_INVISIBLE_OTHERS(target));
                     } else if (forPlayer != sender && forPlayer != target)
-                        forPlayer.sendMessage(quitFormat.replace("%displayname%", StringUtils.joinQuitWithColor(target, profile.getNickname(), profile.getColorNick().name())));
+                        forPlayer.sendMessage(quitFormat.replace("%displayname%", profile.getNickname()));
             }
         }
     }

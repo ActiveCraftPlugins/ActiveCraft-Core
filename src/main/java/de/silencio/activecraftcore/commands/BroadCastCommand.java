@@ -10,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -27,19 +26,18 @@ public class BroadCastCommand extends ActiveCraftCommand {
             case "broadcast", "bc" -> {
                 checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1, InvalidArgumentException.ErrorType.INCLUDE_MESSAGE);
                 String msg = combineArray(args, 0);
-                msg = ColorUtils.replaceColor(msg);
-                msg = ColorUtils.replaceFormat(msg);
+                msg = ColorUtils.replaceColorAndFormat(msg);
                 Bukkit.broadcastMessage(CommandMessages.BROADCAST_PREFIX() + ChatColor.RESET + " " + msg);
             }
             case "broadcastworld", "bcw" -> {
                 checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1, InvalidArgumentException.ErrorType.INCLUDE_MESSAGE);
                 String msg = combineArray(args, 0);
-                msg = ColorUtils.replaceColor(msg);
-                msg = ColorUtils.replaceFormat(msg);
+                msg = ColorUtils.replaceColorAndFormat(msg);
                 World world = getPlayer(sender).getWorld();
-                for (Player player : Bukkit.getOnlinePlayers())
-                    if (player.getWorld() == world)
-                        player.sendMessage(CommandMessages.BROADCAST_PREFIX() + ChatColor.RESET + " " + msg);
+                String finalMsg = msg;
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(player -> player.getWorld().equals(world))
+                        .forEach(player -> player.sendMessage(CommandMessages.BROADCAST_PREFIX() + ChatColor.RESET + " " + finalMsg));
             }
         }
     }

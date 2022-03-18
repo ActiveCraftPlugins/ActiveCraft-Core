@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LogCommand extends ActiveCraftCommand {
@@ -35,11 +34,6 @@ public class LogCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            list.add("on");
-            list.add("off");
-        }
-        return list;
+        return args.length == 1 ? List.of("on", "off") : null;
     }
 }

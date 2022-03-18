@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class XpCommand extends ActiveCraftCommand {
@@ -110,13 +109,8 @@ public class XpCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        List<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            list.add("add");
-            list.add("set");
-            list.add("clear");
-        }
-        if (args.length == 2) list.addAll(getBukkitPlayernames());
-        return list;
+        if (args.length == 1) return List.of("add", "set", "clear");
+        if (args.length == 2) return getBukkitPlayernames();
+        return null;
     }
 }

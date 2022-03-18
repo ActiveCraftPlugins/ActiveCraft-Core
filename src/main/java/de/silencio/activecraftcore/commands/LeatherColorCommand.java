@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LeatherColorCommand extends ActiveCraftCommand {
@@ -36,25 +35,7 @@ public class LeatherColorCommand extends ActiveCraftCommand {
     }
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            list.add("green");
-            list.add("black");
-            list.add("blue");
-            list.add("lime");
-            list.add("cyan");
-            list.add("red");
-            list.add("magenta");
-            list.add("pink");
-            list.add("orange");
-            list.add("light_gray");
-            list.add("gray");
-            list.add("light_blue");
-            list.add("purple");
-            list.add("yellow");
-            list.add("white");
-            list.add("brown");
-        }
-        return list;
+        return List.of("green", "black", "blue", "lime", "cyan", "red", "magenta", "pink",
+                "orange", "light_gray", "gray", "light_blue", "purple", "yellow", "white", "brown");
     }
 }

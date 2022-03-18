@@ -6,12 +6,10 @@ import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ComparisonType;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.config.Portal;
-import de.silencio.activecraftcore.utils.config.PortalsConfig;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.block.EndGateway;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,6 +17,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class PortalCommand extends ActiveCraftCommand {
 
@@ -75,11 +74,9 @@ public class PortalCommand extends ActiveCraftCommand {
     }
 
     public static void cleanPortals() {
-        for (Portal portal : ConfigManager.getPortalsConfig().getPortals().values()) {
-            World portalworld;
-            if ((portalworld = portal.world()) != null && portal.to_world() != null && portalworld.getBlockAt(portal.x(), portal.y(), portal.z()).getType() == Material.END_GATEWAY) return;
-            ConfigManager.getPortalsConfig().set(portal.name(), null, true);
-        }
+        ConfigManager.getPortalsConfig().getPortals().values().stream()
+                .filter(Predicate.not(portal -> portal.world() != null && portal.to_world() != null && portal.world().getBlockAt(portal.x(), portal.y(), portal.z()).getType() == Material.END_GATEWAY))
+                .forEach(portal -> ConfigManager.getPortalsConfig().set(portal.name(), null, true));
     }
 
     @Override

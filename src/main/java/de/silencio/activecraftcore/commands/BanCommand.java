@@ -1,6 +1,5 @@
 package de.silencio.activecraftcore.commands;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.manager.BanManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
@@ -23,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BanCommand extends ActiveCraftCommand {
 
@@ -48,7 +48,7 @@ public class BanCommand extends ActiveCraftCommand {
                 checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
                 if (BanManager.Name.isBanned(args[0])) {
                     BanManager.Name.unban(args[0]);
-                    sendMessage(sender, CommandMessages.UNBANNED_PLAYER(Profile.fromString(args[0]) != null ? Profile.fromString(args[0]).getName() : args[0]));
+                    sendMessage(sender, CommandMessages.UNBANNED_PLAYER(Profile.of(args[0]) != null ? Profile.of(args[0]).getName() : args[0]));
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.NOT_BANNED());
             }
             case "ban-ip" -> {
@@ -83,10 +83,8 @@ public class BanCommand extends ActiveCraftCommand {
                 if (!BanManager.Name.getBans().isEmpty() || !BanManager.IP.getBans().isEmpty()) {
 
                     ComponentBuilder componentBuilder = new ComponentBuilder();
-                    List<String> tempBanListName = new ArrayList<>();
-                    List<String> tempBanListIP = new ArrayList<>();
-                    for (BanEntry banEntry : BanManager.Name.getBans()) tempBanListName.add(banEntry.getTarget());
-                    for (BanEntry banEntry : BanManager.IP.getBans()) tempBanListIP.add(banEntry.getTarget());
+                    List<String> tempBanListName = BanManager.Name.getBans().stream().map(BanEntry::getTarget).collect(Collectors.toList());
+                    List<String> tempBanListIP = BanManager.IP.getBans().stream().map(BanEntry::getTarget).collect(Collectors.toList());
                     Collections.sort(tempBanListName);
                     Collections.sort(tempBanListIP);
 
@@ -127,12 +125,12 @@ public class BanCommand extends ActiveCraftCommand {
             case "unban" -> {
                 if (args.length != 1) return null;
                 if (BanManager.Name.getBans().isEmpty()) return null;
-                for (BanEntry banEntry : BanManager.Name.getBans()) list.add(banEntry.getTarget());
+                BanManager.Name.getBans().forEach(entry -> list.add(entry.getTarget()));
             }
             case "unban-ip" -> {
                 if (args.length != 1) return null;
                 if (BanManager.IP.getBans().isEmpty()) return null;
-                for (BanEntry banEntry : BanManager.IP.getBans()) list.add(banEntry.getTarget());
+                BanManager.Name.getBans().forEach(entry -> list.add(entry.getTarget()));
             }
         }
         return list;

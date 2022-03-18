@@ -10,7 +10,6 @@ import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +29,9 @@ public class LockdownCommand extends ActiveCraftCommand {
                 if (!ConfigManager.getMainConfig().isLockedDown()) {
                     LockdownManager.lockdown(true);
                     sendMessage(sender, CommandMessages.LOCKDOWN_ENABLED());
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (!player.hasPermission("activecraft.lockdown")) {
-                            player.kickPlayer(ConfigManager.getMainConfig().getLockdownKickMessage());
-                        }
-                    }
+                    Bukkit.getOnlinePlayers().stream()
+                            .filter(player -> player.hasPermission("activecraft.lockdown.bypass"))
+                            .forEach(player -> player.kickPlayer(ConfigManager.getMainConfig().getLockdownKickMessage()));
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.LOCKDOWN_ALREADY_ENABLED());
             } else if (args[0].equalsIgnoreCase("disable")) {
                 if (ConfigManager.getMainConfig().isLockedDown()) {

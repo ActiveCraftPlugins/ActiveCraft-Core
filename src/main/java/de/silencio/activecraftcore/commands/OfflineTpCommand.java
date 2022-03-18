@@ -11,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OfflineTpCommand extends ActiveCraftCommand {
@@ -49,6 +48,6 @@ public class OfflineTpCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return args.length == 1 ? new ArrayList<>(getProfileNames()) : null;
+        return args.length == 1 ? getProfileNames() : null;
     }
 }

@@ -1,8 +1,7 @@
 package de.silencio.activecraftcore.events;
 
-import lombok.*;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 

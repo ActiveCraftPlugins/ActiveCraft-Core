@@ -2,16 +2,15 @@ package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.CommandMessages;
-import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class PlayerlistCommand extends ActiveCraftCommand {
 
@@ -22,24 +21,13 @@ public class PlayerlistCommand extends ActiveCraftCommand {
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
         checkPermission(sender, "playerlist");
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean isFirst = true;
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            Profile profile = getProfile(player);
-            if (profile.isVanished()) {
-                if (sender.hasPermission("activecraft.vanish.see")) {
-                    if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");
-                    else isFirst = false;
-                    stringBuilder.append(player.getName() + ChatColor.GRAY + " " + ConfigManager.getMainConfig().getVanishTagFormat());
-                }
-            } else {
-                if (!isFirst) stringBuilder.append(ChatColor.WHITE + ", ");
-                else isFirst = false;
-                stringBuilder.append(player.getDisplayName());
-            }
-        }
         sendMessage(sender, CommandMessages.PLAYERLIST_HEADER());
-        sendMessage(sender, stringBuilder.toString());
+        sendMessage(sender, combineList(Bukkit.getOnlinePlayers().stream().map(ActiveCraftCommand::getProfile)
+                .map(profile -> profile.isVanished() ?
+                        sender.hasPermission("activecraft.vanish.see") ?
+                                profile.getName() + ChatColor.GRAY + " " + ConfigManager.getMainConfig().getVanishTagFormat() : ""
+                        : profile.getNickname())
+                .filter(Predicate.not(""::equals)).collect(Collectors.toList()), ChatColor.WHITE + ", "));
     }
 
     @Override

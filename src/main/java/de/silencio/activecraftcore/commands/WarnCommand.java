@@ -1,6 +1,5 @@
 package de.silencio.activecraftcore.commands;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.exceptions.InvalidArgumentException;
 import de.silencio.activecraftcore.manager.WarnManager;
@@ -8,10 +7,7 @@ import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ComparisonType;
-import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.config.Warn;
-import net.minecraft.server.commands.CommandMe;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -92,7 +88,7 @@ public class WarnCommand extends ActiveCraftCommand {
                     case "get", "remove" -> {
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target != null) {
-                            list.addAll(Profile.fromString(args[1]).getWarnList().values()
+                            list.addAll(Profile.of(args[1]).getWarnList().values()
                                     .stream().map(Warn::reason).collect(Collectors.toList()));
                         }
                     }

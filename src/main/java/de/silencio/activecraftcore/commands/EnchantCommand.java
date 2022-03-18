@@ -47,9 +47,9 @@ public class EnchantCommand extends ActiveCraftCommand {
         switch (args[0].toLowerCase()) {
             case "clear" -> {
                 if (player.getInventory().getItemInMainHand().getEnchantments().size() > 0) {
-                    for (Enchantment enchantment : Enchantment.values())
-                        if (player.getInventory().getItemInMainHand().containsEnchantment(enchantment))
-                            player.getInventory().getItemInMainHand().removeEnchantment(enchantment);
+                    Arrays.stream(Enchantment.values())
+                            .filter(enchantment -> player.getInventory().getItemInMainHand().containsEnchantment(enchantment))
+                            .forEach(player.getInventory().getItemInMainHand()::removeEnchantment);
                     sendMessage(sender, CommandMessages.CLEARED_ALL_ENCHANTMENTS());
                     player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f);
                 } else sendMessage(sender, Errors.WARNING() + CommandMessages.NOT_ENCHANTED());
@@ -132,7 +132,6 @@ public class EnchantCommand extends ActiveCraftCommand {
                     default -> null;
                 };
 
-
                 if (enchantment == null) {
                     sendMessage(sender, Errors.WARNING() + ChatColor.GRAY + "Invalid enchantment!");
                     return;
@@ -151,12 +150,10 @@ public class EnchantCommand extends ActiveCraftCommand {
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
         ArrayList<String> list = new ArrayList<>();
         if (args.length == 1) {
-            for (Enchantment enchantment : Enchantment.values())
-                list.add(enchantment.getName());
+            Arrays.stream(Enchantment.values()).map(Enchantment::getName).forEach(list::add);
             list.add("clear");
             list.add("glint");
-        }
-        if (args.length == 2 && args[0].equalsIgnoreCase("glint")) {
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("glint")) {
             list.add("true");
             list.add("false");
         }

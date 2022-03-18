@@ -5,7 +5,9 @@ import de.silencio.activecraftcore.exceptions.*;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.*;
+import de.silencio.activecraftcore.utils.ColorUtils;
+import de.silencio.activecraftcore.utils.ComparisonType;
+import de.silencio.activecraftcore.utils.IntegerUtils;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
@@ -143,10 +145,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static boolean isValidCommand(String input) {
-        for (String registeredCommand : Bukkit.getCommandMap().getKnownCommands().keySet())
-            if (input.replace("/", "").equals(registeredCommand))
-                return true;
-        return false;
+        return Bukkit.getCommandMap().getKnownCommands().keySet().stream().anyMatch(cmd -> input.replace("/", "").equals(cmd));
     }
 
     public static boolean checkTargetSelf(CommandSender sender, CommandSender target, String permission) throws SelfTargetException {
@@ -207,8 +206,8 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static Profile getProfile(String playername) throws InvalidPlayerException {
-        if (Profile.fromString(playername) == null) throw new InvalidPlayerException(playername);
-        return Profile.fromString(playername);
+        if (Profile.of(playername) == null) throw new InvalidPlayerException(playername);
+        return Profile.of(playername);
     }
 
     public static Color getColor(String input) throws InvalidColorException {
@@ -225,7 +224,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     public static Profile getProfile(Player player) {
-        return Profile.fromString(player.getName());
+        return Profile.of(player.getName());
     }
 
     public static void sendMessage(CommandSender receiver, String message) {
@@ -295,13 +294,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> list = onTab(sender, command, alias, args);
-        if (list == null) list = new ArrayList<>();
-        ArrayList<String> completerList = new ArrayList<>();
-        String currentarg = args[args.length - 1].toLowerCase();
-        for (String s : list)
-            if (s.toLowerCase().startsWith(currentarg))
-                completerList.add(s);
-        return completerList;
+        return list != null ? list.stream().filter(s -> s.toLowerCase().startsWith(args[args.length - 1].toLowerCase())).collect(Collectors.toList()) : new ArrayList<>();
     }
 
     protected List<String> getBukkitPlayernames() {

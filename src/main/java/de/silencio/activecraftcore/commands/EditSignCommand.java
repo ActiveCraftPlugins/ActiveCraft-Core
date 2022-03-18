@@ -23,7 +23,7 @@ public class EditSignCommand extends ActiveCraftCommand {
                 checkPermission(sender, "editsign.self");
                 Player player = getPlayer(sender);
                 Profile profile = getProfile(player);
-                if (profile.canEditSign()) {
+                if (profile.isEditSign()) {
                     profile.set(Profile.Value.EDIT_SIGN, false);
                     sendMessage(sender, CommandMessages.DISABLED());
                 } else {
@@ -36,7 +36,7 @@ public class EditSignCommand extends ActiveCraftCommand {
                 Player target = getPlayer(args[0]);
                 Profile profile = getProfile(target);
                 checkTargetSelf(sender, target, "editsign.self");
-                if (profile.canEditSign()) {
+                if (profile.isEditSign()) {
                     profile.set(Profile.Value.EDIT_SIGN, false);
                     sendMessage(sender, CommandMessages.DISABLED_OTHERS(target));
                     sendSilentMessage(target, CommandMessages.DISABLED_OTHERS_MESSAGE(sender));

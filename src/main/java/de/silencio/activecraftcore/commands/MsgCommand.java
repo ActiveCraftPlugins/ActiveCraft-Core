@@ -72,6 +72,6 @@ public class MsgCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? new ArrayList<>(getProfileNames()) : null;
+        return args.length == 1 ? getProfileNames() : null;
     }
 }

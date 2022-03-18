@@ -9,7 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SudoCommand extends ActiveCraftCommand {
 
@@ -23,32 +25,16 @@ public class SudoCommand extends ActiveCraftCommand {
         Player target = getPlayer(args[0]);
         String executedCommand = combineArray(args, 1);
         if (isValidCommand(executedCommand)) target.performCommand(executedCommand);
-        else sendMessage(sender, Errors.WARNING() + "Invalid Command!");
+        else sendMessage(sender, Errors.INVALID_COMMAND());
     }
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-
-        if (args.length == 1) list.addAll(getBukkitPlayernames());
-        else if (args.length == 2) {
-            if (ConfigManager.getMainConfig().isHideCommandsAfterPluginName()) {
-                List<String> pluginNames = new ArrayList<>();
-                pluginNames.add("minecraft");
-                pluginNames.add("bukkit");
-                pluginNames.add("spigot");
-                pluginNames.add("paper");
-                list.addAll(getBukkitPlayernames());
-                List<String> toBeRemoved = new ArrayList<>();
-                for (String cmd : Bukkit.getCommandMap().getKnownCommands().keySet())
-                    for (String pluginName : pluginNames)
-                        if (cmd.startsWith(pluginName + ":"))
-                            toBeRemoved.add(cmd);
-                for (String cmd : Bukkit.getCommandMap().getKnownCommands().keySet())
-                    if (!toBeRemoved.contains(cmd))
-                        list.add(cmd);
-            }
-        }
-        return list;
+        if (args.length == 1) return getBukkitPlayernames();
+        if (!(args.length == 2 && ConfigManager.getMainConfig().isHideCommandsAfterPluginName())) return null;
+        List<String> pluginNames = new ArrayList<>(List.of("minecraft", "bukkit", "spigot", "paper"));
+        Arrays.stream(Bukkit.getPluginManager().getPlugins()).forEach(plugin -> pluginNames.add(plugin.getName().toLowerCase()));
+        return Bukkit.getCommandMap().getKnownCommands().keySet().stream()
+                .filter(cmd -> pluginNames.stream().noneMatch(pluginName -> cmd.startsWith(pluginName + ":"))).collect(Collectors.toList());
     }
 }

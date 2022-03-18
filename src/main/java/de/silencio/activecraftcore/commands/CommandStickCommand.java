@@ -4,7 +4,6 @@ import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.utils.ColorUtils;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,10 +22,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandStickCommand extends ActiveCraftCommand implements Listener {
 
@@ -39,14 +39,7 @@ public class CommandStickCommand extends ActiveCraftCommand implements Listener 
         checkPermission(sender, "commandstick");
         Player player = getPlayer(sender);
 
-        boolean isValidCommand = false;
-        for (String registeredCommand : Bukkit.getCommandMap().getKnownCommands().keySet())
-            if (args[0].replace("/", "").equals(registeredCommand)) {
-                isValidCommand = true;
-                break;
-            }
-
-        if (isValidCommand) {
+        if (isValidCommand(args[0])) {
             ItemStack commandStick = new ItemStack(Material.STICK);
             ItemMeta commandStickMeta = commandStick.getItemMeta();
             commandStickMeta.setDisplayName(ChatColor.GOLD + "Command Stick");
@@ -59,7 +52,7 @@ public class CommandStickCommand extends ActiveCraftCommand implements Listener 
             commandStickMeta.setLore(lore);
             commandStick.setItemMeta(commandStickMeta);
             player.getInventory().addItem(commandStick);
-        } else sendMessage(sender, Errors.WARNING() + "Invalid Command!");
+        } else sendMessage(sender, Errors.INVALID_COMMAND());
     }
 
 
@@ -146,31 +139,10 @@ public class CommandStickCommand extends ActiveCraftCommand implements Listener 
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 0) return list;
-        if (args.length == 1) {
-
-            if (ConfigManager.getMainConfig().isHideCommandsAfterPluginName()) {
-
-                List<String> pluginNames = new ArrayList<>();
-                pluginNames.add("minecraft");
-                pluginNames.add("bukkit");
-                pluginNames.add("spigot");
-                pluginNames.add("paper");
-                for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-                    pluginNames.add(plugin.getName().toLowerCase());
-
-                List<String> toBeRemoved = new ArrayList<>();
-
-                for (String cmd : Bukkit.getCommandMap().getKnownCommands().keySet())
-                    for (String pluginName : pluginNames)
-                        if (cmd.startsWith(pluginName + ":"))
-                            toBeRemoved.add(cmd);
-                for (String cmd : Bukkit.getCommandMap().getKnownCommands().keySet())
-                    if (!toBeRemoved.contains(cmd))
-                        list.add(cmd);
-            }
-        }
-        return list;
+        if (!(args.length == 1 && ConfigManager.getMainConfig().isHideCommandsAfterPluginName())) return null;
+        List<String> pluginNames = new ArrayList<>(List.of("minecraft", "bukkit", "spigot", "paper"));
+        Arrays.stream(Bukkit.getPluginManager().getPlugins()).forEach(plugin -> pluginNames.add(plugin.getName().toLowerCase()));
+        return Bukkit.getCommandMap().getKnownCommands().keySet().stream()
+                .filter(cmd -> pluginNames.stream().noneMatch(pluginName -> cmd.startsWith(pluginName + ":"))).collect(Collectors.toList());
     }
 }

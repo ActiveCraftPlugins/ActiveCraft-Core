@@ -2,6 +2,7 @@ package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
 import de.silencio.activecraftcore.messages.CommandMessages;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,19 +17,18 @@ public class SuicideCommand extends ActiveCraftCommand {
         super("suicide");
     }
 
+    @Getter
     private static final List<Player> suiciders = new ArrayList<>();
 
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        if (args.length == 0 ) {
+        if (args.length == 0) {
             checkPermission(sender, "suicide.self");
             Player playerdied = getPlayer(sender);
             suiciders.add(playerdied);
             playerdied.setHealth(0);
-            sendMessage(sender, CommandMessages. SUICIDE());
-            for (Player player : Bukkit.getOnlinePlayers())
-                if (playerdied != player)
-                    sendMessage(player, CommandMessages.BROADCAST_SUICIDE(playerdied));
+            sendMessage(sender, CommandMessages.SUICIDE());
+            Bukkit.getOnlinePlayers().stream().filter(player -> player != playerdied).forEach(player -> sendMessage(player, CommandMessages.BROADCAST_SUICIDE(getProfile(player))));
         } else if (args.length == 1) {
             checkPermission(sender, "suicide.others");
             Player target = getPlayer(args[0]);
@@ -36,14 +36,8 @@ public class SuicideCommand extends ActiveCraftCommand {
             suiciders.add(target);
             target.setHealth(0);
             sendMessage(sender, CommandMessages.SUICIDE_OTHERS(target));
-            for (Player player : Bukkit.getOnlinePlayers())
-                if (player != target)
-                    player.sendMessage(CommandMessages.BROADCAST_SUICIDE(target));
+            Bukkit.getOnlinePlayers().stream().filter(player -> player != target).forEach(player -> sendMessage(player, CommandMessages.BROADCAST_SUICIDE(getProfile(target))));
         }
-    }
-
-    public static List<Player> getSuiciders() {
-        return suiciders;
     }
 
     @Override

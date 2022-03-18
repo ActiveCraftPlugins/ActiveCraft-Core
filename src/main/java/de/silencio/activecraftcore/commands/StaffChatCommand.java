@@ -21,9 +21,7 @@ public class StaffChatCommand extends ActiveCraftCommand {
     @Override
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
         checkPermission(sender, "staffchat");
-        String message = combineArray(args);
-        message = ColorUtils.replaceColor(message);
-        message = ColorUtils.replaceFormat(message);
+        String message = ColorUtils.replaceColorAndFormat(combineArray(args));
         StaffChatMessageEvent event = new StaffChatMessageEvent(sender, message);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;

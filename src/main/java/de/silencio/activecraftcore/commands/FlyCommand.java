@@ -26,11 +26,11 @@ public class FlyCommand extends ActiveCraftCommand {
                         checkPermission(sender, "fly.self");
                         Player player = getPlayer(sender);
                         Profile profile = getProfile(player);
-                        if (profile.canFly()) {
+                        if (profile.isFly()) {
                             profile.set(Profile.Value.FLY, false);
                             player.setAllowFlight(false);
                             sendMessage(sender, CommandMessages.DISABLE_FLY());
-                        } else if (!profile.canFly()) {
+                        } else if (!profile.isFly()) {
                             player.setAllowFlight(true);
                             profile.set(Profile.Value.FLY, true);
                             sendMessage(sender, CommandMessages.ENABLE_FLY());
@@ -40,12 +40,12 @@ public class FlyCommand extends ActiveCraftCommand {
                         checkPermission(sender, "fly.others");
                         Player target = getPlayer(args[0]);
                         Profile profile = getProfile(target);
-                        if (profile.canFly()) {
+                        if (profile.isFly()) {
                             if (!checkTargetSelf(sender, target, "fly.self")) sendSilentMessage(target, CommandMessages.DISABLED_FLY_OTHERS_MESSAGE(sender));
                             target.setAllowFlight(false);
                             sendMessage(sender, CommandMessages.DISABLE_FLY_OTHERS(target));
                             profile.set(Profile.Value.FLY, false);
-                        } else if (!profile.canFly()) {
+                        } else if (!profile.isFly()) {
                             if (!checkTargetSelf(sender, target, "fly.self")) sendSilentMessage(target, CommandMessages.ENABLE_FLY_OTHERS_MESSAGE(sender));
                             target.setAllowFlight(true);
                             sendMessage(sender, CommandMessages.ENABLE_FLY_OTHERS(target));

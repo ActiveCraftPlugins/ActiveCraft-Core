@@ -8,8 +8,9 @@ import de.silencio.activecraftcore.messages.Language;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LanguageCommand extends ActiveCraftCommand {
 
@@ -35,11 +36,7 @@ public class LanguageCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        if (args.length == 1)
-            for (Language language : Language.values())
-                list.add(language.getCode());
-        return list;
+        return args.length == 1 ? Arrays.stream(Language.values()).map(Language::getCode).collect(Collectors.toList()) : null;
     }
 }
 

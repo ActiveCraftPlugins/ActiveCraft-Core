@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LastOnlineCommand extends ActiveCraftCommand {
@@ -32,6 +31,6 @@ public class LastOnlineCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? new ArrayList<>(getProfileNames()) : null;
+        return args.length == 1 ? getProfileNames() : null;
     }
 }
