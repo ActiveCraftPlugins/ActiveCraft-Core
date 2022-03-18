@@ -1,27 +1,31 @@
 package de.silencio.activecraftcore.guicreator;
 
 import de.silencio.activecraftcore.messages.GuiMessages;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class GuiBackItem extends GuiItem {
 
-    private int position;
-
-    public GuiBackItem(int position) {
+    public GuiBackItem() {
         super(Material.ARROW);
         ItemMeta itemMeta = this.getItemMeta();
-        itemMeta.setDisplayName(ChatColor.GOLD + GuiMessages.BACK_ARROW());
+        setDisplayName(ChatColor.GOLD + GuiMessages.BACK_ARROW());
         this.setItemMeta(itemMeta);
-        this.position = position;
+        this.addClickListener(guiClickEvent -> {
+            Player player = (Player) guiClickEvent.getView().getPlayer();
+            if (GuiNavigator.getGuiStack(player) != null && GuiNavigator.getGuiStack(player).size() >= 1)
+                GuiNavigator.pop(player);
+        });
     }
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
 }

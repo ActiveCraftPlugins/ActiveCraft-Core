@@ -1,24 +1,26 @@
 package de.silencio.activecraftcore.guicreator;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
+import lombok.Data;
 import org.bukkit.inventory.Inventory;
 
 import java.util.Random;
 
+@Data
 public class Gui {
 
     private String name;
     private int id;
-    private GuiCreator associatedGuiCreator;
+    private final GuiCreator associatedGuiCreator;
     private Inventory inventory;
 
     public Gui(Inventory inventory, GuiCreator guiCreator) {
         this.inventory = inventory;
         this.associatedGuiCreator = guiCreator;
-        int randInt = newRandom(10000);
+        int randInt = newRandom(99999);
         while (true) {
             if (ActiveCraftCore.getGuiList().containsKey(randInt)) {
-                randInt = newRandom(10000);
+                randInt = newRandom(99999);
             } else {
                 ActiveCraftCore.getGuiList().put(randInt, this);
                 break;
@@ -32,48 +34,19 @@ public class Gui {
         return random.nextInt(bound);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-        update();
-    }
-
-    public int getId() {
-        return id;
-    }
-
     public void setId(int id) {
+        ActiveCraftCore.getGuiList().remove(this.id);
         this.id = id;
-        update();
+        ActiveCraftCore.getGuiList().put(id, this);
     }
 
-    public GuiCreator getAssociatedGuiCreator() {
-        return associatedGuiCreator;
-    }
-
-    public void setAssociatedGuiCreator(GuiCreator associatedGuiCreator) {
-        this.associatedGuiCreator = associatedGuiCreator;
-        update();
+    public static Gui ofInventory(Inventory inventory) {
+        return ActiveCraftCore.getGuiList().values().stream()
+                .filter(gui -> gui.getInventory() == inventory)
+                .findAny().orElse(null);
     }
 
     public Gui rebuild() {
         return getAssociatedGuiCreator().build();
     }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
-        update();
-    }
-
-    public void update() {
-        ActiveCraftCore.getGuiList().put(id, this);
-    }
-
 }

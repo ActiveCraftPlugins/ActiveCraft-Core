@@ -1,21 +1,25 @@
 package de.silencio.activecraftcore.guicreator;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.meta.SkullMeta;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class GuiPlayerHead extends GuiItem {
 
-    private int position;
-
-    public GuiPlayerHead(int position) {
+    public GuiPlayerHead() {
         super(Material.PLAYER_HEAD);
-        this.position = position;
     }
 
-    public GuiPlayerHead(OfflinePlayer owningPlayer, int position) {
+    public GuiPlayerHead(OfflinePlayer owningPlayer) {
         super(Material.PLAYER_HEAD);
-        this.position = position;
         this.setOwner(owningPlayer);
     }
     
@@ -24,13 +28,5 @@ public class GuiPlayerHead extends GuiItem {
         skullMeta.setOwningPlayer(player);
         this.setItemMeta(skullMeta);
         return this;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
     }
 }

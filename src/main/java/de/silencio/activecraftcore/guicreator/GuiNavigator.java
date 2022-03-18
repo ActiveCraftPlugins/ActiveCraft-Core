@@ -1,61 +1,42 @@
 package de.silencio.activecraftcore.guicreator;
 
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
 import java.util.Stack;
 
 public class GuiNavigator {
 
-    private static HashMap<Player, Stack<Inventory>> playerGuiStack = new HashMap<>();
+    private static final HashMap<Player, Stack<Gui>> playerGuiStack = new HashMap<>();
 
-    public static void push(Player player, Inventory inventory) {
-        if (getGuiStack(player) == null) {
-            Stack<Inventory> inventoryStack = new Stack<>();
-            inventoryStack.add(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        } else {
-            Stack<Inventory> inventoryStack = getGuiStack(player);
-            inventoryStack.add(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        }
+    public static void push(Player player, Gui gui) {
+        if (getGuiStack(player) == null)
+            playerGuiStack.put(player, new Stack<>());
+        getGuiStack(player).push(gui);
+        player.openInventory(gui.getInventory());
     }
 
-    public static void pushReplacement(Player player, Inventory inventory) {
-        if (getGuiStack(player) == null) {
-            Stack<Inventory> inventoryStack = new Stack<>();
-            inventoryStack.push(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        } else {
-            Stack<Inventory> inventoryStack = getGuiStack(player);
-            inventoryStack.pop();
-            inventoryStack.push(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        }
+    public static void pushReplacement(Player player, Gui gui) {
+        if (getGuiStack(player) == null)
+            playerGuiStack.put(player, new Stack<>());
+        getGuiStack(player).pop();
+        getGuiStack(player).push(gui);
+        player.openInventory(gui.getInventory());
     }
 
-    public static void pushAndRemoveUntil(Player player, Inventory inventory) {
-        if (getGuiStack(player) == null) {
-            Stack<Inventory> inventoryStack = new Stack<>();
-            inventoryStack.push(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        } else {
-            Stack<Inventory> inventoryStack = getGuiStack(player);
-            inventoryStack.clear();
-            inventoryStack.push(inventory);
-            playerGuiStack.put(player, inventoryStack);
-        }
+    public static void pushAndRemoveUntil(Player player, Gui gui) {
+        if (getGuiStack(player) == null)
+            playerGuiStack.put(player, new Stack<>());
+        getGuiStack(player).clear();
+        getGuiStack(player).push(gui);
+        player.openInventory(gui.getInventory());
     }
 
-    public static Inventory pop(Player player) {
-        Inventory topInv = null;
-        if (getGuiStack(player) != null) {
-            Stack<Inventory> inventoryStack = getGuiStack(player);
-            topInv = inventoryStack.pop();
-            playerGuiStack.put(player, inventoryStack);
-        }
-        return topInv;
+    public static Gui pop(Player player) {
+        getGuiStack(player).pop();
+        Gui topGui = getGuiStack(player).peek();
+        player.openInventory(topGui.rebuild().getInventory());
+        return topGui;
     }
 
     public void remove(Player player) {
@@ -63,12 +44,10 @@ public class GuiNavigator {
     }
 
     public void clear(Player player) {
-        Stack<Inventory> playerGuiStack = getGuiStack(player);
-        playerGuiStack.clear();
-        GuiNavigator.playerGuiStack.put(player, playerGuiStack);
+        GuiNavigator.playerGuiStack.put(player, new Stack<>());
     }
 
-    public static Stack<Inventory> getGuiStack(Player player) {
+    public static Stack<Gui> getGuiStack(Player player) {
         return playerGuiStack.get(player);
     }
 }

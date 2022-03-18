@@ -1,41 +1,53 @@
 package de.silencio.activecraftcore.guicreator;
 
 import de.silencio.activecraftcore.messages.GuiMessages;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class GuiConfirmation extends GuiCreator {
 
-    private String identifier;
-    private String title;
+    private final String title;
+    private GuiAction guiAction;
 
     public GuiConfirmation(String identifier) {
-        super("confirmation_" + identifier, 3, GuiMessages.CONFIRMATION_TITLE());
-        this.identifier = identifier;
-        this.title = GuiMessages.CONFIRMATION_TITLE();
-        fillBackground(true);
-        setItemInSlot(new GuiItem(Material.LIME_CONCRETE).setDisplayName(GuiMessages.CONFIRM_ITEM()), 11);
-        setItemInSlot(new GuiItem(Material.RED_CONCRETE).setDisplayName(GuiMessages.CANCEL_ITEM()), 15);
+        this(identifier, GuiMessages.CONFIRMATION_TITLE());
     }
 
     public GuiConfirmation(String identifier, String title) {
         super("confirmation_" + identifier, 3, title);
-        this.identifier = identifier;
         this.title = title;
         fillBackground(true);
-        setItemInSlot(new GuiItem(Material.LIME_CONCRETE).setDisplayName(GuiMessages.CONFIRM_ITEM()), 11);
-        setItemInSlot(new GuiItem(Material.RED_CONCRETE).setDisplayName(GuiMessages.CANCEL_ITEM()), 15);
+        setItem(new GuiItem(Material.LIME_CONCRETE)
+                .setDisplayName(GuiMessages.CONFIRM_ITEM())
+                .addClickListener(guiClickEvent -> {
+                    Player player = guiClickEvent.getPlayer();
+                    if (guiAction != null) guiAction.perform();
+                    if (GuiNavigator.getGuiStack(player) != null && GuiNavigator.getGuiStack(player).size() >= 1)
+                        GuiNavigator.pop(player);
+                }), 11);
+        setItem(new GuiItem(Material.RED_CONCRETE)
+                .setDisplayName(GuiMessages.CANCEL_ITEM())
+                .addClickListener(guiClickEvent -> {
+                    Player player = guiClickEvent.getPlayer();
+                    if (GuiNavigator.getGuiStack(player) != null)
+                        if (GuiNavigator.getGuiStack(player).size() >= 1)
+                            GuiNavigator.pop(player);
+                }), 15);
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public GuiCreator performAfterConfirm(GuiAction guiAction) {
+        this.guiAction = guiAction;
+        return this;
     }
 
     @Override
     public void refresh() {
-    }
-
-    public String getTitle() {
-        return title;
     }
 }
 

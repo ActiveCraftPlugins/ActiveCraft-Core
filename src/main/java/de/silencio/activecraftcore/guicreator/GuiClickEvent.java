@@ -1,9 +1,10 @@
 package de.silencio.activecraftcore.guicreator;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
+import de.silencio.activecraftcore.events.ActiveCraftEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,14 +14,15 @@ import org.bukkit.inventory.InventoryView;
 
 import java.util.List;
 
-public class GuiClickEvent extends Event {
-
-    private static final HandlerList handlers = new HandlerList();
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class GuiClickEvent extends ActiveCraftEvent {
 
     private boolean cancelled;
     private GuiItem currentItem;
     private ClickType click;
     private int slot;
+    private Gui gui;
     private Inventory clickedInventory;
     private InventoryAction action;
     private GuiItem cursor;
@@ -29,6 +31,7 @@ public class GuiClickEvent extends Event {
     private InventoryType.SlotType slotType;
     private List<HumanEntity> viewers;
     private InventoryView view;
+    private Player player;
     private InventoryClickEvent invClickEvent;
 
     public GuiClickEvent(GuiItem guiItem, InventoryClickEvent event) {
@@ -42,84 +45,10 @@ public class GuiClickEvent extends Event {
         this.slotType = event.getSlotType();
         this.viewers = event.getViewers();
         this.view = event.getView();
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(boolean cancel) {
-        cancelled = cancel;
-        invClickEvent.setCancelled(cancel);
+        this.player = (Player) view.getPlayer();
     }
 
     public Gui getGui() {
-        for (int id : ActiveCraftCore.getGuiList().keySet()) {
-            Gui gui = ActiveCraftCore.getGuiById(id);
-            if (clickedInventory == gui.getInventory()) {
-                return gui;
-            }
-        }
-        return null;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public GuiItem getCurrentItem() {
-        return currentItem;
-    }
-
-    public void setCurrentItem(GuiItem currentItem) {
-        this.currentItem = currentItem;
-    }
-
-    public ClickType getClick() {
-        return click;
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public Inventory getClickedInventory() {
-        return clickedInventory;
-    }
-
-    public InventoryAction getAction() {
-        return action;
-    }
-
-    public GuiItem getCursor() {
-        return cursor;
-    }
-
-    public void setCursor(GuiItem cursor) {
-        this.cursor = cursor;
-    }
-
-    public int getHotbarButton() {
-        return hotbarButton;
-    }
-
-    public int getRawSlot() {
-        return rawSlot;
-    }
-
-    public InventoryType.SlotType getSlotType() {
-        return slotType;
-    }
-
-    public List<HumanEntity> getViewers() {
-        return viewers;
-    }
-
-    public InventoryView getView() {
-        return view;
+        return gui != null ? gui : (gui = Gui.ofInventory(clickedInventory));
     }
 }

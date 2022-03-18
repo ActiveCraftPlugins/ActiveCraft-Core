@@ -2,63 +2,59 @@ package de.silencio.activecraftcore.guicreator;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.messages.GuiMessages;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.Permissible;
 
+import java.util.HashMap;
+
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public abstract class GuiCreator {
 
-    private Inventory inventory;
+    protected final Inventory inventory;
+    protected final String title;
+    protected final int rows;
+    protected final InventoryHolder holder;
+    protected final String identifier;
+    protected GuiPlayerHead playerHead;
+    protected GuiBackItem backItem;
+    protected GuiCloseItem closeItem;
+    protected boolean backgroundFilled;
+    protected GuiItem backgroundItem;
+    protected GuiItem[] items = new GuiItem[55];
+    protected HashMap<ItemStack, GuiItem> correspondingGuiItem = new HashMap<>();
 
-    private String title;
-    private String internalName;
-    private GuiPlayerHead playerHead;
-    private GuiBackItem backItem;
-    private GuiCloseItem closeItem;
-    private GuiNoPermissionItem noPermissionItem;
-    private boolean backgroundFilled;
-    private GuiItem backgroundItem;
-    private boolean bordered;
-    private int rows;
-    private GuiItem[] itemInSlot = new GuiItem[55];
-    private InventoryHolder holder;
-
-    public GuiCreator(String internalName, int rows) {
-        this(internalName, rows, null, GuiMessages.DEFAULT_GUI_TITLE());
+    public GuiCreator(String identifier, int rows) {
+        this(identifier, rows, null, GuiMessages.DEFAULT_GUI_TITLE());
     }
 
-    public GuiCreator(String internalName, int rows, InventoryHolder holder) {
-        this(internalName, rows, holder, GuiMessages.DEFAULT_GUI_TITLE());
+    public GuiCreator(String identifier, int rows, InventoryHolder holder) {
+        this(identifier, rows, holder, GuiMessages.DEFAULT_GUI_TITLE());
     }
 
-    public GuiCreator(String internalName, int rows, String title) {
-        this(internalName, rows, null, title);
+    public GuiCreator(String identifier, int rows, String title) {
+        this(identifier, rows, null, title);
     }
 
-    public GuiCreator(String internalName, int rows, InventoryHolder holder, String title) {
+    public GuiCreator(String identifier, int rows, InventoryHolder holder, String title) {
         this.title = title;
-        this.rows = rows;
+        this.rows = rows == 0 ? 1 : Math.min(rows, 6);
         this.holder = holder;
-        this.internalName = internalName;
-        this.backgroundItem = new GuiItem(Material.GRAY_STAINED_GLASS_PANE).setDisplayName(" ");
+        this.identifier = identifier;
+        this.backgroundItem = new GuiItem(Material.GRAY_STAINED_GLASS_PANE).setDisplayName(" ").setClickSound(null);
         inventory = Bukkit.createInventory(holder, 9 * rows, title);
-        ActiveCraftCore.getGuiDataMap().put(this, new GuiData());
     }
 
     public abstract void refresh();
-
-    public String getTitle() {
-        return title;
-    }
-
-    public GuiPlayerHead getPlayerHead() {
-        return playerHead;
-    }
-
-    public boolean isBackgroundFilled() {
-        return backgroundFilled;
-    }
 
     public GuiCreator fillBackground(boolean backgroundFilled) {
         this.backgroundFilled = backgroundFilled;
@@ -71,97 +67,94 @@ public abstract class GuiCreator {
         return this;
     }
 
-    public GuiItem getBackgroundItem() {
-        return backgroundItem;
-    }
-
-    public void setBackgroundItem(GuiItem backgroundItem) {
-        this.backgroundItem = backgroundItem;
-    }
-
-    public GuiCloseItem getCloseItem() {
-        return closeItem;
-    }
-
-    public GuiCreator setCloseItem(GuiCloseItem closeItem) {
+    public GuiCreator setCloseItem(GuiCloseItem closeItem, int slot) {
         this.closeItem = closeItem;
+        setItem(closeItem, slot);
         return this;
     }
 
-    public GuiCreator setPlayerHead(GuiPlayerHead guiPlayerHead) {
+    public GuiCreator setCloseItem(int slot) {
+        setCloseItem(new GuiCloseItem(), slot);
+        return this;
+    }
+
+    public GuiCreator setPlayerHead(GuiPlayerHead guiPlayerHead, int slot) {
         this.playerHead = guiPlayerHead;
+        setItem(playerHead, slot);
         return this;
     }
 
-    public GuiBackItem getBackItem() {
-        return backItem;
+    public GuiCreator setPlayerHead(OfflinePlayer offlinePlayer, int slot) {
+        this.playerHead = new GuiPlayerHead(offlinePlayer);
+        setItem(playerHead, slot);
+        return this;
     }
 
-    public GuiCreator setBackItem(GuiBackItem guiBackItem) {
+    public GuiCreator setPlayerHead(int slot) {
+        setPlayerHead(new GuiPlayerHead(), slot);
+        return this;
+    }
+
+    public GuiCreator setBackItem(GuiBackItem guiBackItem, int slot) {
         this.backItem = guiBackItem;
+        setItem(backItem, slot);
         return this;
     }
 
-    public int getRows() {
-        return rows;
-    }
-
-    public GuiItem getItemInSlot(int slot) {
-        return itemInSlot[slot];
-    }
-
-    public GuiCreator setItemInSlot(GuiItem itemInSlot, int slot) {
-        this.itemInSlot[slot] = itemInSlot;
+    public GuiCreator setBackItem(int slot) {
+        setBackItem(new GuiBackItem(), slot);
         return this;
     }
 
-    public Inventory getInventory() {
-        return inventory;
+    public GuiItem getItem(int slot) {
+        return items[slot];
     }
 
-    public String getInternalName() {
-        return internalName;
+    public GuiCreator setItem(GuiItem item, int slot) {
+        this.items[slot] = item;
+        return this;
     }
 
-    public void setInternalName(String internalName) {
-        this.internalName = internalName;
-    }
-
-    public InventoryHolder getHolder() {
-        return holder;
+    public GuiCreator setItem(GuiItem item, int slot, Permissible permissible, String... permissions) {
+        for (String perm : permissions) {
+            if (permissible.hasPermission(perm)) {
+                return setItem(item, slot);
+            }
+        }
+        return setItem(new GuiNoPermissionItem(), slot);
     }
 
     public Gui build() {
         refresh();
-        if (rows == 0) rows = 1;
-        if (rows >= 6) rows = 6;
 
-        GuiCreateEvent event = new GuiCreateEvent(this, inventory.getHolder(), rows, title, playerHead, backItem, closeItem, backgroundFilled, itemInSlot);
+        GuiCreateEvent event = new GuiCreateEvent(this);
         Bukkit.getPluginManager().callEvent(event);
 
-        //set playerhead
-        if (event.getPlayerHead() != null) setItemInSlot(event.getPlayerHead(), event.getPlayerHead().getPosition());
-        //set backItem
-        if (event.getBackItem() != null) setItemInSlot(event.getBackItem(), event.getBackItem().getPosition());
+        playerHead = event.getGuiCreator().getPlayerHead();
+        backItem = event.getGuiCreator().getBackItem();
+        closeItem = event.getGuiCreator().getCloseItem();
+        backgroundFilled = event.getGuiCreator().isBackgroundFilled();
+        items = event.getGuiCreator().getItems();
 
-        if (event.getCloseItem() != null) setItemInSlot(event.getCloseItem(), event.getCloseItem().getPosition());
-
-        if (event.isBackgroundFilled()) {
-            for (int i = 0; i < event.getItemInSlot().length; i++) {
-                if (event.getItemInSlot()[i] == null) setItemInSlot(backgroundItem, i);
+        if (backgroundFilled) {
+            for (int i = 0; i < items.length; i++) {
+                if (items[i] == null) setItem(backgroundItem, i);
             }
         }
 
-        for (int i = 0; i < event.getItemInSlot().length; i++) {
-            if (i >= rows*9) break;
-            GuiItem item = event.getItemInSlot()[i];
-            inventory.setItem(i, item);
-            if (item != null) {
-                ActiveCraftCore.getGuiDataMap().get(this).addToCorrespondingGuiItem(inventory.getItem(i), item);
-            }
+        for (int i = 0; i < items.length; i++) {
+            if (i >= rows * 9) break;
+            inventory.setItem(i, items[i]);
+            if (items[i] != null) correspondingGuiItem.put(inventory.getItem(i), items[i]);
         }
 
-        ActiveCraftCore.getGuiDataMap().get(this).setGuiList(event.getItemInSlot());
         return new Gui(inventory, this);
+    }
+
+    public static GuiCreator ofInventory(Inventory inventory) {
+        return ActiveCraftCore.getGuiList().values().stream()
+                .map(Gui::getAssociatedGuiCreator)
+                .filter(gc -> gc.getInventory() == inventory)
+                .findAny().orElse(null);
     }
 }
