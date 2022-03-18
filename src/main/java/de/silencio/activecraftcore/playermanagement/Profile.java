@@ -139,11 +139,11 @@ public final class Profile {
     }
 
     private void loadFromConfig(FileConfig fileConfig) {
-        name = fileConfig.getString("name");
-        nickname = fileConfig.getString("nickname");
-        last_online = fileConfig.getString("last-online");
-        uuid = UUID.fromString(fileConfig.getString("uuid"));
-        color_nick = ChatColor.valueOf(fileConfig.getString("colornick"));
+        name = fileConfig.getString("name", "%INVALID_NAME%");
+        nickname = fileConfig.getString("nickname", "%INVALID_NAME%");
+        lastOnline = fileConfig.getString("last-online", "1/1/1970, 00:00:00");
+        uuid = UUID.fromString(fileConfig.getString("uuid", ""));
+        colorNick = ChatColor.valueOf(fileConfig.getString("colornick", "WHITE"));
         flyspeed = (float) fileConfig.getDouble("flyspeed");
         warns = fileConfig.getInt("violations.warns");
         mutes = fileConfig.getInt("violations.mutes");
