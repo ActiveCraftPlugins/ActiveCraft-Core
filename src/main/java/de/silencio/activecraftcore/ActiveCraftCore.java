@@ -13,6 +13,7 @@ import de.silencio.activecraftcore.utils.config.FileConfig;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -67,17 +68,12 @@ public final class ActiveCraftCore extends JavaPlugin {
             if (!this.getDescription().getVersion().equals(version))
                 getLogger().info("There is a new update available.");
         });
-
-        log("""
-                    
-                    ___        __  _            ______           ______        ______
-                   /   | _____/ /_(_)   _____  / ____/________ _/ __/ /_      / ____/___  ________
-                  / /| |/ ___/ __/ / | / / _ \\/ /   / ___/ __ `/ /_/ __/_____/ /   / __ \\/ ___/ _ \\
-                 / ___ / /__/ /_/ /| |/ /  __/ /___/ /  / /_/ / __/ /_/_____/ /___/ /_/ / /  /  __/
-                /_/  |_\\___/\\__/_/ |___/\\___/\\____/_/   \\__,_/_/  \\__/      \\____/\\____/_/   \\___/
-                                                                                                  
-                                               ActiveCraft-Core v1.3.0
-                """);
+        bukkitLog(ChatColor.DARK_AQUA + "    ___   ____________     ");
+        bukkitLog(ChatColor.DARK_AQUA + "   /   | / ____/ ____/     ");
+        bukkitLog(ChatColor.DARK_AQUA + "  / /| |/ /   / /          " + ChatColor.GOLD + "ActiveCraft-Core" + ChatColor.AQUA + " v" + getDescription().getVersion());
+        bukkitLog(ChatColor.DARK_AQUA + " / ___ / /___/ /___        " + ChatColor.DARK_GRAY + "by CPlaiz and Silencio");
+        bukkitLog(ChatColor.DARK_AQUA + "/_/  |_\\____/\\____/      ");
+        bukkitLog(ChatColor.DARK_AQUA + "");
         log("Plugin loaded.");
     }
 
@@ -106,8 +102,17 @@ public final class ActiveCraftCore extends JavaPlugin {
     public static void log(String text) {
         log(Level.INFO, text);
     }
+
     public static void log(Level level, String text) {
         ActiveCraftCore.getPlugin().getLogger().log(level, text);
+    }
+
+    public static void bukkitLog(Level level, String text) {
+        Bukkit.getLogger().log(level, text);
+    }
+
+    public static void bukkitLog(String text) {
+        Bukkit.getLogger().log(Level.INFO, text);
     }
 
     public void startTimer() {
