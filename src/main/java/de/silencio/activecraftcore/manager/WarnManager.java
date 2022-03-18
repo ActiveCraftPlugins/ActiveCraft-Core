@@ -1,23 +1,22 @@
 package de.silencio.activecraftcore.manager;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerWarnAddEvent;
 import de.silencio.activecraftcore.events.PlayerWarnRemoveEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
+import de.silencio.activecraftcore.playermanagement.PlayerQueue;
 import de.silencio.activecraftcore.playermanagement.Profile;
-import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.config.Warn;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class WarnManager {
 
-    private Profile profile;
+    private final Profile profile;
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public WarnManager(Profile profile) {
@@ -52,7 +51,7 @@ public class WarnManager {
         }
 
         //call event
-        PlayerWarnAddEvent event = new PlayerWarnAddEvent(profile, new Warn(profile, reason, offsetDateTime.format(dtf), source, id));
+        PlayerWarnAddEvent event = new PlayerWarnAddEvent(profile, new Warn(reason, offsetDateTime.format(dtf), source, id));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 

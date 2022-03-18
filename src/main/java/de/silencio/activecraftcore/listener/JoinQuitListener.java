@@ -30,7 +30,7 @@ public class JoinQuitListener implements Listener {
     public void onPlayerWorldChange(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         Location playerLocation = player.getLocation();
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
 
         profile.set(Profile.Value.LAST_LOCATION, event.getFrom().getWorld().getName(), playerLocation);
     }
@@ -84,7 +84,7 @@ public class JoinQuitListener implements Listener {
         playerdataConfig.set("times-joined", playerdataConfig.getInt("times-joined") + 1);
 
 
-        Profile profile = Profile.fromString(player.getName());
+        Profile profile = Profile.of(player.getName());
 
         playerdataConfig.saveConfig();
 
@@ -102,7 +102,7 @@ public class JoinQuitListener implements Listener {
         if (!player.hasPermission("vanish.see")) VanishManager.hideAll(player);
 
         //fly
-        if (profile.canFly()) player.setAllowFlight(true);
+        if (profile.isFly()) player.setAllowFlight(true);
     }
 
     @EventHandler
@@ -110,7 +110,7 @@ public class JoinQuitListener implements Listener {
         Player player = event.getPlayer();
         Location playerLocation = player.getLocation();
 
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
 
         OffsetDateTime now = OffsetDateTime.now();
         profile.set(Profile.Value.LAST_ONLINE, dtf.format(now));

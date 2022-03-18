@@ -1,6 +1,5 @@
 package de.silencio.activecraftcore.listener;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.Bukkit;
@@ -18,8 +17,8 @@ public class CommandListener implements Listener {
         String eventMessage = event.getMessage();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Profile profile = Profile.fromPlayer(player);
-            if (profile.hasLogEnabled()) {
+            Profile profile = Profile.of(player);
+            if (profile.isLogEnabled()) {
                 if (player.hasPermission("activecraft.log")) {
                     player.sendMessage(CommandMessages.LOG_PREFIX(Bukkit.getPlayer(executingPlayer.getName()), eventMessage));
                 }

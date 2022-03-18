@@ -27,7 +27,7 @@ public class VanishManager {
     }
 
     public static void setVanished(Player player, boolean hide) {
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
         MainConfig mainConfig = ConfigManager.getMainConfig();
         if (hide) {
             PlayerVanishEvent event = new PlayerVanishEvent(profile, true);

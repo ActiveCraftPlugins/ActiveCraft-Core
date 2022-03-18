@@ -20,8 +20,7 @@ public class MessageListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChatMessage(AsyncPlayerChatEvent event) {
 
-        String message = ColorUtils.replaceColor(event.getMessage());
-        message = ColorUtils.replaceFormat(message);
+        String message = ColorUtils.replaceColorAndFormat(event.getMessage());
         Player player = event.getPlayer();
 
         if (ActiveCraftCore.getDialogueManagerList().containsKey(player)) {
@@ -31,7 +30,7 @@ public class MessageListener implements Listener {
             return;
         }
 
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
 
         boolean muted = profile.isMuted();
         boolean forcemuted = profile.isForcemuted();
@@ -47,7 +46,7 @@ public class MessageListener implements Listener {
                 Bukkit.broadcast(ChatColor.GOLD + "[Mute] " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GOLD + " tried to talk, but is default muted. (" + ChatColor.AQUA + message + ChatColor.GOLD + ")", "activecraft.muted.see");
         } else {
             String format = ConfigManager.getMainConfig().getChatFormat()
-                    .replace("%displayname%", StringUtils.messageWithColor(player, profile.getNickname(), profile.getColorNick().name()))
+                    .replace("%displayname%", profile.getNickname())
                     .replace("%message%", message);
 
             format = format.replace("%", "%%");

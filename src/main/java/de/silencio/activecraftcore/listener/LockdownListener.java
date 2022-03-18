@@ -1,6 +1,5 @@
 package de.silencio.activecraftcore.listener;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.event.EventHandler;
@@ -15,11 +14,11 @@ public class LockdownListener implements Listener {
 
         if (ConfigManager.getMainConfig().isLockedDown()) {
             String playername = event.getPlayerProfile().getName();
-            if (Profile.fromString(playername) == null) {
+            if (Profile.of(playername) == null) {
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
                 event.setKickMessage(ConfigManager.getMainConfig().getLockdownKickMessage());
             }
-            Profile profile = Profile.fromString(playername);
+            Profile profile = Profile.of(playername);
             if(profile == null || !profile.canBypassLockdown()) {
                 event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
                 event.setKickMessage(ConfigManager.getMainConfig().getLockdownKickMessage());

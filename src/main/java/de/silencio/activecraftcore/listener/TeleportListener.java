@@ -15,6 +15,5 @@ public class TeleportListener implements Listener {
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN || event.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND){
             ActiveCraftCore.getLastLocMap().put(player, event.getFrom());
         }
-
     }
 }

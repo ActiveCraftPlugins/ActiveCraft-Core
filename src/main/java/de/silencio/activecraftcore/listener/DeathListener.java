@@ -18,7 +18,7 @@ public class DeathListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
 
         Player died = e.getEntity(); //in 1.17 gibt get player nen error deshalb IMMER get entity
-        Profile profile = Profile.fromPlayer(died);
+        Profile profile = Profile.of(died);
         Player killer = died.getKiller();
 
         ActiveCraftCore.getLastLocMap().put(died, died.getLocation());

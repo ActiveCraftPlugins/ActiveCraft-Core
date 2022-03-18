@@ -1,11 +1,7 @@
 package de.silencio.activecraftcore.manager;
 
-import de.silencio.activecraftcore.messages.CommandMessages;
-import de.silencio.activecraftcore.messages.Errors;
-import de.silencio.activecraftcore.utils.ComparisonType;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
 import de.silencio.activecraftcore.utils.config.Portal;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

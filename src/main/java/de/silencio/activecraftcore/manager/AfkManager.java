@@ -1,12 +1,10 @@
 package de.silencio.activecraftcore.manager;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.events.PlayerAfkEvent;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.ColorUtils;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,7 +12,7 @@ import org.bukkit.entity.Player;
 public class AfkManager {
 
     public static void setAfk(Player player, boolean afk) {
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
 
         //call event
         PlayerAfkEvent event = new PlayerAfkEvent(profile, afk);

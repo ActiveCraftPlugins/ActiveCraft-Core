@@ -1,6 +1,5 @@
 package de.silencio.activecraftcore.listener;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,8 +25,8 @@ public class SignInteractListener implements Listener {
         BlockState blockState = event.getClickedBlock().getState();
         if (blockState instanceof Sign) {
             if (player.isSneaking()) {
-                Profile profile = Profile.fromPlayer(player);
-                if (profile.canEditSign()) {
+                Profile profile = Profile.of(player);
+                if (profile.isEditSign()) {
                     event.setCancelled(true);
                     Sign signBlock = (Sign) event.getClickedBlock().getState();
                     player.openSign(signBlock);

@@ -32,7 +32,7 @@ public class BanManager {
                     Bukkit.getBanList(BanList.Type.IP).addBan(target, reason, expires, source);
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         if (player.getAddress().getAddress().toString().replace("/", "").equals(target)) {
-                            Profile profile = Profile.fromPlayer(player);
+                            Profile profile = Profile.of(player);
                             profile.set(Profile.Value.IP_BANS, profile.getIpBans() + 1);
                             Bukkit.getScheduler().runTask(ActiveCraftCore.getPlugin(), () -> {
                                 String expirationString =
@@ -92,7 +92,7 @@ public class BanManager {
                 Bukkit.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     Bukkit.getBanList(BanList.Type.NAME).addBan(target, reason, expires, source);
-                    Profile profile = Profile.fromString(target);
+                    Profile profile = Profile.of(target);
                     profile.set(Profile.Value.BANS, profile.getBans() + 1);
                     if (Bukkit.getPlayer(target) != null)
                         Bukkit.getScheduler().runTask(ActiveCraftCore.getPlugin(), () -> {

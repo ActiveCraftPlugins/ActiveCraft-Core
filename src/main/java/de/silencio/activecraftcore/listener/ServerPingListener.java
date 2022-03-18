@@ -1,12 +1,9 @@
 package de.silencio.activecraftcore.listener;
 
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
-
-import java.util.Objects;
 
 public class ServerPingListener implements Listener {
 

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class MuteManager {
 
     public static void mutePlayer(Player player) {
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
         //call event
         PlayerMuteEvent event = new PlayerMuteEvent(profile, false);
         Bukkit.getPluginManager().callEvent(event);
@@ -18,7 +18,7 @@ public class MuteManager {
         profile.set(Profile.Value.MUTED, true);
     }
     public static void unmutePlayer(Player player) {
-        Profile profile = Profile.fromPlayer(player);
+        Profile profile = Profile.of(player);
         //call event
         PlayerMuteEvent event = new PlayerMuteEvent(profile, true);
         Bukkit.getPluginManager().callEvent(event);

@@ -3,7 +3,9 @@ package de.silencio.activecraftcore.manager;
 import de.silencio.activecraftcore.events.PlayerHomeDeleteEvent;
 import de.silencio.activecraftcore.events.PlayerHomeSetEvent;
 import de.silencio.activecraftcore.events.PlayerHomeTeleportEvent;
-import de.silencio.activecraftcore.exceptions.*;
+import de.silencio.activecraftcore.exceptions.ActiveCraftException;
+import de.silencio.activecraftcore.exceptions.InvalidHomeException;
+import de.silencio.activecraftcore.exceptions.MaxHomesException;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.messages.Errors;
 import de.silencio.activecraftcore.playermanagement.Profile;
@@ -15,8 +17,6 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.HashMap;
-
-// TODO: 03.02.2022 events 
 
 public class HomeManager {
 
