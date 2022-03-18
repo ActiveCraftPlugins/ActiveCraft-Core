@@ -169,6 +169,6 @@ public final class ActiveCraftCore extends JavaPlugin {
             saveResource("messages.yml", false);
 
         language = ConfigManager.getMainConfig().getLanguage();
-        activeCraftMessage = new ActiveCraftMessage();
+        ConfigManager.loadMessageConfig();
     }
 }

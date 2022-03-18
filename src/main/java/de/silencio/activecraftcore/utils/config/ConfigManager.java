@@ -1,5 +1,6 @@
 package de.silencio.activecraftcore.utils.config;
 
+import de.silencio.activecraftcore.messages.ActiveCraftCoreMessage;
 import lombok.Getter;
 
 public class ConfigManager {
@@ -15,4 +16,9 @@ public class ConfigManager {
         warpsConfig.reload();
         portalsConfig.reload();
     }
+
+    public static void loadMessageConfig() {
+        ActiveCraftCoreMessage.setFileConfig(new FileConfig("messages.yml"));
+    }
+
 }

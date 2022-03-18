@@ -1,57 +1,38 @@
 package de.silencio.activecraftcore.messages;
 
-import de.silencio.activecraftcore.ActiveCraftCore;
 import org.bukkit.ChatColor;
 
-public class TableMenuMessages {
-
-    static ActiveCraftMessage acm = ActiveCraftCore.getPlugin().getActiveCraftMessage();
+public class TableMenuMessages extends ActiveCraftCoreMessage {
 
     public static String TABLEMENU_TITLE() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "title");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "title");
     }
 
     public static String TABLEMENU_CRAFTING_TABLE() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "crafting-table");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "crafting-table");
     }
 
     public static String TABLEMENU_CARTOGRAPHY_TABLE() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "cartography-table");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "cartography-table");
     }
 
     public static String TABLEMENU_STONECUTTER() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "stonecutter");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "stonecutter");
     }
 
     public static String TABLEMENU_ANVIL() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "anvil");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "anvil");
     }
 
     public static String TABLEMENU_GRINDSTONE() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "grindstone");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "grindstone");
     }
 
     public static String TABLEMENU_LOOM() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "loom");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "loom");
     }
 
     public static String TABLEMENU_SMITHING_TABLE() {
-
-        String msg = ChatColor.GOLD + acm.getMessage(MessageType.TABLEMENU, "smithing-table");
-        return msg;
+        return ChatColor.GOLD + getMessage(MessageType.TABLEMENU, "smithing-table");
     }
 }

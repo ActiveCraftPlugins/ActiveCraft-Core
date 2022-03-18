@@ -2,25 +2,28 @@ package de.silencio.activecraftcore.messages;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.utils.config.FileConfig;
+import lombok.Getter;
+import lombok.Setter;
 
-public class ActiveCraftMessage {
+public class ActiveCraftCoreMessage {
 
-    private FileConfig fileConfig;
+    @Getter
+    @Setter
+    private static FileConfig fileConfig = new FileConfig("messages.yml");
 
-    public ActiveCraftMessage() {
-        fileConfig = new FileConfig("messages.yml");
-    }
 
-    public String getMessage(MessageType type, String input) {
+    protected static String getMessage(MessageType type, String input) {
         return fileConfig.getString(ActiveCraftCore.getLanguage().name().toLowerCase()
                 + "." + type.name().toLowerCase()
-                + "." + input);
+                + "." + input,
+                "INVALID_STRING");
     }
 
-    public String getMessage(MessageType type, CommandType cmdType , String input) {
+    protected static String getMessage(MessageType type, CommandType cmdType, String input) {
         return fileConfig.getString(ActiveCraftCore.getLanguage().name().toLowerCase()
                 + "." + type.name().toLowerCase()
                 + "." + cmdType.name().toLowerCase().replace("_", "-")
-                + "." + input);
+                + "." + input,
+                "INVALID_STRING");
     }
 }

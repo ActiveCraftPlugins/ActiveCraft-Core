@@ -81,6 +81,7 @@ public enum CommandType {
     WHOIS,
     XP,
     DRAIN,
-    LANGUAGE;
+    LANGUAGE,
+    AC_RELOAD
 
 }
