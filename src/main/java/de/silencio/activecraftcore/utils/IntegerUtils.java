@@ -7,9 +7,6 @@ public class IntegerUtils {
         int hours = 0;
         int minutes = 0;
         int seconds = 0;
-        if (duration / 60 / 60 / 24 >= 1) {
-            duration -= duration / 60 / 60 / 24 * 60 * 60 * 24;
-        }
         if (duration / 60 / 60 >= 1) {
             hours = duration / 60 / 60;
             duration -= duration / 60 / 60 * 60 * 60;
