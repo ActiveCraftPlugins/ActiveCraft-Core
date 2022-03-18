@@ -1,7 +1,6 @@
 package de.silencio.activecraftcore.playermanagement;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
-import de.silencio.activecraftcore.utils.config.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,7 +13,7 @@ public class PlayerQueue {
 
     private static boolean initialized = false;
 
-    private static HashMap<Profile, Queue<Action>> offlineQueue = new HashMap<>();
+    private static final HashMap<Profile, Queue<Action>> offlineQueue = new HashMap<>();
 
     public static void execute(Profile profile) {
         while (!offlineQueue.get(profile).isEmpty() && offlineQueue.get(profile).peek() != null) {
@@ -34,9 +33,9 @@ public class PlayerQueue {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (offlineQueue.get(Profile.fromPlayer(player)) == null) continue;
-                    if (offlineQueue.get(Profile.fromPlayer(player)).size() == 0) continue;
-                        execute(Profile.fromPlayer(player));
+                    if (offlineQueue.get(Profile.of(player)) == null) continue;
+                    if (offlineQueue.get(Profile.of(player)).size() == 0) continue;
+                    execute(Profile.of(player));
                 }
             }
         };

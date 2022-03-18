@@ -3,13 +3,22 @@ package de.silencio.activecraftcore.playermanagement;
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.manager.HomeManager;
 import de.silencio.activecraftcore.manager.WarnManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
+import de.silencio.activecraftcore.utils.ColorUtils;
 import de.silencio.activecraftcore.utils.StringUtils;
+import de.silencio.activecraftcore.utils.config.Effect;
+import de.silencio.activecraftcore.utils.config.FileConfig;
 import de.silencio.activecraftcore.utils.config.Warn;
-import org.bukkit.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.util.*;
@@ -58,17 +67,17 @@ public final class Profile {
     private String name;
     private String nickname;
     private String prefix;
-    private String last_online;
+    private String lastOnline;
     private UUID uuid;
-    private ChatColor color_nick;
+    private ChatColor colorNick;
     private float flyspeed;
     private int times_joined;
     private int warns;
     private int mutes;
     private int bans;
-    private int ip_bans;
-    private int playtime_minutes;
-    private int playtime_hours;
+    private int ipBans;
+    private int playtimeMinutes;
+    private int playtimeHours;
     private boolean afk;
     private boolean op;
     private boolean whitelisted;
@@ -89,8 +98,8 @@ public final class Profile {
     private HashMap<String, Location> lastLocations;
     private HashMap<Effect, Boolean> effects;
 
-    private WarnManager warnManager;
-    private HomeManager homeManager;
+    private final WarnManager warnManager;
+    private final HomeManager homeManager;
 
     public Profile(Player player) {
         this(player.getName());
@@ -108,26 +117,22 @@ public final class Profile {
         loadFromConfig(playerdataConfig);
     }
 
-    public static Profile fromString(String profileName) {
+    public static Profile of(String profileName) {
         Profile profile = ActiveCraftCore.getProfiles().get(profileName.toLowerCase());
         if (profile != null) profile.refresh();
         return profile;
     }
 
-    public static Profile fromUUID(UUID uuid) {
-        return fromString(ActiveCraftCore.getPlayernameByUUID(uuid));
+    public static Profile of(UUID uuid) {
+        return of(ActiveCraftCore.getPlayernameByUUID(uuid));
     }
 
-    public static Profile fromUUID(String uuid) {
-        return fromString(ActiveCraftCore.getPlayernameByUUID(uuid));
+    public static Profile of(Player player) {
+        return of(player.getName());
     }
 
-    public static Profile fromPlayer(Player player) {
-        return fromString(player.getName());
-    }
-
-    public static Profile fromCommandSender(CommandSender sender) {
-        return fromString(sender.getName());
+    public static Profile of(CommandSender sender) {
+        return of(sender.getName());
     }
 
     private void loadFromConfig(FileConfig fileConfig) {
@@ -151,14 +156,14 @@ public final class Profile {
         forcemuted = fileConfig.getBoolean("forcemuted");
         defaultmuted = fileConfig.getBoolean("default-mute");
         vanished = fileConfig.getBoolean("vanished");
-        log_enabled = fileConfig.getBoolean("log-enabled");
-        bypass_lockdown = fileConfig.getBoolean("lockdown-bypass");
-        edit_sign = fileConfig.getBoolean("edit-sign");
+        logEnabled = fileConfig.getBoolean("log-enabled");
+        bypassLockdown = fileConfig.getBoolean("lockdown-bypass");
+        editSign = fileConfig.getBoolean("edit-sign");
         tags = fileConfig.getStringList("tags");
-        prefix = fileConfig.getString("prefix");
-        receive_socialspy = fileConfig.getBoolean("receive-socialspy");
-        playtime_minutes = fileConfig.getInt("playtime.minutes");
-        playtime_hours = fileConfig.getInt("playtime.hours");
+        prefix = fileConfig.getString("prefix", "");
+        receiveSocialspy = fileConfig.getBoolean("receive-socialspy");
+        playtimeMinutes = fileConfig.getInt("playtime.minutes");
+        playtimeHours = fileConfig.getInt("playtime.hours");
 
         lastLocations = new HashMap<>();
         Bukkit.getWorlds().forEach(world -> lastLocations.put(world.getName(), fileConfig.getLocation("last-location." + world.getName())));
@@ -172,7 +177,6 @@ public final class Profile {
         ConfigurationSection warnsSection = playerdataConfig.getConfigurationSection("warns");
         if (warnsSection != null)
             warnsSection.getKeys(false).forEach(warnId -> warnList.put(warnId, new Warn(
-                    this,
                     warnsSection.getString(warnId + ".reason"),
                     warnsSection.getString(warnId + ".created"),
                     warnsSection.getString(warnId + ".source"),
@@ -233,7 +237,7 @@ public final class Profile {
         tags.clear();
         playerdataConfig.set("tags", this.tags);
         playerdataConfig.saveConfig();
-        reloadDisplayname();
+        updateDisplayname();
     }
 
     public void addTag(String... tags) {
@@ -241,7 +245,7 @@ public final class Profile {
             if (!this.tags.contains(tag)) this.tags.add(tag);
         playerdataConfig.set("tags", this.tags);
         playerdataConfig.saveConfig();
-        reloadDisplayname();
+        updateDisplayname();
     }
 
     public void removeTag(String... tags) {
@@ -249,7 +253,7 @@ public final class Profile {
             this.tags.remove(tag);
         playerdataConfig.set("tags", this.tags);
         playerdataConfig.saveConfig();
-        reloadDisplayname();
+        updateDisplayname();
     }
 
     public void setTags(String... tags) {
@@ -261,14 +265,14 @@ public final class Profile {
         this.prefix = prefix;
         playerdataConfig.set("prefix", prefix);
         playerdataConfig.saveConfig();
-        reloadDisplayname();
+        updateDisplayname();
     }
 
     public void clearPrefix() {
         setPrefix("");
     }
 
-    public void reloadDisplayname() {
+    public void updateDisplayname() {
         Player player = Bukkit.getPlayer(name);
         if (player == null) return;
         List<String> appliedTags = tags;
@@ -390,7 +394,7 @@ public final class Profile {
     }
 
     public boolean canReceiveSocialspy() {
-        return receive_socialspy;
+        return receiveSocialspy;
     }
 
     public Location getLastLocation(String world) {
@@ -416,7 +420,7 @@ public final class Profile {
     public String getNickname() {
         if (prefix == null) prefix = "";
         prefix = prefix.strip() + (prefix.strip().equals("") ? "" : " ");
-        return prefix + color_nick + nickname;
+        return prefix + colorNick + nickname;
     }
 
     public Player getPlayer() {
