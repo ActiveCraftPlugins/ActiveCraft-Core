@@ -103,7 +103,7 @@ public final class ActiveCraftCore extends JavaPlugin {
     public void startTimer() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                Profile profile = Profile.fromPlayer(player);
+                Profile profile = Profile.of(player);
 
                 int minutes = profile.getPlaytimeMinutes();
                 int hours = profile.getPlaytimeHours();
