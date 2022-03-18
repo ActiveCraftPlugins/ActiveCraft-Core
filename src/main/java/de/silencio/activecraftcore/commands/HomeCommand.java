@@ -1,7 +1,6 @@
 package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
-import de.silencio.activecraftcore.manager.HomeManager;
 import de.silencio.activecraftcore.messages.CommandMessages;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import org.bukkit.Bukkit;
@@ -9,8 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HomeCommand extends ActiveCraftCommand {
 
@@ -82,21 +82,19 @@ public class HomeCommand extends ActiveCraftCommand {
 
     @Override
     public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
         switch (label) {
             case "sethome" -> {
-                if (args.length == 1) list.addAll(getProfileNames());
+                if (args.length == 1)
+                    return getProfileNames();
             }
             case "home", "delhome" -> {
                 Profile profile = getProfile((Player) sender);
-                if (args.length == 1) {
-                    list.addAll(profile.getHomeList().keySet());
-                    list.addAll(getProfileNames());
-                }
+                if (args.length == 1)
+                    return Stream.concat(profile.getHomeList().keySet().stream(), getProfileNames().stream()).collect(Collectors.toList());
                 if (args.length == 2 && Bukkit.getPlayer(args[0]) != null)
-                    list.addAll(profile.getHomeList().keySet());
+                    return profile.getHomeList().keySet().stream().toList();
             }
         }
-        return list;
+        return null;
     }
 }
