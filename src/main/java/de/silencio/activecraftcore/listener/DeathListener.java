@@ -4,15 +4,20 @@ import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.commands.SuicideCommand;
 import de.silencio.activecraftcore.playermanagement.Profile;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
-import de.silencio.activecraftcore.utils.config.FileConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.permissions.Permissible;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class DeathListener implements Listener {
+
+    private boolean hasEffectivePermission(Permissible permissible, String permission) {
+        return permissible.getEffectivePermissions().stream().map(PermissionAttachmentInfo::getPermission).anyMatch(permission::equalsIgnoreCase);
+    }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
@@ -23,12 +28,12 @@ public class DeathListener implements Listener {
 
         ActiveCraftCore.getLastLocMap().put(died, died.getLocation());
 
-        if (died.hasPermission("activecraft.keepexp")) {
+        if (hasEffectivePermission(died, "activecraft.keepexp")) {
             e.setKeepLevel(true);
             e.setShouldDropExperience(false);
         }
 
-        if (died.hasPermission("keepinventory")) {
+        if (hasEffectivePermission(died, "activecraft.keepinventory")) {
             e.setKeepInventory(true);
             e.getDrops().clear();
         }
