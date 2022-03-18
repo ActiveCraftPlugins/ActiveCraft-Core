@@ -40,6 +40,7 @@ public final class ActiveCraftCore extends JavaPlugin {
 
     public ActiveCraftCore() {
         plugin = this;
+        pluginManager = new ACCPluginManager(ActiveCraftCore.getPlugin());
     }
 
     @Override
@@ -56,7 +57,7 @@ public final class ActiveCraftCore extends JavaPlugin {
         Metrics metrics = new Metrics(this, 12627);
 
         // Load commmands and events
-        PluginManager.init();
+        pluginManager.init();
 
         // start playtime timer
         startTimer();
