@@ -117,4 +117,10 @@ public class ColorUtils {
         return outputStringBuilder.toString();
     }
 
+    public static String getRgbColorCode(Color color) {
+        String hex = String.format("%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        StringBuilder output = new StringBuilder("§x");
+        Arrays.stream(hex.split("")).forEach(c -> output.append("§" + c));
+        return output.toString();
+    }
 }
