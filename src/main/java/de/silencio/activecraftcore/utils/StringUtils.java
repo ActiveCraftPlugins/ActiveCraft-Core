@@ -115,4 +115,10 @@ public class StringUtils {
             resultBuilder.append(i != start ? splitter + args.get(i) : args.get(i));
         return resultBuilder.toString();
     }
+
+    public static String remove(String target, String... replaced) {
+        for (String s : replaced)
+            target = target.replace(s, "");
+        return target;
+    }
 }
