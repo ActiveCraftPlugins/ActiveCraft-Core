@@ -70,6 +70,10 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
         return combineList(args, 0, args.size(), " ");
     }
 
+    public static String combineList(List<String> args, String splitter) {
+        return combineList(args, 0, args.size(), splitter);
+    }
+
     public static String combineList(List<String> args, int start) {
         return combineList(args, start, args.size(), " ");
     }
