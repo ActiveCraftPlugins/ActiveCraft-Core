@@ -1,18 +1,17 @@
 package de.silencio.activecraftcore;
 
 import de.silencio.activecraftcore.guicreator.Gui;
-import de.silencio.activecraftcore.guicreator.GuiCreator;
-import de.silencio.activecraftcore.guicreator.GuiData;
-import de.silencio.activecraftcore.guis.ProfileMenu;
+import de.silencio.activecraftcore.guis.profilemenu.ProfileMenu;
 import de.silencio.activecraftcore.manager.DialogueManager;
-import de.silencio.activecraftcore.messages.ActiveCraftMessage;
 import de.silencio.activecraftcore.messages.Language;
 import de.silencio.activecraftcore.messages.MiscMessage;
 import de.silencio.activecraftcore.playermanagement.PlayerQueue;
 import de.silencio.activecraftcore.playermanagement.Profile;
+import de.silencio.activecraftcore.utils.UpdateChecker;
 import de.silencio.activecraftcore.utils.config.ConfigManager;
 import de.silencio.activecraftcore.utils.config.FileConfig;
-import de.silencio.activecraftcore.utils.UpdateChecker;
+import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -22,21 +21,22 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
+@ToString
 public final class ActiveCraftCore extends JavaPlugin {
 
-    private static ActiveCraftCore plugin;
-    private static Language language;
-    private static ActiveCraftMessage activeCraftMessage;
-    private static final HashMap<Player, Profile> msgPlayerStoring = new HashMap<>();
-    private static final HashMap<Player, ProfileMenu> profileMenuList = new HashMap<>();
-    private static final HashMap<String, Profile> profiles = new HashMap<>();
-    private static final HashMap<GuiCreator, GuiData> guiDataMap = new HashMap<>();
-    private static final HashMap<Integer, Gui> guiList = new HashMap<>();
-    private static final HashMap<Player, Location> lastLocMap = new HashMap<>();
-    private static final HashMap<CommandSender, DialogueManager> dialogueManagerList = new HashMap<>();
+    private @Getter static ActiveCraftCore plugin;
+    private @Getter static Language language;
+    private @Getter static final HashMap<Player, ProfileMenu> profileMenuList = new HashMap<>();
+    private @Getter static final HashMap<String, Profile> profiles = new HashMap<>();
+    private @Getter static final HashMap<Integer, Gui> guiList = new HashMap<>();
+    private @Getter static final HashMap<Player, Location> lastLocMap = new HashMap<>();
+    private @Getter static final HashMap<CommandSender, DialogueManager> dialogueManagerList = new HashMap<>();
+    private @Getter static ACCPluginManager pluginManager;
 
     public ActiveCraftCore() {
         plugin = this;
@@ -121,45 +121,13 @@ public final class ActiveCraftCore extends JavaPlugin {
         }, 20 * 60, 20 * 60);
     }
 
-    public static Language getLanguage() {
-        return language;
-    }
-
     public void setLanguage(Language language) {
         ConfigManager.getMainConfig().set("language", language.getCode().toLowerCase());
         ActiveCraftCore.language = language;
     }
 
-    public static ActiveCraftMessage getActiveCraftMessage() {
-        return activeCraftMessage;
-    }
-
-    public static void setActiveCraftMessage(ActiveCraftMessage activeCraftMessage) {
-        ActiveCraftCore.activeCraftMessage = activeCraftMessage;
-    }
-
-    public static HashMap<CommandSender, DialogueManager> getDialogueManagerList() {
-        return dialogueManagerList;
-    }
-
-    public static HashMap<Player, Location> getLastLocMap() {
-        return lastLocMap;
-    }
-
-    public static HashMap<GuiCreator, GuiData> getGuiDataMap() {
-        return guiDataMap;
-    }
-
-    public static HashMap<Integer, Gui> getGuiList() {
-        return guiList;
-    }
-
     public static Gui getGuiById(int id) {
         return ActiveCraftCore.guiList.get(id);
-    }
-
-    public static HashMap<Player, ProfileMenu> getProfileMenuList() {
-        return profileMenuList;
     }
 
     public static Map<String, UUID> getPlayerlist() {
@@ -182,19 +150,11 @@ public final class ActiveCraftCore extends JavaPlugin {
         return getPlayerlist().get(playername.toLowerCase());
     }
 
-    public static HashMap<Player, Profile> getMsgPlayerStoring() {
-        return msgPlayerStoring;
-    }
-
     public static void createProfiles() {
         profiles.clear();
         for (String playername : getPlayerlist().keySet())
             if (new File(ActiveCraftCore.getPlugin().getDataFolder() + File.separator + "playerdata" + File.separator + playername + ".yml").exists())
                 profiles.put(playername, new Profile(playername));
-    }
-
-    public static HashMap<String, Profile> getProfiles() {
-        return profiles;
     }
 
     public void loadConfigs() {
