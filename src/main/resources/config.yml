@@ -14,34 +14,34 @@ warp-timer: true
 
 # Default Mute
 default-mute:
-# When activated, players who join for the first time cannot speak in chat.
+  # When activated, players who join for the first time cannot speak in chat.
   enabled: false
-# Set the time a new player should be muted for.
+  # Set the time a new player should be muted for.
   duration: 10 #in minutes | 0 to disable
 
 # Vanish Settings
 vanish-tag:
   # Set if the vanish tag should be shown behind player names in tab.
   enabled: true
-# The tag that is shown behind player names in tab, assuming 'enable-vanish-format' is true.
+  # The tag that is shown behind player names in tab, assuming 'enable-vanish-format' is true.
   format: '[V]'
 
 # AFK Settings
 afk:
-# If players enabling / disabling afk mode should be broadcasted in chat.
+  # If players enabling / disabling afk mode should be broadcasted in chat.
   announce: true
-# The tag that is shown behind player names in tab.
+  # The tag that is shown behind player names in tab.
   format: '[AFK]'
 
 # Lockdown Settings
 lockdown:
-# Whether lockdown is enabled or not
+  # Whether lockdown is enabled or not
   enabled: false
-# The server modt (Multiplayer Menu) when lockdown is activated.
+  # The server modt (Multiplayer Menu) when lockdown is activated.
   modt: "This server is in lockdown mode. You are not able to join until this is disabled."
-# The kick message when players attempt to join during lockdown mode.
+  # The kick message when players attempt to join during lockdown mode.
   kick-message: "This server is in lockdown mode. You are not able to join until this is disabled."
-# The modt is saved to this when locking down and restored after lockdown ended
+  # The modt is saved to this when locking down and restored after lockdown ended
   old-modt: ''
 
 # Misc Settings
