@@ -122,10 +122,6 @@ commands:
       - "flyspeed"
     permission: activecraft.fly
     permission-message: "§cWarning! §7You don't have the permission to do that!"
-  #offinvsee:
-  #  description: Shows a players armor and offhand-item.
-  #  permission: activecraft.offinvsee
-  #  permission-message: "§cWarning! §7You don't have the permission to do that!"
   realname:
     description: Shows a players real name.
     permission: activecraft.realname
@@ -432,6 +428,14 @@ commands:
   acreload:
     description: Reloads the plugin's configuration files.
     permission: activecraft.reload
+    permission-message: "§cWarning! §7You don't have the permission to do that!"
+  effects:
+    description: Opens a gui to manage a player's effects.
+    permission: activecraft.effects
+    permission-message: "§cWarning! §7You don't have the permission to do that!"
+  offinvsee:
+    description: Shows a players armor and offhand-item.
+    permission: activecraft.offinvsee
     permission-message: "§cWarning! §7You don't have the permission to do that!"
 
 permissions:
@@ -1036,9 +1040,9 @@ permissions:
   activecraft.playerlist:
     description: Lists all online players.
     default: op
-  #activecraft.offinvsee:
-  #  description: Shows a players armor and offhand-item.
-  #  default: op
+  activecraft.offinvsee:
+    description: Shows a players armor and offhand-item.
+    default: op
   activecraft.kick:
     description: Allows the player to kick another player.
     default: op
@@ -1142,4 +1146,13 @@ permissions:
     default: op
   activecraft.reload:
     description: Permission to reload the configuration files and load the changes into the game.
+    default: op
+  activecraft.effects:
+    description: Permission to manage a player's effects.
+    default: op
+  activecraft.keepexp:
+    description: The player will keep their exp on death.
+    default: op
+  activecraft.keepinventory:
+    description: Permission to manage a player's effects.
     default: op

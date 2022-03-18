@@ -26,6 +26,7 @@ en:
     not-a-player: 'You are not a player!'
     not-true-false: 'Please use true / false!'
     not-holding-item: 'You are not holding an item!'
+    invalid-command: 'Invalid Command!'
   reason:
     hacking: 'Hacking'
     botting: 'Botting'
@@ -37,6 +38,14 @@ en:
     moderator-banned: 'Banned by a moderator.'
     moderator-kicked: 'Kicked by a moderator.'
     moderator-warned: 'Warned by a moderator.'
+  duration:
+    15m: '15 Minutes'
+    1h: '1 Hour'
+    8h: '8 Hours'
+    1d: '1 Day'
+    7d: '7 Days'
+    1M: '1 Month'
+    permanent: 'permanent'
   dialogue:
     default-header: '-- Dialogue --'
     default-completed-message: 'Exiting dialogue...'
@@ -54,6 +63,49 @@ en:
     confirmation-title: 'Confirmation'
     default-gui-title: 'Gui'
     no-permission-item: 'No permission'
+  effectgui:
+    title: 'Effects'
+    effects:
+      speed: 'Speed'
+      slow: 'Slowness'
+      fast-digging: 'Haste'
+      slow-digging: 'Mining Fatigue'
+      increase-damage: 'Strength'
+      heal: 'Instant Health'
+      harm: 'Instant Damage'
+      jump: 'Jump Boost'
+      confusion: 'Nausea'
+      regeneration: 'Regeneration'
+      damage-resistance: 'Resistance'
+      fire-resistance: 'Fire Resistance'
+      water-breathing: 'Water Breathing'
+      invisibility: 'Invisibility'
+      blindness: 'Blindness'
+      night-vision: 'Night Vision'
+      hunger: 'Hunger'
+      weakness: 'Weakness'
+      poison: 'Poison'
+      wither: 'Wither'
+      health-boost: 'Health Boost'
+      absorption: 'Absorption'
+      saturation: 'Saturation'
+      glowing: 'Glowing'
+      levitation: 'Levitation'
+      luck: 'Luck'
+      unluck: 'Bad Luck'
+      slow-falling: 'Slow Falling'
+      conduit-power: 'Conduit Power'
+      dolphins-grace: 'Dolphins Grace'
+      bad-omen: 'Bad Omen'
+      hero-of-the-village: 'Hero of the Village'
+    header:
+      statuseffects: 'Status Effects'
+      potioneffects: 'Potion Effects'
+    effectitem:
+      active-format: 'ACTIVE'
+      inactive-format: 'INACTIVE'
+      level-format: 'Level %level%'
+      tooltip: 'Leftclick to toggle  | Rightclick to change level'
   profile:
     mainprofile:
       title: 'Profile'
@@ -93,6 +145,13 @@ en:
       mute-lore: '%t_displayname% is not muted.'
       unmute: 'Unmute %t_displayname%'
       unmute-lore: '%t_displayname% is muted.'
+    reasons-gui:
+      title: 'Choose a reason'
+      confirm: 'Confirm'
+      not-selected: 'Not selected'
+      selected: 'Selected'
+      set-time: 'Set time to %time%'
+      set-reason: 'Set reason to %reason%'
     gamemode-switcher-gui:
       title: 'Gamemode Switcher'
       creative: "Set %t_displayname%'s gamemode to Creative"
@@ -372,6 +431,8 @@ en:
       realname-header: |
         Players with the nickname %nickname%:
         %players%
+    ac-reload:
+      ac-reloaded: 'Reloaded ActiveCraft-Core'
     repair:
       repair-success: 'Fixed your %item-displayname%.'
       cannot-be-repaired: "Item can't be repaired."
@@ -531,7 +592,7 @@ en:
       xp-clear-others: "You have cleared %t_displayname%'s exp."
       xp-clear-others-message: 'Your exp has been cleared by %s_displayname%.'
     language:
-      current-language: 'The plugin language currently is %language% (%code%).'
+      current-language: 'The plugin language is currently %language% (%code%).'
       language-set: 'The plugin language was set to %language% (%code%).'
 
 
@@ -552,6 +613,7 @@ de:
     not-a-player: 'Du bist kein Spieler!'
     not-true-false: 'Bitte benutze true / false!'
     not-holding-item: 'Du hältst kein Item in der Hand!'
+    invalid-command: 'Ungültiger Befehl!'
   reason:
     hacking: 'Hacking'
     botting: 'Botting'
@@ -563,6 +625,14 @@ de:
     moderator-banned: 'Von einem Moderator gebannt.'
     moderator-kicked: 'Von einem Moderator gekickt.'
     moderator-warned: 'Von einem Moderator gewarnt.'
+  duration:
+    15m: '15 Minuten'
+    1h: '1 Stunde'
+    8h: '8 Stunden'
+    1d: '1 Tag'
+    7d: '7 Tage'
+    1M: '1 Monat'
+    permanent: 'permanent'
   dialogue:
     default-header: '-- Dialog --'
     default-completed-message: 'Beende Dialog...'
@@ -580,6 +650,49 @@ de:
     confirmation-title: 'Bestätigung'
     default-gui-title: 'Gui'
     no-permission-item: 'Keine Erlaubnis'
+  effectgui:
+    title: 'Effekte'
+    effects:
+      speed: 'Geschwindigkeit'
+      slow: 'Langsamkeit'
+      fast-digging: 'Eile'
+      slow-digging: 'Abbaulähmung'
+      increase-damage: 'Stärke'
+      heal: 'Direktheilung'
+      harm: 'Direktschade'
+      jump: 'Sprungkraft'
+      confusion: 'Übelkeit'
+      regeneration: 'Regeneration'
+      damage-resistance: 'Resistenz'
+      fire-resistance: 'Feuerresistenz'
+      water-breathing: 'Unterwasseratmung'
+      invisibility: 'Unsichtbarkeit'
+      blindness: 'Blindheit'
+      night-vision: 'Nachtsicht'
+      hunger: 'Hunger'
+      weakness: 'Schwäche'
+      poison: 'Vergiftung'
+      wither: 'Wither'
+      health-boost: 'Extraenergie'
+      absorption: 'Absorption'
+      saturation: 'Sättigung'
+      glowing: 'Leuchten'
+      levitation: 'Levitation'
+      luck: 'Glück'
+      unluck: 'Pech'
+      slow-falling: 'Sanfter Fall'
+      conduit-power: 'Meereskraft'
+      dolphins-grace: 'Gunst des Delfins'
+      bad-omen: 'Böses Omen'
+      hero-of-the-village: 'Held des Dorfes'
+    header:
+      statuseffects: 'Statuseffekte'
+      potioneffects: 'Trankeffekte'
+    effectitem:
+      active-format: 'AKTIV'
+      inactive-format: 'INAKTIV'
+      level-format: 'Stufe %level%'
+      tooltip: 'Linksklick zum ein-/ausschalten  | Rechtsklick um Stufe zu ändern'
   profile:
     mainprofile:
       title: 'Profil'
@@ -619,6 +732,13 @@ de:
       mute-lore: '%t_displayname% ist nicht stummgeschaltet.'
       unmute: '%t_displayname% entstummen'
       unmute-lore: '%t_displayname% ist gestummt.'
+    reasons-gui:
+      title: 'Wähle einen Grund'
+      confirm: 'Bestätigen'
+      not-selected: 'Nicht ausgewählt'
+      selected: 'Ausgewählt'
+      set-time: 'Zeit auf %time% gesetzt'
+      set-reason: 'Grund zu %reason% gesetzt'
     gamemode-switcher-gui:
       title: 'Spielmoduswechsler'
       creative: "%t_displayname%s Spielmodus zu Kreativ setzen"
@@ -898,6 +1018,8 @@ de:
       realname-header: |
         Spieler mit dem Spitznamen %nickname%:
         %players%
+    ac-reload:
+      ac-reloaded: 'ActiveCraft-Core neu geladen'
     repair:
       repair-sucess: 'Dein %item-displayname% wurde repariert.'
       cannot-be-repaired: 'Dieses Item kann nicht repariert werden.'
@@ -1078,6 +1200,7 @@ sv:
     not-a-player: 'Du är inte en spelare!'
     not-true-false: 'Snälla använd sannt / falskt!'
     not-holding-item: 'Du håller inte i ett object!'
+    invalid-command: 'Invalid Command!'
   reason:
     hacking: 'Hack'
     botting: 'Botting'
@@ -1089,6 +1212,14 @@ sv:
     moderator-banned: 'Bannade av en moderator'
     moderator-kicked: 'Kickad av en moderator'
     moderator-warned: 'Varnad av en moderator'
+  duration:
+    15m: '15 Minutes'
+    1h: '1 Hour'
+    8h: '8 Hours'
+    1d: '1 Day'
+    7d: '7 Days'
+    1M: '1 Month'
+    permanent: 'permanent'
   dialogue:
     default-header: '-- Dialog --'
     default-completed-message: 'Lämnar dialogen...'
@@ -1106,6 +1237,49 @@ sv:
     confirmation-title: 'Bekräftelse'
     default-gui-title: 'Gui'
     no-permission-item: 'Ingen behörighet'
+  effectgui:
+    title: 'Effects'
+    effects:
+      speed: 'Speed'
+      slow: 'Slowness'
+      fast-digging: 'Haste'
+      slow-digging: 'Mining Fatigue'
+      increase-damage: 'Strength'
+      heal: 'Instant Health'
+      harm: 'Instant Damage'
+      jump: 'Jump Boost'
+      confusion: 'Nausea'
+      regeneration: 'Regeneration'
+      damage-resistance: 'Resistance'
+      fire-resistance: 'Fire Resistance'
+      water-breathing: 'Water Breathing'
+      invisibility: 'Invisibility'
+      blindness: 'Blindness'
+      night-vision: 'Night Vision'
+      hunger: 'Hunger'
+      weakness: 'Weakness'
+      poison: 'Poison'
+      wither: 'Wither'
+      health-boost: 'Health Boost'
+      absorption: 'Absorption'
+      saturation: 'Saturation'
+      glowing: 'Glowing'
+      levitation: 'Levitation'
+      luck: 'Luck'
+      unluck: 'Bad Luck'
+      slow-falling: 'Slow Falling'
+      conduit-power: 'Conduit Power'
+      dolphins-grace: 'Dolphins Grace'
+      bad-omen: 'Bad Omen'
+      hero-of-the-village: 'Hero of the Village'
+    header:
+      statuseffects: 'Status Effects'
+      potioneffects: 'Potion Effects'
+    effectitem:
+      active-format: 'ACTIVE'
+      inactive-format: 'INACTIVE'
+      level-format: 'Level %level%'
+      tooltip: 'Leftclick to toggle  | Rightclick to change level'
   profile:
     mainprofile:
       title: 'Profil'
@@ -1145,6 +1319,13 @@ sv:
       mute-lore: '%t_displayname% is not muted.'
       unmute: 'Unmute %t_displayname%'
       unmute-lore: '%t_displayname% är muted.'
+    reasons-gui:
+      title: 'Choose a reason'
+      confirm: 'Confirm'
+      not-selected: 'Not selected'
+      selected: 'Selected'
+      set-time: 'Set time to %time%'
+      set-reason: 'Set reason to %reason%'
     gamemode-switcher-gui:
       title: 'Speläges ändrare'
       creative: "Satte %t_displayname%s spelarläge till Kreativt"
@@ -1424,6 +1605,8 @@ sv:
       realname-header: |
         Spelare med smeknamnet %nickname%:
         %players%
+    ac-reload:
+      ac-reloaded: 'Reloaded ActiveCraft-Core'
     repair:
       repair-success: 'Fixade ditt föremål %item-displayname%.'
       cannot-be-repaired: "Föremålet kan inte bli lagat."
