@@ -92,12 +92,11 @@ public final class ActiveCraftCore extends JavaPlugin {
         log("Plugin unloaded.");
     }
 
-    public void log(String text) {
-        Bukkit.getLogger().log(Level.INFO, text);
+    public static void log(String text) {
+        log(Level.INFO, text);
     }
-
-    public static ActiveCraftCore getPlugin() {
-        return plugin;
+    public static void log(Level level, String text) {
+        ActiveCraftCore.getPlugin().getLogger().log(level, text);
     }
 
     public void startTimer() {
