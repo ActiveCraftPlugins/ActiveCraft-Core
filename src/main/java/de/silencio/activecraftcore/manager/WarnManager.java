@@ -57,6 +57,9 @@ public class WarnManager {
 
         Warn warn = event.getWarn();
 
+        String finalReason = reason;
+        PlayerQueue.add(profile, () -> profile.getPlayer().sendMessage(CommandMessages.WARNED_HEADER(), CommandMessages.WARNED(source, finalReason)));
+
         profile.set(Profile.Value.WARNS, profile.getWarns() + 1);
         profile.set(Profile.Value.WARN_LIST, warn.id(), Map.of("reason", warn.reason(), "created", warn.created(), "source", warn.source()));
     }
