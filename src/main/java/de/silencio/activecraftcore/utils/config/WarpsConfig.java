@@ -17,6 +17,8 @@ public class WarpsConfig extends ActiveCraftConfig {
     @Override
     protected void load() {
         warps = new HashMap<>();
-        fileConfig.getKeys(false).forEach(key -> warps.put(key, fileConfig.getLocation(key)));
+        fileConfig.getKeys(false).stream()
+                .filter(key -> fileConfig.getLocation(key) != null)
+                .forEach(key -> warps.put(key, fileConfig.getLocation(key)));
     }
 }

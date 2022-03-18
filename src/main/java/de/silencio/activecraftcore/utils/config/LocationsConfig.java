@@ -18,7 +18,9 @@ public class LocationsConfig extends ActiveCraftConfig {
     @Override
     protected void load() {
         locations = new HashMap<>();
-        fileConfig.getKeys(false).forEach(key -> locations.put(key, fileConfig.getLocation(key)));
+        fileConfig.getKeys(false).stream()
+                .filter(key -> fileConfig.getLocation(key) != null)
+                .forEach(key -> locations.put(key, fileConfig.getLocation(key)));
         spawn = locations.get("spawn");
     }
 }

@@ -19,12 +19,8 @@ public class StringUtils {
     private static final Pattern IPv4_PATTERN = Pattern.compile(IPV4_REGEX);
 
     public static boolean isValidInet4Address(String ip) {
-        if (ip == null) {
-            return false;
-        }
-
+        if (ip == null) return false;
         Matcher matcher = IPv4_PATTERN.matcher(ip);
-
         return matcher.matches();
     }
 
@@ -90,13 +86,10 @@ public class StringUtils {
         return combineArray(args, start, args.length, splitter);
     }
 
-
     public static String combineArray(String[] args, int start, int stop, String splitter) {
         StringBuilder resultBuilder = new StringBuilder();
-        for (int i = start; i < stop; i++) {
-            if (i != start) resultBuilder.append(splitter);
-            resultBuilder.append(args[i]);
-        }
+        for (int i = start; i < stop; i++)
+            resultBuilder.append(i != start ? splitter + args[i] : args[i]);
         return resultBuilder.toString();
     }
 
@@ -118,10 +111,8 @@ public class StringUtils {
 
     public static String combineList(List<String> args, int start, int stop, String splitter) {
         StringBuilder resultBuilder = new StringBuilder();
-        for (int i = start; i < stop; i++) {
-            if (i != start) resultBuilder.append(splitter);
-            resultBuilder.append(args.get(i));
-        }
+        for (int i = start; i < stop; i++)
+            resultBuilder.append(i != start ? splitter + args.get(i) : args.get(i));
         return resultBuilder.toString();
     }
 }

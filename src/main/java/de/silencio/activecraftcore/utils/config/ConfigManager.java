@@ -2,17 +2,12 @@ package de.silencio.activecraftcore.utils.config;
 
 import lombok.Getter;
 
-@Getter
 public class ConfigManager {
 
-    @Getter
-    private static MainConfig mainConfig = new MainConfig();
-    @Getter
-    private static LocationsConfig locationsConfig = new LocationsConfig();
-    @Getter
-    private static WarpsConfig warpsConfig = new WarpsConfig();
-    @Getter
-    private static PortalsConfig portalsConfig = new PortalsConfig();
+    private @Getter static MainConfig mainConfig = new MainConfig();
+    private @Getter static LocationsConfig locationsConfig = new LocationsConfig();
+    private @Getter static WarpsConfig warpsConfig = new WarpsConfig();
+    private @Getter static PortalsConfig portalsConfig = new PortalsConfig();
 
     public static void reloadAll() {
         mainConfig.reload();

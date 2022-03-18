@@ -18,17 +18,22 @@ public class PortalsConfig extends ActiveCraftConfig  {
     @Override
     protected void load() {
         portals = new HashMap<>();
-        fileConfig.getSections().forEach(section -> portals.put(section.getName(), new Portal(
-                section.getName(),
-                section.getInt("x"),
-                section.getInt("y"),
-                section.getInt("z"),
-                Bukkit.getWorld(section.getString("world")),
-                section.getInt("to_x"),
-                section.getInt("to_y"),
-                section.getInt("to_z"),
-                Bukkit.getWorld(section.getString("to_world"))
-        )));
+        for (ConfigurationSection section : fileConfig.getSections()) {
+            String worldname = section.getString("world");
+            String to_worldname = section.getString("to_world");
+            if (worldname == null || to_worldname == null) continue;
+            portals.put(section.getName(), new Portal(
+                    section.getName(),
+                    section.getInt("x"),
+                    section.getInt("y"),
+                    section.getInt("z"),
+                    Bukkit.getWorld(worldname),
+                    section.getInt("to_x"),
+                    section.getInt("to_y"),
+                    section.getInt("to_z"),
+                    Bukkit.getWorld(to_worldname)
+            ));
+        }
     }
 
 }
