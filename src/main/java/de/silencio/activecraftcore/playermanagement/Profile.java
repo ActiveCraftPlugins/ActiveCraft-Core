@@ -96,7 +96,7 @@ public final class Profile {
     private HashMap<String, Location> homeList;
     private HashMap<String, Warn> warnList;
     private HashMap<String, Location> lastLocations;
-    private HashMap<Effect, Boolean> effects;
+    private HashMap<PotionEffectType, Effect> effects;
 
     private final WarnManager warnManager;
     private final HomeManager homeManager;
@@ -184,7 +184,11 @@ public final class Profile {
             )));
 
         effects = new HashMap<>();
-        Arrays.stream(Effect.values()).forEach(effect -> effects.put(effect, playerdataConfig.getBoolean("effects." + effect.name().toLowerCase())));
+        Arrays.stream(PotionEffectType.values()).forEach(effect -> effects.put(effect, new Effect(
+                effect,
+                playerdataConfig.getInt("effects." + effect.getName().toLowerCase() + ".amp"),
+                playerdataConfig.getBoolean("effects." + effect.getName().toLowerCase() + ".active")
+        )));
     }
 
     public void set(Value value, Object object) {
@@ -231,7 +235,50 @@ public final class Profile {
         refresh();
     }
 
+    public void refreshEffects() {
+        Player player;
+        if ((player = getPlayer()) == null) return;
+        for (Effect effect : effects.values()) {
+            if (effect != null) {
+                if (effect.active()) {
+                    player.addPotionEffect(new PotionEffect(effect.effectType(), 2147483647, effect.amplifier()));
+                }
+            }
+        }
+    }
 
+    public void toggleEffect(PotionEffectType effectType) {
+        Effect effect = effects.get(effectType);
+        if (effect == null) {
+            set(Profile.Value.EFFECTS, effectType.getName().toLowerCase(), Map.of("amp", 1, "active", true));
+        } else {
+            set(Profile.Value.EFFECTS, effectType.getName().toLowerCase(), Map.of("amp", effect.amplifier(), "active", !effect.active()));
+        }
+        Player player;
+        if ((player = getPlayer()) == null) return;
+        effect = effects.get(effectType);
+        if (effect.active()) {
+            player.addPotionEffect(new PotionEffect(effectType, 2147483647, effect.amplifier()));
+        } else {
+            player.removePotionEffect(effectType);
+        }
+    }
+
+    public void changeEffectLevel(PotionEffectType effectType, int change) {
+        Effect effect = effects.get(effectType);
+        if (effect == null) {
+            set(Profile.Value.EFFECTS, effectType.getName().toLowerCase(), Map.of("amp", change < 0 ? 1 : change, "active", true));
+        } else {
+            int amp = effect.amplifier() + change;
+            amp = 0 < amp && amp < 256 ? amp : (amp >= 256 ? 255 : 0);
+            set(Profile.Value.EFFECTS, effectType.getName().toLowerCase(), Map.of("amp", amp, "active", effect.active()));
+        }
+        Player player;
+        effect = effects.get(effectType);
+        if ((player = getPlayer()) == null || !effect.active()) return;
+        player.removePotionEffect(effectType);
+        player.addPotionEffect(new PotionEffect(effectType, 2147483647, effect.amplifier()));
+    }
 
     public void clearTags() {
         tags.clear();
