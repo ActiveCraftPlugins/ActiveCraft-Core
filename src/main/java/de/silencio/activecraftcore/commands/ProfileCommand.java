@@ -2,7 +2,8 @@ package de.silencio.activecraftcore.commands;
 
 import de.silencio.activecraftcore.ActiveCraftCore;
 import de.silencio.activecraftcore.exceptions.ActiveCraftException;
-import de.silencio.activecraftcore.guis.ProfileMenu;
+import de.silencio.activecraftcore.guicreator.GuiNavigator;
+import de.silencio.activecraftcore.guis.profilemenu.ProfileMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,16 +20,9 @@ public class ProfileCommand extends ActiveCraftCommand {
     public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
         Player player = getPlayer(sender);
         checkPermission(sender, "profile");
-        if (args.length == 0) {
-            ProfileMenu profileMenu = new ProfileMenu(player, player);
-            ActiveCraftCore.getProfileMenuList().put(player, profileMenu);
-            player.openInventory(profileMenu.getMainProfile().build().getInventory());
-        } else if (args.length == 1) {
-            Player target = getPlayer(args[0]);
-            ProfileMenu profileMenu = new ProfileMenu(player, target);
-            ActiveCraftCore.getProfileMenuList().put(player, profileMenu);
-            player.openInventory(profileMenu.getMainProfile().build().getInventory());
-        }
+        ProfileMenu profileMenu = new ProfileMenu(player, args.length == 1 ? getPlayer(args[0]) : player);
+        ActiveCraftCore.getProfileMenuList().put(player, profileMenu);
+        GuiNavigator.push(player, profileMenu.getMainProfile().build());
     }
 
     @Override
