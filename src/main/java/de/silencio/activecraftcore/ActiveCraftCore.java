@@ -89,6 +89,7 @@ public final class ActiveCraftCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Bukkit.getOnlinePlayers().forEach(player -> Profile.of(player).set(Profile.Value.LAST_LOCATION, "BEFORE_QUIT", player.getLocation()));
         log("Plugin unloaded.");
     }
 
