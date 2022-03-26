@@ -48,6 +48,7 @@ public class GuiNavigator {
     }
 
     public static Stack<Gui> getGuiStack(Player player) {
+        playerGuiStack.computeIfAbsent(player, k -> new Stack<>());
         return playerGuiStack.get(player);
     }
 }
