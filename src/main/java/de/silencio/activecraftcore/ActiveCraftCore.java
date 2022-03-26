@@ -149,8 +149,13 @@ public final class ActiveCraftCore extends JavaPlugin {
     public static Map<String, UUID> getPlayerlist() {
         FileConfig playerlistConfig = new FileConfig("playerlist.yml");
         Map<String, UUID> playerlist = new HashMap<>();
-        for (String key : playerlistConfig.getKeys(false))
-            playerlist.put(playerlistConfig.getString(key), UUID.fromString(key));
+        for (String key : playerlistConfig.getKeys(false)) {
+            try {
+                playerlist.put(playerlistConfig.getString(key), UUID.fromString(key));
+            } catch (IllegalArgumentException e) {
+                log(Level.SEVERE, "Error occured while loading profile for \"" + key + "\"");
+            }
+        }
         return playerlist;
     }
 
