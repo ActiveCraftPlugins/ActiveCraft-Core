@@ -7,9 +7,9 @@ import de.silencio.activecraftcore.guis.profilemenu.Listener.MainProfileListener
 import de.silencio.activecraftcore.listener.*;
 import org.bukkit.plugin.Plugin;
 
-public class ACCPluginManager extends ActiveCraftPluginManager {
+public class CorePluginManager extends ActiveCraftPluginManager {
 
-    public ACCPluginManager(Plugin plugin) {
+    public CorePluginManager(Plugin plugin) {
         super(plugin);
     }
 
