@@ -173,8 +173,9 @@ public final class ActiveCraftCore extends JavaPlugin {
 
     public static void createProfiles() {
         profiles.clear();
-        for (String playername : getPlayerlist().keySet())
-            if (new File(ActiveCraftCore.getPlugin().getDataFolder() + File.separator + "playerdata" + File.separator + playername + ".yml").exists())
+        Map<String, UUID> playerlist = getPlayerlist();
+        for (String playername : playerlist.keySet())
+            if (new File(ActiveCraftCore.getPlugin().getDataFolder() + File.separator + "playerdata" + File.separator + playerlist.get(playername) + ".yml").exists())
                 profiles.put(playername, new Profile(playername));
     }
 
