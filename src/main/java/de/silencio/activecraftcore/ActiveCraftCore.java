@@ -37,11 +37,11 @@ public final class ActiveCraftCore extends JavaPlugin {
     private @Getter static final HashMap<Integer, Gui> guiList = new HashMap<>();
     private @Getter static final HashMap<Player, Location> lastLocMap = new HashMap<>();
     private @Getter static final HashMap<CommandSender, DialogueManager> dialogueManagerList = new HashMap<>();
-    private @Getter static ACCPluginManager pluginManager;
+    private @Getter static CorePluginManager pluginManager;
 
     public ActiveCraftCore() {
         plugin = this;
-        pluginManager = new ACCPluginManager(ActiveCraftCore.getPlugin());
+        pluginManager = new CorePluginManager(getPlugin());
     }
 
     @Override
