@@ -29,7 +29,7 @@ public class SummonCommand extends ActiveCraftCommand {
                 Player player = getPlayer(sender);
                 EntityType entityType = parseEntityType(args[0]);
                 if (forbiddenEntityTypes.contains(entityType)) throw new InvalidEntityException(args[0]);
-                player.getWorld().spawnEntity(player.getLocation(), EntityType.valueOf(args[0]));
+                player.getWorld().spawnEntity(player.getLocation(), entityType);
                 sendMessage(sender, CommandMessages.SUMMON(args[0]));
             }
             case 2 -> {
