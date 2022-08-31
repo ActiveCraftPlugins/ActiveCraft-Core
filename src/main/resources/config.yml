@@ -2,9 +2,10 @@
 #  Made by CPlaiz and Silencio
 
 # Ingame Visual formats
-chat-format: '%displayname%§f: %message%'
-join-format: "§b» §f%displayname%"
-quit-format: "§c« §f%displayname%"
+
+send-join-message: true # to edit the format go to "messages.yml" > "general" > "join-format"
+send-quit-message: true # to edit the format go to "messages.yml" > "general" > "quit-format"
+use-custom-chat-format: true # to edit the format go to "messages.yml" > "chat" > "chat-format"
 
 # Teleportation Timers
 tpa-timer: true
@@ -17,7 +18,7 @@ default-mute:
   # When activated, players who join for the first time cannot speak in chat.
   enabled: false
   # Set the time a new player should be muted for.
-  duration: 10 #in minutes | 0 to disable
+  duration: 10 #in minutes | -1 to allow only manual verification
 
 # Vanish Settings
 vanish-tag:
@@ -62,6 +63,21 @@ hide-commands-after-plugin-name:
   # All commands that should not be removed from the tab complete.
   except:
     - 'minecraft:enchant'
+    - 'minecraft:tp'
 # Remove any command from tab complete.
 hide-commands:
   - 'command'
+
+#database
+database:
+  dialect: sqlite # supported dialects: mysql, sqlite
+  local-path: activecraftcore.db # for file database only | relative from plugin data folder
+  host: localhost # for hosted database only
+  network-path: activecraftcore # for hosted database only
+  port: 1433 # for hosted database only
+  user: activeuser # for hosted database only
+  password: activecraftcore # for hosted database only
+
+# Additional Features
+features:
+  prefix: false
