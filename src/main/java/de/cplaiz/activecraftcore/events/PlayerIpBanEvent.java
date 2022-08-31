@@ -1,4 +1,4 @@
-package de.silencio.activecraftcore.events;
+package de.cplaiz.activecraftcore.events;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
