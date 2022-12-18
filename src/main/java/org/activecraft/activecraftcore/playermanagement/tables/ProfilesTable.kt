@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-object Profiles : Table("profiles") {
+object ProfilesTable : Table("profiles") {
 
     //val profileId = integer("id").autoIncrement()
     val uuid = uuid("uuid")
@@ -45,7 +45,7 @@ object Profiles : Table("profiles") {
         }
     }
 
-    fun profileExists(uuid: UUID) = select { Profiles.uuid eq uuid }.any()
+    fun profileExists(uuid: UUID) = select { ProfilesTable.uuid eq uuid }.any()
 
     /*fun registerExtensionLoader(loader: Profiles.(ResultRow) -> Unit) {
         extensionLoaders.add(loader)
@@ -84,26 +84,26 @@ object Profiles : Table("profiles") {
 
     private fun loadData(profile: Profilev2, row: ResultRow) {
         profile.apply {
-            name = row[Profiles.name]
-            rawNickname = row[Profiles.nickname]
-            lastOnline = row[Profiles.lastOnline]
-            timesJoined = row[Profiles.timesJoined]
-            timesWarned = row[Profiles.timesWarned]
-            timesMuted = row[Profiles.timesMuted]
-            timesBanned = row[Profiles.timesBanned]
-            timesIpBanned = row[Profiles.timesIpBanned]
-            playtime = row[Profiles.playtime]
+            name = row[ProfilesTable.name]
+            rawNickname = row[ProfilesTable.nickname]
+            lastOnline = row[ProfilesTable.lastOnline]
+            timesJoined = row[ProfilesTable.timesJoined]
+            timesWarned = row[ProfilesTable.timesWarned]
+            timesMuted = row[ProfilesTable.timesMuted]
+            timesBanned = row[ProfilesTable.timesBanned]
+            timesIpBanned = row[ProfilesTable.timesIpBanned]
+            playtime = row[ProfilesTable.playtime]
             isAfk = row[afk]
             isGodmode = row[godmode]
             isFly = row[fly]
             isMuted = row[muted]
             isDefaultmuted = row[defaultmuted]
             isVanished = row[vanished]
-            receiveLog = row[Profiles.receiveLog]
-            bypassLockdown = row[Profiles.bypassLockdown]
-            receiveSocialspy = row[Profiles.receiveSocialspy]
-            editSign = row[Profiles.editSign]
-            colorNick = ChatColor.valueOf(row[Profiles.colorNick])
+            receiveLog = row[ProfilesTable.receiveLog]
+            bypassLockdown = row[ProfilesTable.bypassLockdown]
+            receiveSocialspy = row[ProfilesTable.receiveSocialspy]
+            editSign = row[ProfilesTable.editSign]
+            colorNick = ChatColor.valueOf(row[ProfilesTable.colorNick])
         }
     }
 
@@ -115,29 +115,29 @@ object Profiles : Table("profiles") {
     private fun saveData(profile: Profilev2, updateBuilder: UpdateBuilder<Int>) {
         profile.apply {
             if (updateBuilder.type == StatementType.INSERT)
-                updateBuilder[Profiles.uuid] = uuid
-            updateBuilder[Profiles.name] = name
-            updateBuilder[Profiles.nickname] = rawNickname
-            updateBuilder[Profiles.lastOnline] = lastOnline
-            updateBuilder[Profiles.timesJoined] = timesJoined
-            updateBuilder[Profiles.timesWarned] = timesWarned
-            updateBuilder[Profiles.timesMuted] = timesMuted
-            updateBuilder[Profiles.timesBanned] = timesBanned
-            updateBuilder[Profiles.timesIpBanned] = timesIpBanned
-            updateBuilder[Profiles.playtime] = playtime
+                updateBuilder[ProfilesTable.uuid] = uuid
+            updateBuilder[ProfilesTable.name] = name
+            updateBuilder[ProfilesTable.nickname] = rawNickname
+            updateBuilder[ProfilesTable.lastOnline] = lastOnline
+            updateBuilder[ProfilesTable.timesJoined] = timesJoined
+            updateBuilder[ProfilesTable.timesWarned] = timesWarned
+            updateBuilder[ProfilesTable.timesMuted] = timesMuted
+            updateBuilder[ProfilesTable.timesBanned] = timesBanned
+            updateBuilder[ProfilesTable.timesIpBanned] = timesIpBanned
+            updateBuilder[ProfilesTable.playtime] = playtime
             updateBuilder[afk] = isAfk
             updateBuilder[godmode] = isGodmode
             updateBuilder[fly] = isFly
             updateBuilder[muted] = isMuted
             updateBuilder[defaultmuted] = isDefaultmuted
             updateBuilder[vanished] = isVanished
-            updateBuilder[Profiles.receiveLog] = receiveLog
-            updateBuilder[Profiles.bypassLockdown] = bypassLockdown
-            updateBuilder[Profiles.receiveSocialspy] = receiveSocialspy
-            updateBuilder[Profiles.editSign] = editSign
-            updateBuilder[Profiles.colorNick] = colorNick.name
+            updateBuilder[ProfilesTable.receiveLog] = receiveLog
+            updateBuilder[ProfilesTable.bypassLockdown] = bypassLockdown
+            updateBuilder[ProfilesTable.receiveSocialspy] = receiveSocialspy
+            updateBuilder[ProfilesTable.editSign] = editSign
+            updateBuilder[ProfilesTable.colorNick] = colorNick.name
 
-            updateBuilder[Profiles.prefix] = displayManager.prefix
+            updateBuilder[ProfilesTable.prefix] = displayManager.prefix
         }
     }
 

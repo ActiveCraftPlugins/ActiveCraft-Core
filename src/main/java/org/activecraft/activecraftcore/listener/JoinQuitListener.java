@@ -6,15 +6,7 @@ import org.activecraft.activecraftcore.messagesv2.MessageFormatter;
 import org.activecraft.activecraftcore.messagesv2.MessageSupplier;
 import org.activecraft.activecraftcore.playermanagement.Playerlist;
 import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.playermanagement.tables.Profiles;
-import org.activecraft.activecraftcore.utils.config.MainConfig;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.manager.VanishManager;
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter;
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier;
-import org.activecraft.activecraftcore.playermanagement.Playerlist;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.playermanagement.tables.Profiles;
+import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable;
 import org.activecraft.activecraftcore.utils.config.MainConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -97,7 +89,7 @@ public class JoinQuitListener implements Listener {
         profile.setBypassLockdown(player.hasPermission("lockdown.bypass"));
         // TODO: 27.08.2022 save profile
         long before = System.nanoTime();
-        Profiles.INSTANCE.writeToDatabase(profile);
+        ProfilesTable.INSTANCE.writeToDatabase(profile);
         long after = System.nanoTime();
 
         System.out.println("Microseconds: " + ((after - before) / 1000));

@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object Warns : Table("warns") {
 
     val id = varchar("id", 8)
-    val profileId = uuid("profile_id") references Profiles.uuid
+    val profileId = uuid("profile_id") references ProfilesTable.uuid
     val reason = text("reason")
     val created = datetime("created")
     val warnSource = text("source")

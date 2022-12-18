@@ -358,7 +358,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
 
     protected boolean isTargetSelf(CommandSender sender, String target, String extendedPermission, boolean ignorePermission) throws SelfTargetException {
         if (sender.getName().equalsIgnoreCase(target)) {
-            String permString = (plugin.getPermissionGroup() != null ? plugin.getPermissionGroup() + "." : "")
+            String permString = (plugin.permissionGroup != null ? plugin.permissionGroup + "." : "")
                     + permission + ".self" + (extendedPermission != null ? "." + extendedPermission : "");
             if (!ignorePermission && !sender.hasPermission(permString))
                 throw new SelfTargetException(sender, "null");
@@ -386,7 +386,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     protected boolean checkPermission(Permissible permissible, String extendedPermission) throws NoPermissionException {
-        return checkPermission(permissible, extendedPermission, plugin.getPermissionGroup());
+        return checkPermission(permissible, extendedPermission, plugin.permissionGroup);
     }
 
     protected boolean checkPermission(Permissible permissible, String permissionExtension, String permissionPrefix) throws NoPermissionException {
@@ -548,7 +548,7 @@ public abstract class ActiveCraftCommand implements CommandExecutor, TabComplete
     }
 
     protected List<String> getProfileNames() {
-        return ActiveCraftCore.getInstance().getProfiles().values().stream().map(Profilev2::getName).collect(Collectors.toList());
+        return ActiveCraftCore.getInstance().profiles.values().stream().map(Profilev2::getName).collect(Collectors.toList());
     }
 
     public static void registerErrorEvent(Class<? extends ActiveCraftException> exception, BiConsumer<ActiveCraftException, CommandSender> consumer) {

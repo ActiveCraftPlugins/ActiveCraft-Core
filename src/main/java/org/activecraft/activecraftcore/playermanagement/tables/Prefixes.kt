@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.update
 object Prefixes : Table("prefixes") {
 
     val id = integer("id").autoIncrement()
-    val profileId = uuid("profile_id") references Profiles.uuid
+    val profileId = uuid("profile_id") references ProfilesTable.uuid
     val prefix = text("prefix")
 
     fun getPrefixForProfile(profile: Profilev2) =

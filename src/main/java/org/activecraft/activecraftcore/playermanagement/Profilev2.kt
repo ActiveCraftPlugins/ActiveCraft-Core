@@ -4,22 +4,13 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.ActiveCraftPlugin
 import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
 import org.activecraft.activecraftcore.playermanagement.dialog.DialogManager
-import org.activecraft.activecraftcore.playermanagement.tables.Profiles.writeToDatabase
+import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable.writeToDatabase
 import org.activecraft.activecraftcore.utils.ColorUtils
 import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.time.LocalDateTime
 import java.util.*
-
-/*val Profiles.test: Column<Int>
-    get() = integer("test")
-
-fun registerExtensionTest() {
-    Profiles.registerExtensionLoader {
-        it[test] = 1
-    }
-}*/
 
 class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
 
@@ -52,7 +43,7 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
     var isGodmode: Boolean = false
     var isFly: Boolean = false
     var isMuted: Boolean = false
-    var isDefaultmuted: Boolean = ActiveCraftCore.getInstance().mainConfig.isDefaultMuteEnabled
+    var isDefaultmuted: Boolean = ActiveCraftCore.instance.mainConfig.isDefaultMuteEnabled
     var isVanished: Boolean = false
     var receiveLog: Boolean = false
         @JvmName("canReceiveLog") get
@@ -92,34 +83,26 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
 
     companion object {
         @JvmStatic
-        fun of(profileName: String?): Profilev2? {
-            return of(ActiveCraftCore.getInstance().playerlist.getUUIDByPlayername(profileName))
-        }
+        fun of(uuid: UUID?) = ActiveCraftCore.instance.profiles[uuid]
 
         @JvmStatic
-        fun of(uuid: UUID?): Profilev2? {
-            return ActiveCraftCore.getInstance().profiles[uuid]
-        }
+        fun of(profileName: String?) = of(ActiveCraftCore.instance.playerlist.getUUIDByPlayername(profileName))
 
         @JvmStatic
-        fun of(player: Player): Profilev2? {
-            return of(player.uniqueId)
-        }
+        fun of(player: Player) = of(player.uniqueId)
 
         @JvmStatic
-        fun of(sender: CommandSender): Profilev2? {
-            return of(sender.name)
-        }
+        fun of(sender: CommandSender) = of(sender.name)
 
         @JvmStatic
         fun createIfNotExists(player: Player): Profilev2 {
-            ActiveCraftCore.getInstance().playerlist.addPlayerIfAbsent(player)
+            ActiveCraftCore.instance.playerlist.addPlayerIfAbsent(player)
 
             return of(player) ?: Profilev2(player.uniqueId) {
                 name = player.name
                 rawNickname = player.name
             }.also {
-                ActiveCraftCore.getInstance().profiles[player.uniqueId] = it
+                ActiveCraftCore.instance.profiles[player.uniqueId] = it
                 writeToDatabase(it)
             }
         }

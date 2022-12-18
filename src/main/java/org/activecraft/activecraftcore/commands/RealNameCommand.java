@@ -30,7 +30,7 @@ public class RealNameCommand extends ActiveCraftCommand {
         checkPermission(sender);
         checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
         String displayname = concatArray(args, 0).trim();
-        messageFormatter.addReplacements("nickname", displayname, "players", concatList(ActiveCraftCore.getInstance().getProfiles().values().stream()
+        messageFormatter.addReplacements("nickname", displayname, "players", concatList(ActiveCraftCore.getInstance().profiles.values().stream()
                 .filter(profile -> displayname.equalsIgnoreCase(ColorUtils.removeColorAndFormat(profile.getNickname())))
                 .map(Profilev2::getName)
                 .collect(Collectors.toList()), 0, ", "));

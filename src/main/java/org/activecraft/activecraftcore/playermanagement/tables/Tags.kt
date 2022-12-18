@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object Tags : Table("profile_tags") {
 
     var tagId = integer("tag-id").autoIncrement()
-    var profileId = uuid("profile-id") references Profiles.uuid
+    var profileId = uuid("profile-id") references ProfilesTable.uuid
     var tagValue = text("tag-value")
 
     override val primaryKey = PrimaryKey(tagId, name = "profile_tags_pk")

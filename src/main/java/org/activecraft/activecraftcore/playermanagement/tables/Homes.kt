@@ -11,7 +11,7 @@ object Homes : Table("homes") {
 
     var homeId = integer("id").autoIncrement()
     var name = varchar("name", 256)
-    var ownerId = uuid("owner_id") references Profiles.uuid
+    var ownerId = uuid("owner_id") references ProfilesTable.uuid
     var locationId = varchar("location_id", 8) references Locations.id
 
     override val primaryKey = PrimaryKey(homeId, name = "homes_pk")

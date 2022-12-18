@@ -3,12 +3,9 @@ package org.activecraft.activecraftcore.sql
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.exceptions.StartupException
 import org.activecraft.activecraftcore.playermanagement.tables.*
-import org.activecraft.activecraftcore.utils.config.FileConfig
-import org.activecraft.activecraftcore.utils.config.MainConfig
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.sql.SQLException
 
 class SQLManager {
 
@@ -52,7 +49,7 @@ class SQLManager {
                     LastLocations,
                     Locations,
                     PreferredLanguages,
-                    Profiles,
+                    ProfilesTable,
                     Tags,
                     Warns
                 )

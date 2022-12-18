@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object Effects : Table("effects") {
 
     val id = integer("id").autoIncrement()
-    val profileId = uuid("profile_id").references(ref = Profiles.uuid, onUpdate = ReferenceOption.CASCADE)
+    val profileId = uuid("profile_id").references(ref = ProfilesTable.uuid, onUpdate = ReferenceOption.CASCADE)
     val effectType = text("effect_type")
     val active = bool("active")
 

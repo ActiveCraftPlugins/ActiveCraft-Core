@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object PreferredLanguages : Table("preferred_languages") {
 
     val id = integer("id").autoIncrement()
-    val profileId = uuid("profile_id") references Profiles.uuid
+    val profileId = uuid("profile_id") references ProfilesTable.uuid
     val activeCraftMessage = text("activecraft_message")
     val preferredLanguage = varchar("preferred_language", 2)
 

@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object LastLocations : Table("last_locations") {
 
     val id = integer("id").autoIncrement()
-    val profileId = uuid("profile_id") references Profiles.uuid
+    val profileId = uuid("profile_id") references ProfilesTable.uuid
     val worldname = text("world")
     val locationId = varchar("location_id", 8) references Locations.id
     val lastBeforeQuit = bool("last_before_quit")

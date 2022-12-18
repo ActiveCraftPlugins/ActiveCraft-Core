@@ -43,7 +43,7 @@ public class TabCompleteListener implements Listener {
                 .map(ActiveCraftPlugin::getRegisteredCommands)
                 .map(Map::values)
                 .forEach(commands -> commands.stream()
-                        .filter(cmd -> !player.hasPermission(cmd.getPlugin().getPermissionGroup() + "." + cmd.getPermission()))
+                        .filter(cmd -> !player.hasPermission(cmd.getPlugin().permissionGroup + "." + cmd.getPermission()))
                         .forEach(cmd -> {
                             e.getCommands().remove(cmd.getCommandName());
                             e.getCommands().removeAll(cmd.getAliases());
