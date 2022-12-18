@@ -635,6 +635,9 @@ en:
     language:
       current: 'Your preferred language for %plugin% is currently %language% (%code%).'
       set: 'Your preferred language for %plugin% was set to %language% (%code%).'
+    lockchat:
+      locked-chat: 'The chat has been locked!'
+
 
 
 de:
