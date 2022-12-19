@@ -1,55 +1,35 @@
-package org.activecraft.activecraftcore.guicreator;
+package org.activecraft.activecraftcore.guicreator
 
-import org.activecraft.activecraftcore.events.ActiveCraftEvent;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.activecraft.activecraftcore.events.ActiveCraftEvent;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-
-import java.util.List;
+import lombok.Data
+import lombok.EqualsAndHashCode
+import org.activecraft.activecraftcore.events.ActiveCraftEvent
+import org.activecraft.activecraftcore.events.CancellableActiveCraftEvent
+import org.activecraft.activecraftcore.guicreator.Gui.Companion.ofInventory
+import org.bukkit.entity.HumanEntity
+import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
+import org.bukkit.event.inventory.InventoryAction
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class GuiClickEvent extends ActiveCraftEvent {
+class GuiClickEvent(val currentItem: GuiItem, invClickEvent: InventoryClickEvent) : CancellableActiveCraftEvent() {
+    val click: ClickType = invClickEvent.click
+    val slot: Int = invClickEvent.slot
+    var gui: Gui? = null
+        get() = if (field != null) field else ofInventory(clickedInventory).also { field = it }
+        private set
+    val clickedInventory: Inventory? = invClickEvent.clickedInventory
+    val action: InventoryAction = invClickEvent.action
+    val cursor: GuiItem? = null
+    val hotbarButton = 0
+    val rawSlot: Int = invClickEvent.rawSlot
+    val slotType: InventoryType.SlotType = invClickEvent.slotType
+    val viewers: List<HumanEntity> = invClickEvent.viewers
+    val view: InventoryView = invClickEvent.view
+    val player: Player = view.player as Player
 
-    private boolean cancelled;
-    private GuiItem currentItem;
-    private ClickType click;
-    private int slot;
-    private Gui gui;
-    private Inventory clickedInventory;
-    private InventoryAction action;
-    private GuiItem cursor;
-    private int hotbarButton;
-    private int rawSlot;
-    private InventoryType.SlotType slotType;
-    private List<HumanEntity> viewers;
-    private InventoryView view;
-    private Player player;
-    private InventoryClickEvent invClickEvent;
-
-    public GuiClickEvent(GuiItem guiItem, InventoryClickEvent event) {
-        this.invClickEvent = event;
-        this.currentItem = guiItem;
-        this.click = event.getClick();
-        this.slot = event.getSlot();
-        this.clickedInventory = event.getClickedInventory();
-        this.action = event.getAction();
-        this.rawSlot = event.getRawSlot();
-        this.slotType = event.getSlotType();
-        this.viewers = event.getViewers();
-        this.view = event.getView();
-        this.player = (Player) view.getPlayer();
-    }
-
-    public Gui getGui() {
-        return gui != null ? gui : (gui = Gui.ofInventory(clickedInventory));
-    }
 }

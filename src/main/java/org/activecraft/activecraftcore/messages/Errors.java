@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.ActiveCraftCore;
 import org.activecraft.activecraftcore.ActiveCraftCore;
 import org.bukkit.ChatColor;
 
-public class Errors extends MessageCollection implements ActiveCraftCore.MessageImpl {
+public class Errors extends MessageCollection {
 
     private static final String PREFIX = "error.";
 

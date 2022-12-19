@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement
 
-import org.activecraft.activecraftcore.playermanagement.tables.LastLocations
+import org.activecraft.activecraftcore.playermanagement.tables.LastLocationsTable
 import org.bukkit.Location
 import org.bukkit.World
 
@@ -16,12 +16,12 @@ class LocationManager(val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        lastLocations = LastLocations.getLastLocationsForProfile(profile)
-        lastLocationBeforeQuit = LastLocations.getLastLocationBeforeQuitForProfile(profile)
+        lastLocations = LastLocationsTable.getLastLocationsForProfile(profile)
+        lastLocationBeforeQuit = LastLocationsTable.getLastLocationBeforeQuitForProfile(profile)
     }
 
     override fun writeToDatabase() {
-        lastLocations.forEach { LastLocations.saveLastLocation(profile, it.key, it.value, it.value == lastLocationBeforeQuit) }
+        lastLocations.forEach { LastLocationsTable.saveLastLocation(profile, it.key, it.value, it.value == lastLocationBeforeQuit) }
     }
 
     @JvmOverloads

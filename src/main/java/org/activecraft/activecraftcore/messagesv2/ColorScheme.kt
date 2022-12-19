@@ -24,6 +24,6 @@ data class ColorScheme @JvmOverloads constructor(
     }
 
     fun of(plugin: ActiveCraftPlugin): ColorScheme {
-        return plugin.activeCraftMessagev2.colorScheme
+        return plugin.activeCraftMessagev2!!.colorScheme
     }
 }

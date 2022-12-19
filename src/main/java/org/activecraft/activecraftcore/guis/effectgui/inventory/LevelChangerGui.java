@@ -63,10 +63,10 @@ public class LevelChangerGui extends GuiCreator {
             if (!(item instanceof EffectItem effectItem)) continue;
             if (effectItem.getEffectType() == effectType) {
                 var effects = profile.getEffectManager().getEffects();
-                setItem(levelItem = new GuiItem(Material.YELLOW_CONCRETE, effects.get(effectType).amplifier() + 1)
+                setItem(levelItem = new GuiItem(Material.YELLOW_CONCRETE, effects.get(effectType).amplifier + 1)
                         .setDisplayName(
                                 effectGui.getMessageSupplier().getFormatted("effectgui.effectitem.level-format",
-                                        new MessageFormatter(activeCraftCoreMessage, new Pair<>("level", (effects.get(effectType).amplifier() + 1) + "")))), 22);
+                                        new MessageFormatter(activeCraftCoreMessage, new Pair<>("level", (effects.get(effectType).amplifier + 1) + "")))), 22);
                 break;
             }
         }

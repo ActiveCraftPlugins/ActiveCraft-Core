@@ -41,8 +41,8 @@ class ActiveCraftMessage @JvmOverloads constructor(
         fun getMessage(
             key: String,
             plugin: ActiveCraftPlugin,
-            color: ChatColor? = plugin.activeCraftMessagev2.colorScheme.primary,
-            language: Language = plugin.activeCraftMessagev2.defaultPluginLanguage
+            color: ChatColor? = plugin.activeCraftMessagev2!!.colorScheme.primary,
+            language: Language = plugin.activeCraftMessagev2!!.defaultPluginLanguage
         ): String {
             return (color ?: "").toString() + ActiveCraftMessage.getFileConfig(plugin).getString(
                 language.code
@@ -55,7 +55,7 @@ class ActiveCraftMessage @JvmOverloads constructor(
         fun getRawMessage(
             key: String,
             plugin: ActiveCraftPlugin,
-            language: Language = plugin.activeCraftMessagev2.defaultPluginLanguage
+            language: Language = plugin.activeCraftMessagev2!!.defaultPluginLanguage
         ) =
             getMessage(key = key, plugin = plugin, color = null, language = language)
 
@@ -63,9 +63,9 @@ class ActiveCraftMessage @JvmOverloads constructor(
         fun getFormatted(
             key: String,
             plugin: ActiveCraftPlugin,
-            color: ChatColor? = plugin.activeCraftMessagev2.colorScheme.primary,
+            color: ChatColor? = plugin.activeCraftMessagev2!!.colorScheme.primary,
             formatter: MessageFormatter,
-            language: Language = plugin.activeCraftMessagev2.defaultPluginLanguage
+            language: Language = plugin.activeCraftMessagev2!!.defaultPluginLanguage
         ) =
             formatter.format(getMessage(key = key, plugin = plugin, color = color, language = language))
     }

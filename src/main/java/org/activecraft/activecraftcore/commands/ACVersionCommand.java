@@ -57,6 +57,7 @@ public class ACVersionCommand extends ActiveCraftCommand {
                     sendMessage(sender, builder.create());
                 } else
                     sendMessage(sender, ChatColor.GOLD + key + ChatColor.DARK_AQUA + " - " + ChatColor.GREEN + "Latest.");
+                return null;
             });
         }
     }

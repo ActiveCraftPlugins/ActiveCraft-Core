@@ -8,11 +8,11 @@ import org.activecraft.activecraftcore.exceptions.NotHoldingItemException.Expect
 import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
 import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter
 
-val accMessage: ActiveCraftMessage = ActiveCraftCore.getInstance().activeCraftMessagev2
+val accMessage: ActiveCraftMessage = ActiveCraftCore.instance.activeCraftMessagev2!!
 
 fun registerCommandExceptions() {
     // TODO: implement OfflinePlayerException und message dafür
-    ActiveCraftCore.getInstance().commandExceptionProcessor.run {
+    ActiveCraftCore.instance.commandExceptionProcessor.run {
         registerErrorMessage(
             accMessage,
             OperationFailureException::class.java

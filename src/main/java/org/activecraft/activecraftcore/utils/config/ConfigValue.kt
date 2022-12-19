@@ -1,33 +1,34 @@
 package org.activecraft.activecraftcore.utils.config
 
-class ConfigValue<T> private constructor(
-    val activeCraftConfig: ActiveCraftConfig,
-    val configPath: String,
-    val defaultValue: T? = null
+import kotlin.reflect.KProperty
+
+class ConfigValue<T> constructor(
+    private val activeCraftConfig: ActiveCraftConfig,
+    private val configPath: String,
+    private val defaultValue: T
 ) {
 
-    companion object {
-        @JvmStatic
-        @JvmOverloads
-        fun <T> registerNew(activeCraftConfig: ActiveCraftConfig, configPath: String, defaultValue: T? = null): ConfigValue<T> {
-            val configValue = ConfigValue(activeCraftConfig, configPath, defaultValue)
-            activeCraftConfig.configValues.add(configValue)
-            return configValue
-        }
+    private var value: T = defaultValue
+
+    @JvmSynthetic
+    operator fun getValue(thisRef: Any, property: KProperty<*>): T {
+        return getValue()
     }
 
-    var value: T? = null
-        private set
-
-    fun writeValue(value: T) {
-        activeCraftConfig[configPath] = value
+    @JvmSynthetic
+    operator fun setValue(thisRef: Any, property: KProperty<*>, newValue: T) {
+        setValue(newValue)
     }
 
-    fun loadValue() {
-        value = try {
-            activeCraftConfig.fileConfig.get(configPath) as T
-        } catch (_: ClassCastException) {
-            defaultValue
-        }
+    fun getValue() = value ?: load()
+
+    fun setValue(newValue: T) {
+        activeCraftConfig.set(configPath, newValue)
+        value = newValue
+    }
+
+    fun load(): T {
+        value = runCatching { activeCraftConfig.fileConfig.get(configPath) as T }.getOrElse { defaultValue }
+        return value
     }
 }

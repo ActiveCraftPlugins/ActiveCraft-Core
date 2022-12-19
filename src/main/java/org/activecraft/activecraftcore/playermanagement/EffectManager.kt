@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement
 
-import org.activecraft.activecraftcore.playermanagement.tables.Effects
+import org.activecraft.activecraftcore.playermanagement.tables.EffectsTable
 import org.activecraft.activecraftcore.utils.config.Effect
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
@@ -16,11 +16,11 @@ class EffectManager(val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        effects = Effects.getEffectsForProfile(profile).associateBy { it.effectType }.toMutableMap()
+        effects = EffectsTable.getEffectsForProfile(profile).associateBy { it.effectType }.toMutableMap()
     }
 
     override fun writeToDatabase() {
-        effects.values.forEach { Effects.saveEffect(profile, it) }
+        effects.values.forEach { EffectsTable.saveEffect(profile, it) }
     }
 
     fun updateEffects() {
@@ -50,7 +50,7 @@ class EffectManager(val profile: Profilev2) : ProfileManager {
             0,
             false
         )
-        var newAmplifier = effect.amplifier() + change
+        var newAmplifier = effect.amplifier + change
         newAmplifier = if (newAmplifier in 1..255) newAmplifier else if (newAmplifier >= 256) 255 else 0
         effect = Effect(
             effect.effectType,
@@ -68,7 +68,7 @@ class EffectManager(val profile: Profilev2) : ProfileManager {
         if (player == null) return
         player.removePotionEffect(effect.effectType)
         if (!effect.active) return
-        player.addPotionEffect(PotionEffect(effect.effectType, Int.MAX_VALUE, effect.amplifier(), false, false))
+        player.addPotionEffect(PotionEffect(effect.effectType, Int.MAX_VALUE, effect.amplifier, false, false))
     }
 
 }

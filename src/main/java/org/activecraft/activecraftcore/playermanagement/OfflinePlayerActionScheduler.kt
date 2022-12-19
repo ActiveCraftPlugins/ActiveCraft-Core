@@ -29,7 +29,7 @@ object OfflinePlayerActionScheduler {
                 }
             }
         }
-        runnable.runTaskTimer(ActiveCraftCore.getInstance(), 0, 40)
+        runnable.runTaskTimer(ActiveCraftCore.instance, 0, 40)
     }
 
     @JvmStatic

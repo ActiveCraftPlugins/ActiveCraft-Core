@@ -15,26 +15,28 @@ class SQLManager {
     fun init() {
         // TODO: das ganze mit mysql oder so noch networkübergreifend machen
         // connect to sqlite database
-        val mainConfig = ActiveCraftCore.getInstance().mainConfig
+        val mainConfig = ActiveCraftCore.mainConfig
         val dialect: DatabaseDialect
         try {
-            dialect = DatabaseDialect.valueOf(mainConfig.databaseDialect.uppercase())
+            dialect = DatabaseDialect.valueOf(mainConfig.databaseDialect!!.uppercase())
         } catch (e: IllegalArgumentException) {
+            throw StartupException("Invalid database dialect. Check your \"config.yml\"")
+        } catch (e: NullPointerException) {
             throw StartupException("Invalid database dialect. Check your \"config.yml\"")
         }
 
         try {
             database = when (dialect) {
                 DatabaseDialect.SQLITE -> Database.connect(
-                    url = "jdbc:sqlite:${ActiveCraftCore.getInstance().dataFolder}/${mainConfig.databaseLocalPath}",
+                    url = "jdbc:sqlite:${ActiveCraftCore.dataFolder}/${mainConfig.databaseLocalPath}",
                     driver = "org.sqlite.JDBC"
                 )
 
                 DatabaseDialect.MYSQL -> Database.connect(
                     url = "jdbc:mysql://${mainConfig.databaseHost}:${mainConfig.databasePort}/${mainConfig.databaseNetworkPath}",
                     driver = "com.mysql.cj.jdbc.Driver",
-                    user = mainConfig.databaseUser,
-                    password = mainConfig.databasePassword
+                    user = mainConfig.databaseUser!!,
+                    password = mainConfig.databasePassword!!
                 )
             }
         } catch (e: Exception) {
@@ -44,14 +46,15 @@ class SQLManager {
         transaction {
             try {
                 SchemaUtils.create(
-                    Effects,
-                    Homes,
-                    LastLocations,
-                    Locations,
-                    PreferredLanguages,
+                    EffectsTable,
+                    HomesTable,
+                    LastLocationsTable,
+                    LocationsTable,
+                    PreferredLanguagesTable,
+                    PrefixesTable,
                     ProfilesTable,
-                    Tags,
-                    Warns
+                    TagsTable,
+                    WarnsTable
                 )
             } catch (e: Exception) {
                 throw StartupException(e.message)

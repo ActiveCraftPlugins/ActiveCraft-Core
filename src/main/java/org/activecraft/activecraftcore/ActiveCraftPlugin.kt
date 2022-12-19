@@ -1,11 +1,9 @@
 package org.activecraft.activecraftcore
 
-import lombok.Getter
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
-import org.activecraft.activecraftcore.commands.ActiveCraftCommand
 import org.activecraft.activecraftcore.commands.CommandExceptionProcessor
 import org.activecraft.activecraftcore.exceptions.StartupException
 import org.activecraft.activecraftcore.messages.ActiveCraftMessage
@@ -19,31 +17,21 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import java.util.logging.Level
+import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage as ActiveCraftMessagev2
 
-@Getter
 abstract class ActiveCraftPlugin @JvmOverloads constructor(
-    protected val spigotId: Int = 0,
+    val spigotId: Int = 0,
     protected val bStatsId: Int = 0,
-    @JvmField val permissionGroup: String? = "activecraft",
+    val permissionGroup: String? = null,
     useActiveCraftMessage: Boolean = true
 ) : JavaPlugin() {
-    protected var activeCraftMessage: ActiveCraftMessage? = null
-    var activeCraftMessagev2: org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage? = null
-        protected set
-    protected lateinit var pluginManager: PluginManager
-    protected var metrics: Metrics? = null
-    protected var registeredCommands = HashMap<String, ActiveCraftCommand>()
-    var commandExceptionProcessor: CommandExceptionProcessor? = null
-        protected set
+    val activeCraftMessage = if (useActiveCraftMessage) ActiveCraftMessage(this) else null
+    val activeCraftMessagev2 = if (useActiveCraftMessage) ActiveCraftMessagev2(this) else null
+    var pluginManager = PluginManager(this)
+    private var metrics = if (bStatsId != 0) Metrics(this, bStatsId) else null
+    var commandExceptionProcessor = CommandExceptionProcessor(this)
 
     init {
-        if (bStatsId != 0) metrics = Metrics(this, bStatsId)
-        if (useActiveCraftMessage) {
-            activeCraftMessage = ActiveCraftMessage(this)
-            activeCraftMessagev2 = org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage(this)
-        }
-        pluginManager = PluginManager(this)
-        commandExceptionProcessor = CommandExceptionProcessor(this)
         installedPlugins.add(this)
     }
 
@@ -68,21 +56,13 @@ abstract class ActiveCraftPlugin @JvmOverloads constructor(
     @Throws(StartupException::class)
     abstract fun onPluginEnabled()
     abstract fun onPluginDisabled()
-    fun log(level: Level?, text: String?) {
-        log(this, level, text)
-    }
 
-    fun log(text: String?) {
-        log(Level.INFO, text)
-    }
+    @JvmOverloads
+    fun log(text: String, level: Level = Level.INFO) = log(this, text, level)
 
-    fun error(text: String?) {
-        log(Level.SEVERE, text)
-    }
+    fun error(text: String) = log(text, Level.SEVERE)
 
-    fun warning(text: String?) {
-        log(Level.WARNING, text)
-    }
+    fun warning(text: String) = log(text, Level.SEVERE)
 
     fun checkForUpdate() {
         assert(spigotId != 0)
@@ -90,13 +70,13 @@ abstract class ActiveCraftPlugin @JvmOverloads constructor(
             if (description.version != version) {
                 logger.info("There is a new update available.")
                 logger.info("Download it at: https://www.spigotmc.org/resources/$spigotId")
-                ActiveCraftCore.getInstance().getPluginManager().addListeners(object : Listener {
-                    private static
+                ActiveCraftCore.pluginManager.addListeners(object : Listener {
                     var alreadyNotified = false
+
                     @EventHandler
                     fun onOperatorJoin(event: PlayerJoinEvent) {
                         val player = event.player
-                        if (!player.isOp || alreadyNotified) return@getVersion
+                        if (!player.isOp || alreadyNotified) return
                         val builder = ComponentBuilder()
                         builder.append(
                             TextComponent(
@@ -128,12 +108,12 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
     }
 
     @Throws(StartupException::class)
-    protected fun disableIfDependancyMissing(dependency: String, minVersion: String) {
+    protected fun disableIfDependencyMissing(dependency: String, minVersion: String) {
         disableIfDependancyMissing(this, dependency, minVersion, minVersion.replace("[1-9a-zA-Z]".toRegex(), "0"))
     }
 
     @Throws(StartupException::class)
-    protected fun disableIfDependancyMissing(dependency: String, minVersion: String, maxVersion: String) {
+    protected fun disableIfDependencyMissing(dependency: String, minVersion: String, maxVersion: String) {
         disableIfDependancyMissing(this, dependency, minVersion, maxVersion)
     }
 
@@ -141,49 +121,27 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
     protected abstract fun register()
 
     companion object {
-        private val installedPlugins: MutableSet<ActiveCraftPlugin?> = HashSet()
+        val installedPlugins: MutableSet<ActiveCraftPlugin> = mutableSetOf()
+
         @JvmStatic
-        fun of(name: String?): ActiveCraftPlugin? {
-            return installedPlugins.stream()
-                .filter { plugin: ActiveCraftPlugin? -> plugin!!.name.equals(name, ignoreCase = true) }
-                .findFirst().orElse(null)
-        }
+        fun of(name: String) = installedPlugins.find { it.name.equals(name, ignoreCase = true) }
 
-        fun of(plugin: Plugin?): ActiveCraftPlugin? {
-            assert(plugin != null)
-            return of(plugin!!.name)
-        }
+        fun of(plugin: Plugin) = of(plugin.name)
 
-        fun log(plugin: Plugin, level: Level?, text: String?) {
-            plugin.logger.log(level, text)
-        }
+        @JvmOverloads
+        fun log(plugin: Plugin, text: String, level: Level = Level.INFO) = plugin.logger.log(level, text)
 
-        fun log(plugin: Plugin, text: String?) {
-            log(plugin, Level.INFO, text)
-        }
+        fun error(plugin: Plugin, text: String) = log(plugin, text, Level.SEVERE)
 
-        fun error(plugin: Plugin, text: String?) {
-            log(plugin, Level.SEVERE, text)
-        }
+        fun warning(plugin: Plugin, text: String) = log(plugin, text, Level.WARNING)
 
-        fun warning(plugin: Plugin, text: String?) {
-            log(plugin, Level.WARNING, text)
-        }
+        @JvmOverloads
+        fun bukkitLog(text: String, level: Level = Level.INFO) = Bukkit.getLogger().log(level, text)
 
-        fun bukkitLog(level: Level?, text: String?) {
-            Bukkit.getLogger().log(level, text)
-        }
+        fun getActiveCraftPlugin(name: String) = installedPlugins.find { it.name == name }
 
-        fun bukkitLog(text: String?) {
-            Bukkit.getLogger().log(Level.INFO, text)
-        }
 
-        fun getActiveCraftPlugin(name: String): ActiveCraftPlugin? {
-            return installedPlugins.stream().filter { plugin: ActiveCraftPlugin? -> plugin!!.name == name }
-                .findAny().orElse(null)
-        }
-
-        fun isCompatibleVersion(version: String, minVersion: String, maxVersion: String): Boolean {
+        private fun isCompatibleVersion(version: String, minVersion: String, maxVersion: String): Boolean {
             val minSplit = minVersion.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val maxSplit = maxVersion.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val verSplit = version.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -195,7 +153,7 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
                 val minLen = minSplit[i].length
                 val maxLen = maxSplit[i].length
                 val verLen = verSplit[i].length
-                val longest = Math.max(Math.max(minLen, maxLen), verLen)
+                val longest = minLen.coerceAtLeast(maxLen).coerceAtLeast(verLen)
                 minVersionNumber.append(fillWithZero(minSplit[i], longest))
                 maxVersionNumber.append(fillWithZero(maxSplit[i], longest))
                 verVersionNumber.append(fillWithZero(verSplit[i], longest))
@@ -207,17 +165,17 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
                 if (max == 0L) return ver >= min
                 if (min == 0L) return ver <= max
                 require(min <= max) { "Invalid version string" }
-                ver >= min && ver <= max
+                ver in min..max
             } catch (e: NumberFormatException) {
                 throw IllegalArgumentException("Invalid version string")
             }
         }
 
-        fun isDependancyPresent(dependency: String?): Boolean {
+        fun isDependencyPresent(dependency: String?): Boolean {
             return Bukkit.getPluginManager().isPluginEnabled(dependency!!)
         }
 
-        fun isDependancyPresent(dependency: String?, minVersion: String): Boolean {
+        fun isDependencyPresent(dependency: String?, minVersion: String): Boolean {
             return if (!Bukkit.getPluginManager().isPluginEnabled(dependency!!)) false else !isCompatibleVersion(
                 Bukkit.getPluginManager().getPlugin(dependency)!!.description.version,
                 minVersion,
@@ -225,7 +183,7 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             )
         }
 
-        fun isDependancyPresent(dependency: String?, minVersion: String, maxVersion: String): Boolean {
+        fun isDependencyPresent(dependency: String?, minVersion: String, maxVersion: String): Boolean {
             return if (!Bukkit.getPluginManager().isPluginEnabled(dependency!!)) false else !isCompatibleVersion(
                 Bukkit.getPluginManager().getPlugin(dependency)!!.description.version, minVersion, maxVersion
             )
@@ -238,7 +196,7 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             minVersion: String,
             maxVersion: String
         ) {
-            if (!isDependancyPresent(dependency)) {
+            if (!isDependencyPresent(dependency)) {
                 activeCraftPlugin.error("*** $dependency is not installed or not enabled! ***")
                 activeCraftPlugin.error("*** This plugin will be disabled! ***")
                 throw StartupException("Dependancy missing")
@@ -269,13 +227,8 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             return targetBuilder.toString()
         }
 
-        private fun isAnyVersion(version: String): Boolean {
-            return version.replace(".", "").replace("0", "") == ""
-        }
+        private fun isAnyVersion(version: String) =
+            version.replace(".", "").replace("0", "") == ""
 
-        @JvmStatic
-        fun getInstalledPlugins(): Set<ActiveCraftPlugin?> {
-            return installedPlugins
-        }
     }
 }

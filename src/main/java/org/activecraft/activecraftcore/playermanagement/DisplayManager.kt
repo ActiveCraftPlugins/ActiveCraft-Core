@@ -1,7 +1,7 @@
 package org.activecraft.activecraftcore.playermanagement
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.playermanagement.tables.Tags
+import org.activecraft.activecraftcore.playermanagement.tables.TagsTable
 import org.activecraft.activecraftcore.utils.config.Feature
 import org.bukkit.entity.Player
 
@@ -19,16 +19,16 @@ class DisplayManager(val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        suffixTags = Tags.getTagsForProfile(profile)
+        suffixTags = TagsTable.getTagsForProfile(profile)
     }
 
     override fun writeToDatabase() {
         suffixTags.forEach {
-            if (!Tags.tagExistsInDatabase(profile, it)) {
-                Tags.saveTag(profile, it)
+            if (!TagsTable.tagExistsInDatabase(profile, it)) {
+                TagsTable.saveTag(profile, it)
             }
         }
-        Tags.getTagsForProfile(profile).filter { it !in suffixTags }.forEach { Tags.deleteTag(profile, it) }
+        TagsTable.getTagsForProfile(profile).filter { it !in suffixTags }.forEach { TagsTable.deleteTag(profile, it) }
     }
 
     fun clearTags() {
@@ -60,7 +60,7 @@ class DisplayManager(val profile: Profilev2) : ProfileManager {
         val appliedTags = suffixTags.sortedDescending()
 
         val middleDisplayname = profile.rawNickname + (if (suffixTags.isNotEmpty()) " " else "") + suffixTags.joinToString(" ")
-        val prefixEnabled = ActiveCraftCore.getInstance().isFeatureEnabled(Feature.PREFIX)
+        val prefixEnabled = ActiveCraftCore.isFeatureEnabled(Feature.PREFIX)
         val displayedPrefix = prefix + if (prefix == "") "" else " "
         val displayname = (if (prefixEnabled) displayedPrefix else "") + profile.colorNick + middleDisplayname
 
@@ -70,7 +70,7 @@ class DisplayManager(val profile: Profilev2) : ProfileManager {
 
     fun getNickname(): String {
         val displayedPrefix = prefix + if (prefix == "") "" else " "
-        return (if (ActiveCraftCore.getInstance()
+        return (if (ActiveCraftCore.instance
                 .isFeatureEnabled(Feature.PREFIX)
         ) displayedPrefix else "") + profile.colorNick + profile.rawNickname
     }

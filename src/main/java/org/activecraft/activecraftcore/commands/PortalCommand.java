@@ -52,9 +52,9 @@ public class PortalCommand extends ActiveCraftCommand {
                     sendMessage(sender, this.rawCmdMsg("does-not-exist"), true);
                     return;
                 }
-                Portal portal = ActiveCraftCore.getInstance().getPortalsConfig().getPortals().get(args[1]);
+                Portal portal = ActiveCraftCore.instance.getPortalsConfig().getPortals().get(args[1]);
                 PortalManager.destroy(args[1]);
-                messageFormatter.addReplacements("name", args[1], "coords", portal.x() + ", " + portal.y() + ", " + portal.z());
+                messageFormatter.addReplacements("name", args[1], "coords", portal.x + ", " + portal.y + ", " + portal.z);
                 sendMessage(sender, this.cmdMsg("destroyed"));
             }
             case "list" -> {
@@ -68,11 +68,11 @@ public class PortalCommand extends ActiveCraftCommand {
                 boolean isFirst = true;
                 for (String s : portalList) {
                     Portal portal = ActiveCraftCore.getInstance().getPortalsConfig().getPortals().get(s);
-                    int x = portal.x();
-                    int y = portal.y();
-                    int z = portal.z();
+                    int x = portal.x;
+                    int y = portal.y;
+                    int z = portal.z;
                     World world;
-                    if ((world = portal.world()) == null) continue;
+                    if ((world = portal.world) == null) continue;
                     if (isFirst) {
                         messageBuilder.append(ChatColor.BOLD + "" + ChatColor.GOLD + s + ": " + ChatColor.GRAY + world.getName() + "; " + x + ", " + y + ", " + z);
                         isFirst = false;

@@ -12,11 +12,9 @@ import org.activecraft.activecraftcore.modules.ModuleManager
 import org.activecraft.activecraftcore.playermanagement.OfflinePlayerActionScheduler.initialize
 import org.activecraft.activecraftcore.playermanagement.Playerlist
 import org.activecraft.activecraftcore.playermanagement.Profilev2
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable.loadAllProfiles
 import org.activecraft.activecraftcore.sql.SQLManager
-import org.activecraft.activecraftcore.utils.StringUtils
 import org.activecraft.activecraftcore.utils.config.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -30,26 +28,17 @@ import java.util.function.Consumer
 
 val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 
-class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
-    private val profileMenuList = HashMap<Player, ProfileMenu>()
-    @JvmField
+object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
     val profiles = HashMap<UUID, Profilev2>()
-    private val guiManager = GuiManager()
+    val guiManager = GuiManager()
     lateinit var mainConfig: MainConfig
     lateinit var locationsConfig: LocationsConfig
     lateinit var warpsConfig: WarpsConfig
     lateinit var portalsConfig: PortalsConfig
     lateinit var playerlist: Playerlist
+    private val profileMenuList = HashMap<Player, ProfileMenu>()
     private val sqlManager = SQLManager()
     private val features = HashMap<Feature, Boolean>()
-
-    companion object {
-        lateinit var instance: ActiveCraftCore
-    }
-
-    init {
-        instance = this
-    }
 
     override fun onPluginEnabled() {
         // connect to database
@@ -57,6 +46,9 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
 
         // load warp perms
         loadWarpPermissions()
+
+        //
+        loadFeatures()
 
         // Playermanagement
         playerlist = Playerlist()
@@ -73,20 +65,16 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
         bukkitLog(ChatColor.DARK_AQUA.toString() + "  / /| |/ /      " + ChatColor.GOLD + "ActiveCraft" + ChatColor.AQUA + " v" + description.version)
         bukkitLog(ChatColor.DARK_AQUA.toString() + " / ___ / /___    " + ChatColor.DARK_GRAY + "by CPlaiz and Silencio")
         bukkitLog(ChatColor.DARK_AQUA.toString() + "/_/  |_\\____/   ")
-        val moduleIds = ModuleManager.getModules().stream().map(Module::id).toList()
-        val acmodulesString = StringUtils.combineList(
-            getInstalledPlugins().stream()
-                .filter { plugin: ActiveCraftPlugin -> moduleIds.contains(plugin.spigotId) }
-                .map { obj: ActiveCraftPlugin -> obj.name }
-                .toList(),
-            ChatColor.DARK_AQUA.toString() + ", " + ChatColor.GOLD
-        )
+        val moduleIds = ModuleManager.modules.map(Module::id)
+        val acmodulesString =
+            installedPlugins.filter { plugin: ActiveCraftPlugin -> moduleIds.contains(plugin.spigotId) }
+                .joinToString(ChatColor.DARK_AQUA.toString() + ", " + ChatColor.GOLD) { obj: ActiveCraftPlugin -> obj.name }
         if (acmodulesString.isNotEmpty()) bukkitLog(ChatColor.DARK_AQUA.toString() + "Installed Modules: " + ChatColor.GOLD + acmodulesString)
     }
 
     private fun loadWarpPermissions() {
         for (s in warpsConfig.warps.keys) {
-            val childMap: MutableMap<String, Boolean> = HashMap()
+            val childMap: MutableMap<String, Boolean> = mutableMapOf()
             childMap["activecraft.warp.self"] = true
             childMap["activecraft.warp"] = true
             if (Bukkit.getPluginManager().getPermission("activecraft.warp.self.$s") != null) Bukkit.getPluginManager()
@@ -116,7 +104,7 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
 
     override fun onPluginDisabled() {
         Bukkit.getOnlinePlayers().forEach { player: Player ->
-            of(player)!!.locationManager.setLastLocation(
+            Profilev2.of(player).locationManager.setLastLocation(
                 player.world,
                 player.location,
                 true
@@ -131,7 +119,7 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
     private fun startTimer() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, {
             for (player in Bukkit.getOnlinePlayers()) {
-                val profile = of(player)!!
+                val profile = Profilev2.of(player)
                 var playtime = profile.playtime
                 playtime++
                 if (!profile.isAfk) {
@@ -139,7 +127,7 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
                 }
                 if (mainConfig.defaultMuteDuration in 0..playtime) {
                     if (profile.isDefaultmuted) {
-                        player.sendMessage(activeCraftMessage.getMessage("misc.default-mute-remove")) // TODO: 26.08.2022 zu msg supplier von profie ändern
+                        player.sendMessage(activeCraftMessage!!.getMessage("misc.default-mute-remove")) // TODO: 26.08.2022 zu msg supplier von profie ändern
                         profile.isDefaultmuted = false
                     }
                 }
@@ -159,6 +147,13 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
 
     fun isFeatureEnabled(feature: Feature): Boolean {
         return features.getOrDefault(feature, false)
+    }
+
+    private fun loadFeatures() {
+        mainConfig.features.forEach {
+            val feature = Feature.fromIdentifier(it.key) ?: return@forEach
+            features[feature] = it.value
+        }
     }
 
     private fun createProfiles() {

@@ -3,7 +3,7 @@ package org.activecraft.activecraftcore.playermanagement
 import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
 import org.activecraft.activecraftcore.messagesv2.Language
 import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.playermanagement.tables.PreferredLanguages
+import org.activecraft.activecraftcore.playermanagement.tables.PreferredLanguagesTable
 
 class LanguageManager(val profile: Profilev2) : ProfileManager {
 
@@ -15,13 +15,13 @@ class LanguageManager(val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        preferredLanguages = PreferredLanguages.getPreferredLanguagesForProfile(profile)
+        preferredLanguages = PreferredLanguagesTable.getPreferredLanguagesForProfile(profile)
     }
 
     override fun writeToDatabase() {
         preferredLanguages.forEach {
             println("$profile, ${it.value} ${it.value}")
-            PreferredLanguages.savePreferredLanguage(profile, it.key, it.value)
+            PreferredLanguagesTable.savePreferredLanguage(profile, it.key, it.value)
         }
     }
 

@@ -15,7 +15,7 @@ public final class GuiNavigator {
         if (getGuiStack(player) == null)
             playerGuiStack.put(player, new Stack<>());
         getGuiStack(player).push(gui);
-        player.openInventory(gui.getInventory());
+        player.openInventory(gui.inventory);
     }
 
     public static void pushReplacement(Player player, Gui gui) {
@@ -23,7 +23,7 @@ public final class GuiNavigator {
             playerGuiStack.put(player, new Stack<>());
         getGuiStack(player).pop();
         getGuiStack(player).push(gui);
-        player.openInventory(gui.getInventory());
+        player.openInventory(gui.inventory);
     }
 
     public static void pushAndRemoveUntil(Player player, Gui gui) {
@@ -31,13 +31,13 @@ public final class GuiNavigator {
             playerGuiStack.put(player, new Stack<>());
         getGuiStack(player).clear();
         getGuiStack(player).push(gui);
-        player.openInventory(gui.getInventory());
+        player.openInventory(gui.inventory);
     }
 
     public static Gui pop(Player player) {
         getGuiStack(player).pop();
         Gui topGui = getGuiStack(player).peek();
-        player.openInventory(topGui.rebuild().getInventory());
+        player.openInventory(topGui.rebuild().inventory);
         return topGui;
     }
 

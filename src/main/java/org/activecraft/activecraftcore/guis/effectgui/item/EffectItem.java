@@ -86,8 +86,8 @@ public class EffectItem extends GuiItem {
 
     public void refresh() {
         Effect effect = effectGui.getProfile().getEffectManager().getEffects().get(effectType);
-        boolean effectActive = effect != null && effect.active();
-        int effectAmplifier = effect == null ? 0 : effect.amplifier();
+        boolean effectActive = effect != null && effect.active;
+        int effectAmplifier = effect == null ? 0 : effect.amplifier;
         setLore(
                 messageSupplier.getMessage("effectgui.effectitem." + (effectActive? "" : "in") + "active-format", effectActive ? ChatColor.GREEN : ChatColor.RED),
                 messageSupplier.getFormatted("effectgui.effectitem.level-format", new MessageFormatter(messageSupplier.getActiveCraftMessage(), new Pair<>("level", "" + (effectAmplifier + 1)))),

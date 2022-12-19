@@ -5,7 +5,7 @@ import org.activecraft.activecraftcore.ActiveCraftPlugin
 import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
 import org.activecraft.activecraftcore.playermanagement.dialog.DialogManager
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable.writeToDatabase
-import org.activecraft.activecraftcore.utils.ColorUtils
+import org.activecraft.activecraftcore.utils.colorsOnly
 import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -29,7 +29,7 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
         get() = player != null
     var colorNick: ChatColor = ChatColor.WHITE
         set(value) {
-            if (ColorUtils.getColorsOnly().contains(value)) {
+            if (colorsOnly.contains(value)) {
                 field = value
             }
         }
@@ -43,7 +43,7 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
     var isGodmode: Boolean = false
     var isFly: Boolean = false
     var isMuted: Boolean = false
-    var isDefaultmuted: Boolean = ActiveCraftCore.instance.mainConfig.isDefaultMuteEnabled
+    var isDefaultmuted: Boolean = ActiveCraftCore.mainConfig.isDefaultMuteEnabled
     var isVanished: Boolean = false
     var receiveLog: Boolean = false
         @JvmName("canReceiveLog") get
@@ -74,7 +74,8 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
 
     fun getMessageSupplier(acm: ActiveCraftMessage) = languageManager.getMessageSupplier(acm)
 
-    fun getMessageSupplier(acp: ActiveCraftPlugin) = languageManager.getMessageSupplier(acp.activeCraftMessagev2)
+    fun getMessageSupplier(acp: ActiveCraftPlugin) =
+        acp.activeCraftMessagev2?.let { languageManager.getMessageSupplier(it) }
 
     val player: Player?
         get() = Bukkit.getPlayer(name)
@@ -83,26 +84,26 @@ class Profilev2(val uuid: UUID, build: Profilev2.() -> Unit) {
 
     companion object {
         @JvmStatic
-        fun of(uuid: UUID?) = ActiveCraftCore.instance.profiles[uuid]
+        fun of(uuid: UUID?) = ActiveCraftCore.profiles[uuid]
 
         @JvmStatic
-        fun of(profileName: String?) = of(ActiveCraftCore.instance.playerlist.getUUIDByPlayername(profileName))
+        fun of(profileName: String) = of(ActiveCraftCore.playerlist.getUUIDByPlayername(profileName))
 
         @JvmStatic
-        fun of(player: Player) = of(player.uniqueId)
+        fun of(player: Player) = of(player.uniqueId)!!
 
         @JvmStatic
         fun of(sender: CommandSender) = of(sender.name)
 
         @JvmStatic
         fun createIfNotExists(player: Player): Profilev2 {
-            ActiveCraftCore.instance.playerlist.addPlayerIfAbsent(player)
+            ActiveCraftCore.playerlist.addPlayerIfAbsent(player)
 
-            return of(player) ?: Profilev2(player.uniqueId) {
+            return of(player.name) ?: Profilev2(player.uniqueId) {
                 name = player.name
                 rawNickname = player.name
             }.also {
-                ActiveCraftCore.instance.profiles[player.uniqueId] = it
+                ActiveCraftCore.profiles[player.uniqueId] = it
                 writeToDatabase(it)
             }
         }

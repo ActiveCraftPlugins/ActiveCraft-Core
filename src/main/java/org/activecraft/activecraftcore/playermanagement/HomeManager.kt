@@ -7,7 +7,7 @@ import org.activecraft.activecraftcore.exceptions.InvalidHomeException
 import org.activecraft.activecraftcore.exceptions.MaxHomesException
 import org.activecraft.activecraftcore.exceptions.OperationFailureException
 import org.activecraft.activecraftcore.exceptions.PlayerOfflineException
-import org.activecraft.activecraftcore.playermanagement.tables.Homes
+import org.activecraft.activecraftcore.playermanagement.tables.HomesTable
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -24,16 +24,16 @@ class HomeManager(private val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        homes = Homes.getHomesForProfile(profile).associateBy { it.name }
+        homes = HomesTable.getHomesForProfile(profile).associateBy { it.name }
     }
 
     override fun writeToDatabase() {
         homes.values.forEach {
-            if (!Homes.homeExistsInDatabase(profile, it)) {
-                Homes.saveHome(profile, it)
+            if (!HomesTable.homeExistsInDatabase(profile, it)) {
+                HomesTable.saveHome(profile, it)
             }
         }
-        Homes.getHomesForProfile(profile).filter { it !in homes.values }.forEach { Homes.deleteHome(profile, it.name) }
+        HomesTable.getHomesForProfile(profile).filter { it !in homes.values }.forEach { HomesTable.deleteHome(profile, it.name) }
     }
 
     @JvmOverloads

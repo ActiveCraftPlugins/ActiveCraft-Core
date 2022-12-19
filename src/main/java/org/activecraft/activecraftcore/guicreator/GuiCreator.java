@@ -22,7 +22,7 @@ import java.util.HashMap;
 // TODO: 21.08.2022 rm msgimpl
 public abstract class GuiCreator {
 
-    protected final @Getter(AccessLevel.NONE) ActiveCraftMessage activeCraftCoreMessage = ActiveCraftCore.getInstance().getActiveCraftMessagev2();
+    protected final @Getter(AccessLevel.NONE) ActiveCraftMessage activeCraftCoreMessage = ActiveCraftCore.INSTANCE.getActiveCraftMessagev2();
     protected final Inventory inventory;
     protected final String title;
     protected final int rows;

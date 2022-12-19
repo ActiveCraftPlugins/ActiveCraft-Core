@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerWarnAddEvent
 import org.activecraft.activecraftcore.events.PlayerWarnRemoveEvent
 import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.playermanagement.tables.Warns
+import org.activecraft.activecraftcore.playermanagement.tables.WarnsTable
 import org.activecraft.activecraftcore.utils.CharPool
 import org.activecraft.activecraftcore.utils.generateRandomString
 import org.bukkit.Bukkit
@@ -13,12 +13,12 @@ import java.time.LocalDateTime
 class WarnManager(private val profile: Profilev2) : ProfileManager {
 
     var warns: Set<Warn> = emptySet()
-    //private val messageSupplier = profile.getMessageSupplier(ActiveCraftCore.getInstance().activeCraftMessagev2)  // das hier ist richtig
-    private val messageSupplier = ActiveCraftCore.getInstance().activeCraftMessagev2.getDefaultMessageSupplier()!! // das hier ist falsch
+    private val messageSupplier = profile.getMessageSupplier(ActiveCraftCore.activeCraftMessagev2!!)  // das hier ist richtig
+    //private val messageSupplier = ActiveCraftCore.activeCraftMessagev2?.getDefaultMessageSupplier() // das hier ist falsch
     private val allWarns: Set<Warn>
         get() {
             val allWarns: MutableSet<Warn> = mutableSetOf()
-            ActiveCraftCore.getInstance().profiles.values.forEach { allWarns.addAll(it.warnManager.warns) }
+            ActiveCraftCore.profiles.values.forEach { allWarns.addAll(it.warnManager.warns) }
             return allWarns.toSet()
         }
 
@@ -27,11 +27,11 @@ class WarnManager(private val profile: Profilev2) : ProfileManager {
     }
 
     override fun loadFromDatabase() {
-        warns = Warns.getWarnsForProfile(profile).toMutableSet()
+        warns = WarnsTable.getWarnsForProfile(profile).toMutableSet()
     }
 
     override fun writeToDatabase() {
-        warns.forEach { Warns.saveWarn(profile, it) }
+        warns.forEach { WarnsTable.saveWarn(profile, it) }
     }
 
     @JvmOverloads

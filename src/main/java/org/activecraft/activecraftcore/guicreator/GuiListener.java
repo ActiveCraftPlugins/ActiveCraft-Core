@@ -31,7 +31,7 @@ public class GuiListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         Gui gui = GuiNavigator.getActiveGui(player);
         if (gui == null) return;
-        if (gui.getInventory() != event.getClickedInventory()) return;
+        if (gui.inventory != event.getClickedInventory()) return;
         GuiItem guiItem = gui.getGuiCreator().getCorrespondingGuiItem().get(itemStack);
         if (guiItem == null) return;
 

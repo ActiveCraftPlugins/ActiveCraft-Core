@@ -1,40 +1,25 @@
-package org.activecraft.activecraftcore.guicreator;
+package org.activecraft.activecraftcore.guicreator
 
-import org.activecraft.activecraftcore.messagesv2.ColorScheme;
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults.backItemDisplayname
+import org.bukkit.Material
+import org.bukkit.entity.Player
 
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = false)
-@ToString
-public class GuiBackItem extends GuiItem {
+class GuiBackItem @JvmOverloads constructor(
+    material: Material? = Material.ARROW,
+    displayname: String? = backItemDisplayname()
+) : GuiItem(material) {
+    constructor(displayname: String?) : this(Material.ARROW, displayname)
 
-    public GuiBackItem() {
-        this(Material.ARROW, GuiCreatorDefaults.backItemDisplayname());
+    init {
+        displayName = displayname
+        addClickListener(object : ClickListener {
+            override fun onClick(guiClickEvent: GuiClickEvent?) {
+                if (guiClickEvent == null) return
+                val player = guiClickEvent.view.player as Player
+                if (GuiNavigator.getGuiStack(player) != null && GuiNavigator.getGuiStack(player).size >= 1) GuiNavigator.pop(
+                    player
+                )
+            }
+        })
     }
-
-    public GuiBackItem(String displayname) {
-        this(Material.ARROW, displayname);
-    }
-
-    public GuiBackItem(Material material) {
-        this(material, GuiCreatorDefaults.backItemDisplayname());
-    }
-
-    public GuiBackItem(Material material, String displayname) {
-        super(material);
-        setDisplayName(displayname);
-        this.addClickListener(guiClickEvent -> {
-            Player player = (Player) guiClickEvent.getView().getPlayer();
-            if (GuiNavigator.getGuiStack(player) != null && GuiNavigator.getGuiStack(player).size() >= 1)
-                GuiNavigator.pop(player);
-        });
-    }
-
 }
