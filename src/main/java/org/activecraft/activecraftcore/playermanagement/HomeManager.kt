@@ -14,7 +14,7 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permission
 
-class HomeManager(private val profile: Profilev2) : ProfileManager {
+class HomeManager(private val profile: Profile) : ProfileManager {
 
     var homes: Map<String, Home> = emptyMap()
         private set
@@ -68,7 +68,7 @@ class HomeManager(private val profile: Profilev2) : ProfileManager {
         // call event
         val event = PlayerHomeSetEvent(profile, home)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
 
         homes = homes + (name to home)
     }
@@ -81,10 +81,9 @@ class HomeManager(private val profile: Profilev2) : ProfileManager {
         )
 
         // call event
-        val event =
-            PlayerHomeDeleteEvent(profile, homes[name])
+        val event = PlayerHomeDeleteEvent(profile, homes[name]!!)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
         homes = homes - name
     }
 
@@ -100,9 +99,9 @@ class HomeManager(private val profile: Profilev2) : ProfileManager {
 
         // call event
         val event =
-            PlayerHomeTeleportEvent(profile, homes[name])
+            PlayerHomeTeleportEvent(profile, homes[name]!!)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
         player.teleport(homes[name]!!.location)
         player.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f)
     }

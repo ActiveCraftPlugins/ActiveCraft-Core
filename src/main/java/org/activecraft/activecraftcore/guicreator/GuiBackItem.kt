@@ -5,21 +5,15 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 
 class GuiBackItem @JvmOverloads constructor(
-    material: Material? = Material.ARROW,
-    displayname: String? = backItemDisplayname()
+    displayName: String = backItemDisplayname(),
+    material: Material = Material.ARROW
 ) : GuiItem(material) {
-    constructor(displayname: String?) : this(Material.ARROW, displayname)
 
     init {
-        displayName = displayname
-        addClickListener(object : ClickListener {
-            override fun onClick(guiClickEvent: GuiClickEvent?) {
-                if (guiClickEvent == null) return
+        setDisplayName(displayName)
+        addClickListener { guiClickEvent ->
                 val player = guiClickEvent.view.player as Player
-                if (GuiNavigator.getGuiStack(player) != null && GuiNavigator.getGuiStack(player).size >= 1) GuiNavigator.pop(
-                    player
-                )
-            }
-        })
+                if (GuiNavigator.getGuiStack(player).size >= 1) GuiNavigator.pop(player)
+        }
     }
 }

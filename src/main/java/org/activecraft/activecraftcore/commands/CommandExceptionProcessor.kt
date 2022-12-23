@@ -1,15 +1,14 @@
 package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin
 import org.activecraft.activecraftcore.exceptions.ActiveCraftException
-import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.messagesv2.getMessageSupplier
+import org.activecraft.activecraftcore.messages.ActiveCraftMessage
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.messages.getMessageSupplier
 import org.bukkit.command.CommandSender
 import java.util.function.BiConsumer
 
 
-class CommandExceptionProcessor(plugin: ActiveCraftPlugin) {
+class CommandExceptionProcessor {
 
     val exceptionList = mutableMapOf<Class<out ActiveCraftException>, BiConsumer<ActiveCraftException, CommandSender>>()
 

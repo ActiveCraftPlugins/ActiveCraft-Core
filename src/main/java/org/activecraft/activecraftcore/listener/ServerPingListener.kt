@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.server.ServerListPingEvent
 
 class ServerPingListener : Listener {
-    var mainConfig: MainConfig = ActiveCraftCore.mainConfig
+    var mainConfig: MainConfig = ActiveCraftCore.INSTANCE.mainConfig
     @EventHandler
     fun on(event: ServerListPingEvent) {
         if (mainConfig.lockedDown) {

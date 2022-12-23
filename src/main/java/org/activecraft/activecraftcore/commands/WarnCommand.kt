@@ -1,125 +1,134 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.playermanagement.Warn;
-import org.activecraft.activecraftcore.playermanagement.WarnManager;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.playermanagement.Warn;
-import org.activecraft.activecraftcore.playermanagement.WarnManager;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.dateTimeFormatter
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidArgumentException
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Warn
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.activecraft.activecraftcore.utils.anyEqualsIgnoreCase
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import java.util.*
+import java.util.function.Consumer
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-public class WarnCommand extends ActiveCraftCommand {
-
-    public WarnCommand(ActiveCraftPlugin plugin) {
-        super("warn", plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
-        Profilev2 profile = getProfile(args[1]);
-        messageFormatter.setTarget(profile);
-        WarnManager warnManager = profile.getWarnManager();
-        switch (args[0].toLowerCase()) {
-            case "add" -> {
-                checkPermission(sender, "add");
-                String warnToAdd = args.length >= 3 ? concatArray(args, 2) : this.cmdMsg("default-reason");
-                String source = sender.getName();
-                messageFormatter.addReplacement("reason", warnToAdd);
-                warnManager.add(warnToAdd, source);
+class WarnCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("warn", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 2)
+        val profile = getProfile(args[1])
+        messageFormatter.setTarget(profile)
+        val warnManager = profile.warnManager
+        when (args[0].lowercase()) {
+            "add" -> {
+                assertCommandPermission(sender, "add")
+                val warnToAdd = if (args.size >= 3) joinArray(args, 2) else this.cmdMsg("default-reason")
+                val source = sender.name
+                messageFormatter.addFormatterPattern("reason", warnToAdd)
+                warnManager.add(warnToAdd, source)
             }
-            case "remove", "get" -> {
-                checkPermission(sender, args[0].toLowerCase());
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 4);
-                String warnReason = concatArray(args, 3);
-                Collection<Warn> warns = new ArrayList<>();
-                switch (args[2].toLowerCase()) {
-                    case "id" -> warns.add(warnManager.getWarnById(args[3]));
-                    case "reason" -> warns.addAll(warnManager.getWarnsByReason(warnReason));
-                    default -> throw new InvalidArgumentException();
+
+            "remove", "get" -> {
+                assertCommandPermission(sender, args[0].lowercase())
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 4)
+                val warnReason = joinArray(args, 3)
+                val warns: MutableCollection<Warn?> = ArrayList()
+                when (args[2].lowercase()) {
+                    "id" -> warns.add(warnManager.getWarnById(args[3]))
+                    "reason" -> warns.addAll(warnManager.getWarnsByReason(warnReason))
+                    else -> throw InvalidArgumentException()
                 }
                 if (warns.isEmpty()) {
-                    sendMessage(sender, this.cmdMsg("does-not-exist"));
-                    return;
+                    sendMessage(sender, this.cmdMsg("does-not-exist"))
+                    return
                 }
-                if (args[0].equalsIgnoreCase("remove")) {
-                    warns.forEach(warnManager::remove);
-                    return;
+                if (args[0].equals("remove", ignoreCase = true)) {
+                    warns.forEach(Consumer { warn: Warn? ->
+                        warnManager.remove(
+                            warn!!
+                        )
+                    })
+                    return
                 }
-                Set<String> warnIds = new HashSet<>();
-                Set<String> warnSources = new HashSet<>();
-                Set<String> warnCreationDates = new HashSet<>();
-                for (Warn warn : warns) {
-                    warnIds.add(warn.getId());
-                    warnSources.add(warn.getSource());
-                    warnCreationDates.add(warn.getCreated().format(ActiveCraftCore.dateTimeFormatter));
+                val warnIds: MutableSet<String> = HashSet()
+                val warnSources: MutableSet<String> = HashSet()
+                val warnCreationDates: MutableSet<String> = HashSet()
+                for (warn in warns) {
+                    warnIds.add(warn!!.id)
+                    warnSources.add(warn.source)
+                    warnCreationDates.add(warn.created.format(dateTimeFormatter))
                 }
-                messageFormatter.addReplacements(
-                        "reason", warnReason,
-                        "created", ChatColor.AQUA + concatCollection(warnCreationDates, ChatColor.GOLD + ", " + ChatColor.AQUA),
-                        "source", ChatColor.AQUA + concatCollection(warnSources, ChatColor.GOLD + ", " + ChatColor.AQUA),
-                        "id", ChatColor.AQUA + concatCollection(warnIds, ChatColor.GOLD + ", " + ChatColor.AQUA));
-                sendMessage(sender, this.cmdMsg("get-header")
-                        + ChatColor.GOLD + " (" + ChatColor.AQUA + warns.size() + ChatColor.GOLD + ")");
+                messageFormatter.addFormatterPatterns(
+                    "reason" to warnReason,
+                    "created" to ChatColor.AQUA.toString() + joinCollection(
+                        warnCreationDates, ChatColor.GOLD.toString() + ", " + ChatColor.AQUA
+                    ),
+                    "source" to ChatColor.AQUA.toString() + joinCollection(
+                        warnSources, ChatColor.GOLD.toString() + ", " + ChatColor.AQUA
+                    ),
+                    "id" to ChatColor.AQUA.toString() + joinCollection(
+                        warnIds, ChatColor.GOLD.toString() + ", " + ChatColor.AQUA
+                    )
+                )
+                sendMessage(
+                    sender, this.cmdMsg("get-header")
+                            + ChatColor.GOLD + " (" + ChatColor.AQUA + warns.size + ChatColor.GOLD + ")"
+                )
             }
-            case "clear" -> {
-                warnManager.setWarns(Set.of());
-                sendMessage(sender, this.cmdMsg("clear") + ChatColor.GOLD); // TODO: 27.08.2022 msg für "clear" machen
+
+            "clear" -> {
+                warnManager.warns = setOf()
+                sendMessage(sender, this.cmdMsg("clear") + ChatColor.GOLD) // TODO: 27.08.2022 msg für "clear" machen
             }
-            default -> throw new InvalidArgumentException();
+
+            else -> throw InvalidArgumentException()
         }
-        sendMessage(sender, this.cmdMsg(args[0].toLowerCase()));
+        sendMessage(sender, this.cmdMsg(args[0].lowercase()))
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        val list: MutableList<String> = mutableListOf()
+        when (args.size) {
+            1 -> {
+                return listOf("add", "remove", "get")
+            }
 
-        switch (args.length) {
-            case 1 -> {
-                return List.of("add", "remove", "get");
-            }
-            case 2 -> {
-                if (StringUtils.anyEqualsIgnoreCase(args[0], "add", "get", "remove")) {
-                    return getProfileNames();
+            2 -> {
+                if (anyEqualsIgnoreCase(args[0], "add", "get", "remove")) {
+                    return getProfileNames()
                 }
             }
-            case 3 -> {
-                if (StringUtils.anyEqualsIgnoreCase(args[0], "get", "remove")) {
-                    if (Bukkit.getPlayer(args[1]) != null)
-                        return List.of("id", "reason");
+
+            3 -> {
+                if (anyEqualsIgnoreCase(args[0], "get", "remove")) {
+                    if (Bukkit.getPlayer(args[1]) != null) return listOf("id", "reason")
                 }
             }
-            case 4 -> {
-                if (StringUtils.anyEqualsIgnoreCase(args[0], "get", "remove")) {
+
+            4 -> {
+                if (anyEqualsIgnoreCase(args[0], "get", "remove")) {
                     if (Bukkit.getPlayer(args[1]) != null) {
-                        if (!StringUtils.anyEqualsIgnoreCase(args[2].toLowerCase(), "id", "reason")) return null;
-                        return Profilev2.of(args[1]).getWarnManager().getWarns().stream()
-                                .map(args[2].equalsIgnoreCase("id") ? Warn::getId : Warn::getReason)
-                                .distinct()
-                                .collect(Collectors.toList());
+                        return if (!anyEqualsIgnoreCase(
+                                args[2].lowercase(),
+                                "id",
+                                "reason"
+                            )
+                        ) null else of(
+                            args[1]
+                        )!!.warnManager.warns
+                            .map { if (args[2].equals("id", ignoreCase = true)) it.id else it.reason }.distinct()
                     }
                 }
             }
         }
-        return list;
+        return list
     }
 }

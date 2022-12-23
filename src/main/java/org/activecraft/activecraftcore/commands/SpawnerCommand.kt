@@ -1,67 +1,59 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.block.CreatureSpawner
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BlockStateMeta
+import java.util.*
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-public class SpawnerCommand extends ActiveCraftCommand {
-
-    public SpawnerCommand(ActiveCraftPlugin plugin) {
-        super("spawner",  plugin);
+class SpawnerCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("spawner", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+        val type = if (args.size == 1) CommandTargetType.SELF else CommandTargetType.OTHERS
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        args = args.copyOfRange(if (type == CommandTargetType.OTHERS) 1 else 0, args.size)
+        assertCommandPermission(sender, type.code())
+        val mobName = parseEntityType(args[0]).name.uppercase(Locale.getDefault())
+        val spawner = ItemStack(Material.SPAWNER)
+        val spawnermeta = spawner.itemMeta as BlockStateMeta
+        val spawnerblock = spawnermeta.blockState as CreatureSpawner
+        spawnerblock.spawnedType = EntityType.valueOf(mobName)
+        messageFormatter.addFormatterPattern("spawner", mobName.lowercase().replace("_", " "))
+        messageFormatter.setTarget(getProfile(target))
+        spawnermeta.setDisplayName(this.cmdMsg("displayname"))
+        spawnermeta.blockState = spawnerblock
+        spawner.itemMeta = spawnermeta
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(sender, target)) sendSilentMessage(
+            target,
+            this.cmdMsg("target-message")
+        )
+        sendMessage(sender, this.cmdMsg(type.code()))
+        target.inventory.addItem(spawner)
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-        CommandTargetType type = args.length == 1 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        args = Arrays.copyOfRange(args, type == CommandTargetType.OTHERS ? 1 : 0, args.length);
-        checkPermission(sender, type.code());
-        String mobName = parseEntityType(args[0]).name().toUpperCase();
-        ItemStack spawner = new ItemStack(Material.SPAWNER);
-        BlockStateMeta spawnermeta = (BlockStateMeta) spawner.getItemMeta();
-        CreatureSpawner spawnerblock = (CreatureSpawner) spawnermeta.getBlockState();
-        spawnerblock.setSpawnedType(EntityType.valueOf(mobName));
-        messageFormatter.addReplacement("spawner", mobName.toLowerCase().replace("_", " "));
-        messageFormatter.setTarget(getProfile(target));
-        spawnermeta.setDisplayName(this.cmdMsg("displayname"));
-        spawnermeta.setBlockState(spawnerblock);
-        spawner.setItemMeta(spawnermeta);
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, target))
-                sendSilentMessage(target, this.cmdMsg("target-message"));
-        sendMessage(sender, this.cmdMsg(type.code()));
-        target.getInventory().addItem(spawner);
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        Stream<String> entityNameStream = Arrays.stream(EntityType.values())
-                .map(EntityType::name)
-                .filter(Predicate.not("UNKNOWN"::equalsIgnoreCase));
-        if (args.length == 1) {
-            return Stream.concat(entityNameStream, getBukkitPlayernames().stream()).collect(Collectors.toList());
-        } else if (args.length == 2 && Bukkit.getPlayer(args[0]) != null) {
-            return entityNameStream.collect(Collectors.toList());
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        val entityNames= EntityType.values()
+            .map { obj: EntityType -> obj.name }
+            .filter { !it.equals("UNKNOWN", ignoreCase = true) }
+        if (args.size == 1) {
+            return entityNames + getBukkitPlayernames()
+        } else if (args.size == 2 && Bukkit.getPlayer(args[0]) != null) {
+            return entityNames
         }
-        return null;
+        return null
     }
 }

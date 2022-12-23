@@ -5,14 +5,14 @@ package org.activecraft.activecraftcore.commands
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.exceptions.*
 import org.activecraft.activecraftcore.exceptions.NotHoldingItemException.ExpectedItem
-import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter
+import org.activecraft.activecraftcore.messages.ActiveCraftMessage
+import org.activecraft.activecraftcore.messages.PlayerMessageFormatter
 
-val accMessage: ActiveCraftMessage = ActiveCraftCore.instance.activeCraftMessagev2!!
+val accMessage: ActiveCraftMessage = ActiveCraftCore.INSTANCE.activeCraftMessage!!
 
 fun registerCommandExceptions() {
     // TODO: implement OfflinePlayerException und message dafür
-    ActiveCraftCore.instance.commandExceptionProcessor.run {
+    ActiveCraftCore.INSTANCE.commandExceptionProcessor.run {
         registerErrorMessage(
             accMessage,
             OperationFailureException::class.java
@@ -59,7 +59,7 @@ fun registerCommandExceptions() {
         ) { messageSupplier -> messageSupplier.errors.noPermission }
         registerErrorMessage(
             accMessage,
-            NoPlayerException::class.java
+            NotAPlayerException::class.java
         ) { messageSupplier -> messageSupplier.errors.notAPlayer }
         registerErrorMessage(accMessage, NotHoldingItemException::class.java) { messageSupplier, e ->
             when ((e as NotHoldingItemException).expectedItem) {

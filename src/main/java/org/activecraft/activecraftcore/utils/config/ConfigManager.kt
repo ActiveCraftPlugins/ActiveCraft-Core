@@ -1,10 +1,6 @@
 package org.activecraft.activecraftcore.utils.config
 
-import lombok.Getter
 import org.activecraft.activecraftcore.ActiveCraftPlugin
-import org.activecraft.activecraftcore.messages.ActiveCraftMessage
-import java.util.*
-import java.util.function.Consumer
 
 object ConfigManager {
     private val configs: MutableMap<ActiveCraftPlugin, MutableSet<ActiveCraftConfig>> = mutableMapOf()
@@ -27,6 +23,9 @@ object ConfigManager {
     }
 
     @JvmStatic
+    fun getConfigs() = configs.toMap()
+
+    @JvmStatic
     fun registerConfig(plugin: ActiveCraftPlugin, config: ActiveCraftConfig) {
         configs.getOrPut(plugin) { mutableSetOf() }.add(config)
     }
@@ -38,6 +37,6 @@ object ConfigManager {
 
     @JvmStatic
     fun reloadMessageConfig(plugin: ActiveCraftPlugin) {
-        ActiveCraftMessage.getFileConfig(plugin).reload()
+        plugin.activeCraftMessage?.messageFileConfig?.reload()
     }
 }

@@ -3,13 +3,14 @@ package org.activecraft.activecraftcore.utils.config
 import org.bukkit.Location
 
 class LocationsConfig : ActiveCraftConfig("locations.yml") {
-    private val locations: MutableMap<String, Location> = mutableMapOf()
-    private var spawn: Location? = null
+    lateinit var locations: Map<String, Location>
+        private set
+    var spawn: Location? = null
 
     override fun load() {
-        fileConfig.getKeys(false)
-            .filter { key: String? -> fileConfig.getLocation(key!!) != null }
-            .forEach { key: String -> locations[key] = fileConfig.getLocation(key)!! }
+        locations = fileConfig.getKeys(false)
+            .filter { fileConfig.getLocation(it) != null }
+            .associateWith { fileConfig.getLocation(it)!! }
         spawn = locations["spawn"]
     }
 }

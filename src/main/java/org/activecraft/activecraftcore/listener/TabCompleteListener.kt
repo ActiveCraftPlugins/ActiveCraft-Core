@@ -8,10 +8,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandSendEvent
-import java.util.*
 
 class TabCompleteListener : Listener {
-    var mainConfig: MainConfig = ActiveCraftCore.mainConfig
+    var mainConfig: MainConfig = ActiveCraftCore.INSTANCE.mainConfig
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerClickTab(e: PlayerCommandSendEvent) {
         val player = e.player
@@ -23,7 +22,7 @@ class TabCompleteListener : Listener {
         pluginNames.add("spigot")
         pluginNames.add("paper")
         for (plugin in Bukkit.getPluginManager().plugins) {
-            pluginNames.add(plugin.name.lowercase(Locale.getDefault()))
+            pluginNames.add(plugin.name.lowercase())
         }
         ActiveCraftPlugin.installedPlugins
             .map { it.pluginManager.registeredCommands }

@@ -1,6 +1,5 @@
 package org.activecraft.activecraftcore.utils.config
 
-import lombok.Getter
 import org.bukkit.Bukkit
 
 class PortalsConfig : ActiveCraftConfig(FileConfig("portals.yml")) {

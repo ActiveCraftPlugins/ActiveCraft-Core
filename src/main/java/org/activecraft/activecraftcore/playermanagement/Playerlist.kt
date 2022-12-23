@@ -1,11 +1,10 @@
 package org.activecraft.activecraftcore.playermanagement
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.activecraft.activecraftcore.utils.config.FileConfig
 import org.bukkit.entity.Player
 import java.util.*
-import kotlin.collections.HashMap
 
 class Playerlist : HashMap<String, UUID>() {
     private val playerlistConfig = FileConfig("playerlist.yml")
@@ -20,7 +19,7 @@ class Playerlist : HashMap<String, UUID>() {
             try {
                 playerlistConfig.getString(key)?.let { put(it, UUID.fromString(key)) }
             } catch (e: IllegalArgumentException) {
-                ActiveCraftCore.error("Error occured while loading UUID of \"$key\"")
+                ActiveCraftCore.INSTANCE.error("Error occured while loading UUID of \"$key\"")
             }
         }
     }
@@ -28,9 +27,9 @@ class Playerlist : HashMap<String, UUID>() {
     fun addPlayerIfAbsent(player: Player) {
         val keys = playerlistConfig.getKeys(false)
         if (keys.contains(player.uniqueId.toString())) return
-        playerlistConfig[player.uniqueId.toString()] = player.name.lowercase(Locale.getDefault())
+        playerlistConfig[player.uniqueId.toString()] = player.name.lowercase()
         playerlistConfig.saveConfig()
-        put(player.name.lowercase(Locale.getDefault()), player.uniqueId)
+        put(player.name.lowercase(), player.uniqueId)
     }
 
     fun updateIfChanged(player: Player) {
@@ -38,7 +37,7 @@ class Playerlist : HashMap<String, UUID>() {
         if (profile!!.name == player.name) return
         profile.name = player.name
         playerlistConfig[player.name] = null
-        playerlistConfig[player.uniqueId.toString()] = player.name.lowercase(Locale.getDefault())
+        playerlistConfig[player.uniqueId.toString()] = player.name.lowercase()
         playerlistConfig.saveConfig()
         load()
     }
@@ -52,6 +51,6 @@ class Playerlist : HashMap<String, UUID>() {
     }
 
     fun getUUIDByPlayername(playername: String): UUID? {
-        return get(playername.lowercase(Locale.getDefault()))
+        return get(playername.lowercase())
     }
 }

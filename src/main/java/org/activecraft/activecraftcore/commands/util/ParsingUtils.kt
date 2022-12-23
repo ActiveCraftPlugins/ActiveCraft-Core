@@ -51,6 +51,11 @@ interface ParsingUtils {
         }
     }
 
+    @Throws(InvalidArgumentException::class)
+    fun parseBoolean(boolStr: String): Boolean {
+        return boolStr.toBooleanStrictOrNull() ?: throw InvalidNumberException(boolStr)
+    }
+
     @Throws(InvalidEntityException::class)
     fun parseEntityType(mobName: String): EntityType {
         return try {
@@ -62,5 +67,14 @@ interface ParsingUtils {
         } catch (e: IllegalArgumentException) {
             throw InvalidEntityException(mobName)
         }
+    }
+
+    fun isInt(s: String): Boolean {
+        try {
+            val d = s.toInt()
+        } catch (e: NumberFormatException) {
+            return false
+        }
+        return true
     }
 }

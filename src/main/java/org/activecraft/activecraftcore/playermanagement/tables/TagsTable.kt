@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -14,7 +14,7 @@ object TagsTable : Table("profile_tags") {
 
     fun toTag(row: ResultRow) = row[tagValue]
 
-    fun saveTag(profile: Profilev2, tag: String) {
+    fun saveTag(profile: Profile, tag: String) {
         transaction {
             insert {
                 it[profileId] = profile.uuid
@@ -23,11 +23,11 @@ object TagsTable : Table("profile_tags") {
         }
     }
 
-    fun deleteTag(profile: Profilev2, tagValue: String) =
+    fun deleteTag(profile: Profile, tagValue: String) =
         transaction { deleteWhere { (profileId eq profile.uuid) and (TagsTable.tagValue eq tagValue) } }
 
-    fun tagExistsInDatabase(profile: Profilev2, tagValue: String) = getTagsForProfile(profile).any { it == tagValue }
+    fun tagExistsInDatabase(profile: Profile, tagValue: String) = getTagsForProfile(profile).any { it == tagValue }
 
-    fun getTagsForProfile(profile: Profilev2) =
+    fun getTagsForProfile(profile: Profile) =
         transaction { select { profileId eq profile.uuid }.map { toTag(it) }.toSet() }
 }

@@ -1,119 +1,113 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.exceptions.ModuleException;
-import org.activecraft.activecraftcore.exceptions.OperationFailureException;
-import org.activecraft.activecraftcore.modules.ModuleManager;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.WebReader;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.exceptions.ModuleException;
-import org.activecraft.activecraftcore.exceptions.OperationFailureException;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.WebReader;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidArgumentException
+import org.activecraft.activecraftcore.exceptions.ModuleException
+import org.activecraft.activecraftcore.exceptions.OperationFailureException
+import org.activecraft.activecraftcore.modules.ModuleManager.disable
+import org.activecraft.activecraftcore.modules.ModuleManager.enable
+import org.activecraft.activecraftcore.modules.ModuleManager.install
+import org.activecraft.activecraftcore.modules.ModuleManager.load
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.activecraft.activecraftcore.utils.WebReader.aCVersionMap
+import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-public class ACModulesCommand extends ActiveCraftCommand {
-
-    public ACModulesCommand(ActiveCraftPlugin plugin) {
-        super("acmodule", plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-        checkPermission(sender);
-        String module = "";
-        if (args.length >= 2 && !args[0].equalsIgnoreCase("list"))
-            messageFormatter.addReplacement("module", module = args[1]);
-        switch (args[0].toLowerCase()) {
-            case "install" -> {
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
-                String finalModule = module;
-                new Thread(() -> {
+class ACModulesCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("acmodule", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+        assertCommandPermission(sender)
+        var module = ""
+        if (args.size >= 2 && !args[0].equals("list", ignoreCase = true)) messageFormatter.addFormatterPattern(
+            "module",
+            args[1].also { module = it })
+        when (args[0].lowercase()) {
+            "install" -> {
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 2)
+                val finalModule = module
+                Thread {
                     try {
-                        ModuleManager.install(finalModule);
-                    } catch (OperationFailureException | ModuleException e) {
-                        ActiveCraftCommand.getExceptionList().get(e.getClass()).accept(e, sender);
-                        return;
+                        install(finalModule)
+                    } catch (e: OperationFailureException) {
+                        plugin.commandExceptionProcessor.exceptionList[e.javaClass]?.accept(e, sender)
+                        return@Thread
+                    } catch (e: ModuleException) {
+                        plugin.commandExceptionProcessor.exceptionList[e.javaClass]?.accept(e, sender)
+                        return@Thread
                     }
-                    sendMessage(sender, this.cmdMsg("installed"));
-                }).start();
+                    sendMessage(sender, this.cmdMsg("installed"))
+                }.start()
             }
-            case "load" -> {
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
-                ModuleManager.load(module);
-                sendMessage(sender, this.cmdMsg("loaded"));
+
+            "load" -> {
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 2)
+                load(module)
+                sendMessage(sender, this.cmdMsg("loaded"))
             }
-            case "enable" -> {
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
-                ModuleManager.enable(module);
-                sendMessage(sender, this.cmdMsg("enabled"));
+
+            "enable" -> {
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 2)
+                enable(module)
+                sendMessage(sender, this.cmdMsg("enabled"))
             }
-            case "disable" -> {
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 2);
-                ModuleManager.disable(module);
-                sendMessage(sender, this.cmdMsg("disabled"));
+
+            "disable" -> {
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 2)
+                disable(module)
+                sendMessage(sender, this.cmdMsg("disabled"))
             }
-            case "list" -> {
-                checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-                final Set<String> acModules;
-                acModules = WebReader.getACVersionMap().keySet().stream().filter(Predicate.not("ActiveCraft-Core"::equals)).collect(Collectors.toSet());
-                List<String> modules = new ArrayList<>();
-                for (String moduleName : acModules) {
-                    Plugin plugin = Bukkit.getPluginManager().getPlugin(moduleName);
+
+            "list" -> {
+                assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+                val acModules: Set<String> = aCVersionMap.keys
+                    .filter { "ActiveCraft-Core" != it }.toSet()
+                val modules: MutableList<String> = ArrayList()
+                for (moduleName in acModules) {
+                    val plugin = Bukkit.getPluginManager().getPlugin(moduleName)
                     if (plugin == null) {
-                        modules.add(ChatColor.GRAY + moduleName);
-                        continue;
+                        modules.add(ChatColor.GRAY.toString() + moduleName)
+                        continue
                     }
-                    modules.add((plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED) + moduleName);
+                    modules.add((if (plugin.isEnabled) ChatColor.GREEN else ChatColor.RED).toString() + moduleName)
                 }
                 if (modules.isEmpty()) {
-                    sendMessage(sender, this.cmdMsg("no-modules-installed"));
-                    return;
+                    sendMessage(sender, this.cmdMsg("no-modules-installed"))
+                    return
                 }
-                sendMessage(sender, concatList(modules, ChatColor.GRAY + ", "));
+                sendMessage(sender, modules.joinToString(ChatColor.GRAY.toString() + ", "))
             }
-            default -> throw new InvalidArgumentException();
+
+            else -> throw InvalidArgumentException()
         }
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        List<String> acPlugins = WebReader.getACVersionMap().keySet().stream()
-                .filter(Predicate.not("ActiveCraft-Core"::equals))
-                .map(moduleName -> moduleName.replaceFirst("ActiveCraft-", ""))
-                .collect(Collectors.toList());
-        List<String> loadedAcPlugins = acPlugins.stream()
-                .filter(moduleName -> Bukkit.getPluginManager().getPlugin("ActiveCraft-" + moduleName) != null)
-                .collect(Collectors.toList());
-        List<String> enabledAcPlugins = loadedAcPlugins.stream()
-                .filter(Bukkit.getPluginManager()::isPluginEnabled)
-                .collect(Collectors.toList());
-
-        return switch (args.length) {
-            case 1 -> List.of("enable", "disable", "load", "install", "list");
-            case 2 -> switch (args[0]) {
-                case "load", "install" -> acPlugins;
-                case "disable" -> enabledAcPlugins;
-                case "enable" -> loadedAcPlugins;
-                default -> null;
-            };
-            default -> null;
-        };
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        val acPlugins = aCVersionMap.keys
+            .filter{ "ActiveCraft-Core" != it }
+            .map { moduleName -> moduleName.replaceFirst("ActiveCraft-".toRegex(), "") }
+        val loadedAcPlugins = acPlugins
+            .filter { moduleName -> Bukkit.getPluginManager().getPlugin("ActiveCraft-$moduleName") != null }
+        val enabledAcPlugins = loadedAcPlugins
+            .filter { Bukkit.getPluginManager().isPluginEnabled(it) }
+        return when (args.size) {
+            1 -> listOf("enable", "disable", "load", "install", "list")
+            2 -> when (args[0]) {
+                "load", "install" -> acPlugins
+                "disable" -> enabledAcPlugins
+                "enable" -> loadedAcPlugins
+                else -> null
+            }
+            else -> null
+        }
     }
 }

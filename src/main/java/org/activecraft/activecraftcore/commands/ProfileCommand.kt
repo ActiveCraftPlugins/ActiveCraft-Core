@@ -1,38 +1,28 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftCore
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.guicreator.GuiNavigator.Companion.push
+import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class ProfileCommand extends ActiveCraftCommand {
-
-    public ProfileCommand(ActiveCraftPlugin plugin) {
-        super("profile",  plugin);
+class ProfileCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("profile", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val player = getPlayer(sender)
+        assertCommandPermission(sender)
+        val profileMenu = ProfileMenu(player, if (args.size == 1) getPlayer(args[0]) else player)
+        ActiveCraftCore.INSTANCE.profileMenuList[player] = profileMenu
+        push(player, profileMenu.mainProfile.build())
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        Player player = getPlayer(sender);
-        checkPermission(sender);
-        ProfileMenu profileMenu = new ProfileMenu(player, args.length == 1 ? getPlayer(args[0]) : player);
-        ActiveCraftCore.getInstance().getProfileMenuList().put(player, profileMenu);
-        GuiNavigator.push(player, profileMenu.getMainProfile().build());
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

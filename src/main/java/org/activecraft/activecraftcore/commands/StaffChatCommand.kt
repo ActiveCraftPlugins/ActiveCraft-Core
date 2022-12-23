@@ -1,40 +1,30 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.events.StaffChatMessageEvent;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ColorUtils;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.events.StaffChatMessageEvent;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ColorUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.events.StaffChatMessageEvent
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.replaceColorAndFormat
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
-import java.util.List;
-
-
-public class StaffChatCommand extends ActiveCraftCommand {
-
-    public StaffChatCommand(ActiveCraftPlugin plugin) {
-        super("staffchat", plugin);
+class StaffChatCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("staffchat", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val message = replaceColorAndFormat(joinArray(args))
+        val event = StaffChatMessageEvent(sender, message)
+        Bukkit.getPluginManager().callEvent(event)
+        messageFormatter.addFormatterPattern("message", message)
+        if (event.cancelled) return
+        broadcast(this.cmdMsg((if (sender is Player) "" else "from-console-") + "format"), "staffchat")
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        String message = ColorUtils.replaceColorAndFormat(concatArray(args));
-        StaffChatMessageEvent event = new StaffChatMessageEvent(sender, message);
-        Bukkit.getPluginManager().callEvent(event);
-        messageFormatter.addReplacement("message", message);
-        if (event.isCancelled()) return;
-        broadcast(this.cmdMsg((sender instanceof Player ? "" : "from-console-") + "format"), "staffchat");
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

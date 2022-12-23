@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.ChatColor
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -35,12 +35,10 @@ object ProfilesTable : Table("profiles") {
     val receiveSocialspy = bool("receive_socialspy")
     val editSign = bool("edit_sign")
 
-    //private val extensionLoaders = mutableListOf<Profilev2s.(ResultRow) -> Unit>()
-
     override val primaryKey = PrimaryKey(uuid, name = "profiles_pk")
 
-    fun toProfile(row: ResultRow): Profilev2 {
-        return Profilev2(row[uuid]) {
+    fun toProfile(row: ResultRow): Profile {
+        return Profile(row[uuid]) {
             loadData(this, row)
         }
     }
@@ -51,7 +49,7 @@ object ProfilesTable : Table("profiles") {
         extensionLoaders.add(loader)
     }*/
 
-    fun writeToDatabase(profile: Profilev2) {
+    fun writeToDatabase(profile: Profile) {
         transaction {
             if (profileExists(profile.uuid)) {
                 update({ uuid eq profile.uuid }) {
@@ -71,10 +69,10 @@ object ProfilesTable : Table("profiles") {
         }
 
 
-    fun loadFromDatabase(profile: Profilev2) {
+    fun loadFromDatabase(profile: Profile) {
         transaction {
             val resultRow = select { uuid eq profile.uuid }.firstOrNull()
-                ?: throw IllegalStateException("Profilev2 with uuid ${profile.uuid} not found in database")
+                ?: throw IllegalStateException("Profile with uuid ${profile.uuid} not found in database")
             loadData(profile, resultRow)
             /*extensionLoaders.forEach {
                 it(this@Profiles, resultRow)
@@ -82,7 +80,7 @@ object ProfilesTable : Table("profiles") {
         }
     }
 
-    private fun loadData(profile: Profilev2, row: ResultRow) {
+    private fun loadData(profile: Profile, row: ResultRow) {
         profile.apply {
             name = row[ProfilesTable.name]
             rawNickname = row[ProfilesTable.nickname]
@@ -107,12 +105,12 @@ object ProfilesTable : Table("profiles") {
         }
     }
 
-    private fun saveProfile(profile: Profilev2, updateBuilder: UpdateBuilder<Int>) {
+    private fun saveProfile(profile: Profile, updateBuilder: UpdateBuilder<Int>) {
         saveData(profile, updateBuilder)
         saveManagerData(profile, updateBuilder)
     }
 
-    private fun saveData(profile: Profilev2, updateBuilder: UpdateBuilder<Int>) {
+    private fun saveData(profile: Profile, updateBuilder: UpdateBuilder<Int>) {
         profile.apply {
             if (updateBuilder.type == StatementType.INSERT)
                 updateBuilder[ProfilesTable.uuid] = uuid
@@ -141,7 +139,7 @@ object ProfilesTable : Table("profiles") {
         }
     }
 
-    private fun saveManagerData(profile: Profilev2, updateBuilder: UpdateBuilder<Int>) {
+    private fun saveManagerData(profile: Profile, updateBuilder: UpdateBuilder<Int>) {
         profile.apply {
             homeManager.writeToDatabase()
             warnManager.writeToDatabase()

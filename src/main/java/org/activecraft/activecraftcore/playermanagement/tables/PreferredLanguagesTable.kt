@@ -1,9 +1,9 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
 import org.activecraft.activecraftcore.ActiveCraftPlugin
-import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
-import org.activecraft.activecraftcore.messagesv2.Language
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.messages.ActiveCraftMessage
+import org.activecraft.activecraftcore.messages.Language
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.StatementType
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -18,7 +18,7 @@ object PreferredLanguagesTable : Table("preferred_languages") {
 
     override val primaryKey = PrimaryKey(id, name = "preferred_languages_pk")
 
-    fun savePreferredLanguage(profile: Profilev2, activeCraftMessage: ActiveCraftMessage, preferredLanguage: Language) {
+    fun savePreferredLanguage(profile: Profile, activeCraftMessage: ActiveCraftMessage, preferredLanguage: Language) {
         fun writePreferredLanguage(updateBuilder: UpdateBuilder<Int>) {
             if (updateBuilder.type == StatementType.INSERT) {
                 updateBuilder[profileId] = profile.uuid
@@ -40,15 +40,15 @@ object PreferredLanguagesTable : Table("preferred_languages") {
         }
     }
 
-    fun getPreferredLanguagesForProfile(profile: Profilev2) =
+    fun getPreferredLanguagesForProfile(profile: Profile) =
         transaction {
             select { profileId eq profile.uuid }
-                .mapNotNull { ActiveCraftPlugin.getActiveCraftPlugin(it[activeCraftMessage])?.activeCraftMessagev2 }
+                .mapNotNull { ActiveCraftPlugin.getActiveCraftPlugin(it[activeCraftMessage])?.activeCraftMessage }
                 .associateWith { getPreferredLanguagesForProfile(profile, it) }
         }
 
 
-    private fun getPreferredLanguagesForProfile(profile: Profilev2, activeCraftMessage: ActiveCraftMessage) =
+    private fun getPreferredLanguagesForProfile(profile: Profile, activeCraftMessage: ActiveCraftMessage) =
         transaction {
             select { (profileId eq profile.uuid) and (PreferredLanguagesTable.activeCraftMessage eq activeCraftMessage.plugin.name) }
                 .firstNotNullOf {

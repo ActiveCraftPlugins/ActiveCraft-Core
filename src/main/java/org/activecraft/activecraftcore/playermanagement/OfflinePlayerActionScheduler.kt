@@ -8,10 +8,10 @@ import java.util.*
 object OfflinePlayerActionScheduler {
 
     private var initialized = false
-    private val offlineQueue = HashMap<Profilev2, Queue<() -> Unit>>()
+    private val offlineQueue = HashMap<Profile, Queue<() -> Unit>>()
 
     @JvmStatic
-    fun schedule(profile: Profilev2, action: Profilev2.() -> Unit) {
+    fun schedule(profile: Profile, action: Profile.() -> Unit) {
         offlineQueue.computeIfAbsent(profile) { LinkedList() }
         offlineQueue[profile]!!.offer { profile.action() }
     }
@@ -23,17 +23,17 @@ object OfflinePlayerActionScheduler {
         val runnable: BukkitRunnable = object : BukkitRunnable() {
             override fun run() {
                 for (player in Bukkit.getOnlinePlayers()) {
-                    if (offlineQueue[Profilev2.of(player)] == null) continue
-                    if (offlineQueue[Profilev2.of(player)]!!.size == 0) continue
-                    execute(Profilev2.of(player)!!)
+                    if (offlineQueue[Profile.of(player)] == null) continue
+                    if (offlineQueue[Profile.of(player)]!!.size == 0) continue
+                    execute(Profile.of(player))
                 }
             }
         }
-        runnable.runTaskTimer(ActiveCraftCore.instance, 0, 40)
+        runnable.runTaskTimer(ActiveCraftCore.INSTANCE, 0, 40)
     }
 
     @JvmStatic
-    private fun execute(profile: Profilev2) {
+    private fun execute(profile: Profile) {
         while (!offlineQueue[profile]!!.isEmpty() && offlineQueue[profile]!!.peek() != null) {
             offlineQueue[profile]!!.poll()!!()
         }

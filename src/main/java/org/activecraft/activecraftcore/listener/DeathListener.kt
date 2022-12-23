@@ -1,9 +1,8 @@
 package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.commands.SuicideCommand
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.activecraft.activecraftcore.utils.config.MainConfig
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -22,12 +21,12 @@ class DeathListener : Listener {
     }
 
     private fun hasEffectivePermission(permissible: Permissible, permission: String): Boolean {
-        return permissible.effectivePermissions.stream()
+        return permissible.effectivePermissions
             .map { obj: PermissionAttachmentInfo -> obj.permission }
-            .anyMatch { anotherString: String? -> permission.equals(anotherString, ignoreCase = true) }
+            .any { anotherString: String? -> permission.equals(anotherString, ignoreCase = true) }
     }
 
-    var mainConfig: MainConfig = ActiveCraftCore.mainConfig
+    var mainConfig: MainConfig = ActiveCraftCore.INSTANCE.mainConfig
     @EventHandler
     fun onDeath(e: PlayerDeathEvent) {
         val died = e.entity //in 1.17 gibt get player nen error deshalb IMMER get entity
@@ -56,7 +55,7 @@ class DeathListener : Listener {
         }
         var deathmessage = e.deathMessage
         if (killer != null && killer.inventory.itemInMainHand.type == Material.AIR) {
-            val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+            val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
             val vanishTagFormat =
                 acCoreMessageSupplier.getMessage("command.vanish.tag", acCoreMessageSupplier.colorScheme.secondary)
             val afkTagFormat =

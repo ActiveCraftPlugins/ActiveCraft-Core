@@ -2,6 +2,7 @@
 
 package org.activecraft.activecraftcore.utils
 
+import org.activecraft.activecraftcore.exceptions.InvalidColorException
 import org.bukkit.ChatColor
 import org.bukkit.Color
 import java.util.*
@@ -24,7 +25,7 @@ fun replaceColorAndFormat(altColorCode: Char, message: String): String {
 }
 
 fun isValidHexCode(hexCodeString: String): Boolean {
-    return hexCodeString.replace("#", "").lowercase(Locale.getDefault())
+    return hexCodeString.replace("#", "").lowercase()
         .matches("(\\d|[a-f])(\\d|[a-f])(\\d|[a-f])(\\d|[a-f])(\\d|[a-f])(\\d|[a-f])".toRegex())
 }
 
@@ -57,7 +58,7 @@ fun removeColorAndFormat(string: String): String {
 
 fun bukkitColorFromString(string: String): Color {
     val rgbArray = getRGB(
-        when (string.lowercase(Locale.getDefault())) {
+        when (string.lowercase()) {
             "green" -> "#5E7C16"
             "black" -> "#1D1D21"
             "blue" -> "#3C44AA"
@@ -75,7 +76,7 @@ fun bukkitColorFromString(string: String): Color {
             "white" -> "#F9FFFE"
             "brown" -> "#835432"
             "pepega_green" -> "#0aad1b"
-            else -> "#000000"
+            else -> throw InvalidColorException()
         }
     )
     return Color.fromRGB(rgbArray[0], rgbArray[1], rgbArray[2])

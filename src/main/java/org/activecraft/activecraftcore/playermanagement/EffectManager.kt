@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class EffectManager(val profile: Profilev2) : ProfileManager {
+class EffectManager(val profile: Profile) : ProfileManager {
 
     var effects: Map<PotionEffectType, Effect> = emptyMap()
         private set

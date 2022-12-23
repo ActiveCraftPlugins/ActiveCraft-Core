@@ -1,42 +1,36 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
-import java.util.Collection;
-import java.util.List;
-
-public class TpAllCommand extends ActiveCraftCommand {
-
-    public TpAllCommand(ActiveCraftPlugin plugin) {
-        super("tpall",  plugin);
+class TpAllCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("tpall", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender, "tpall")
+        val player = getPlayer(sender)
+        val players = Bukkit.getOnlinePlayers()
+        players.filter { target: Player -> !target.hasPermission("activecraft.tpall.bypass") }
+            .filter { target: Player -> target != player }
+            .forEach { target: Player ->
+                target.teleport(player.location)
+                sendSilentMessage(target, this.cmdMsg("target-message"))
+            }
+        players.filter { target -> target.hasPermission("activecraft.tpall.bypass") }
+            .filter { target -> target != player }
+            .forEach { target -> sendSilentMessage(target, this.cmdMsg("exept")) }
+        sendMessage(sender, this.cmdMsg("tpall"))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender, "tpall");
-        Player player = getPlayer(sender);
-        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
-        players.stream().filter(target -> !target.hasPermission("activecraft.tpall.bypass"))
-                .filter(target -> !target.equals(player))
-                .forEach(target -> {
-                    target.teleport(player.getLocation());
-                    sendSilentMessage(target, this.cmdMsg("target-message"));
-                });
-        players.stream().filter(target -> target.hasPermission("activecraft.tpall.bypass"))
-                .filter(target -> !target.equals(player))
-                .forEach(target -> sendSilentMessage(target, this.cmdMsg("exept")));
-        sendMessage(sender, this.cmdMsg("tpall"));
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return null;
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        return null
     }
 }

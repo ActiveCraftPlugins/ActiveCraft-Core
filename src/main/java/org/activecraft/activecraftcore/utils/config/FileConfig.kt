@@ -8,7 +8,6 @@ import org.bukkit.plugin.Plugin
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.util.stream.Collectors
 
 
 class FileConfig(private val folder: String, private val filename: String) : YamlConfiguration() {
@@ -21,7 +20,7 @@ class FileConfig(private val folder: String, private val filename: String) : Yam
 
     @JvmOverloads
     constructor(filename: String, plugin: Plugin? = null) : this(
-        (plugin ?: ActiveCraftCore).dataFolder.name,
+        (plugin ?: ActiveCraftCore.INSTANCE).dataFolder.name,
         filename
     )
 

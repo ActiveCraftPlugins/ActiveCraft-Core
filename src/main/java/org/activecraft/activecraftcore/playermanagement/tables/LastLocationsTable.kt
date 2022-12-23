@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.Location
 import org.bukkit.World
 import org.jetbrains.exposed.sql.*
@@ -19,7 +19,7 @@ object LastLocationsTable : Table("last_locations") {
 
     override val primaryKey = PrimaryKey(id, name = "last_locations_pk")
 
-    fun saveLastLocation(profile: Profilev2, world: World, lastLocation: Location, lastBeforeQuit: Boolean) {
+    fun saveLastLocation(profile: Profile, world: World, lastLocation: Location, lastBeforeQuit: Boolean) {
         fun writeLastLocation(updateBuilder: UpdateBuilder<Int>, oldLastLocationId: String?) {
             if (updateBuilder.type == StatementType.INSERT) {
                 updateBuilder[profileId] = profile.uuid
@@ -46,14 +46,14 @@ object LastLocationsTable : Table("last_locations") {
         }
     }
 
-    fun getLastLocationsForProfile(profile: Profilev2) =
+    fun getLastLocationsForProfile(profile: Profile) =
         transaction {
             select { profileId eq profile.uuid }
                 .mapNotNull { LocationsTable.locationFromId(it[locationId]) }
                 .associateBy { it.world }
         }
 
-    fun getLastLocationBeforeQuitForProfile(profile: Profilev2) =
+    fun getLastLocationBeforeQuitForProfile(profile: Profile) =
         transaction {
             select { (profileId eq profile.uuid) and (lastBeforeQuit eq true) }
                 .map { LocationsTable.locationFromId(it[locationId]) }

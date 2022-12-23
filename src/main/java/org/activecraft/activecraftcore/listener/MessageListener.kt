@@ -2,11 +2,11 @@ package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerChatEvent
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter
-import org.activecraft.activecraftcore.playermanagement.Profilev2
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.messages.MessageFormatter
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.messages.PlayerMessageFormatter
+import org.activecraft.activecraftcore.playermanagement.Profile
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.activecraft.activecraftcore.utils.config.MainConfig
 import org.activecraft.activecraftcore.utils.replaceColorAndFormat
 import org.bukkit.Bukkit
@@ -18,11 +18,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 class MessageListener : Listener {
     @EventHandler(priority = EventPriority.LOW)
     fun onChatMessage(event: AsyncPlayerChatEvent) {
-        val mainConfig: MainConfig = ActiveCraftCore.mainConfig
+        val mainConfig: MainConfig = ActiveCraftCore.INSTANCE.mainConfig
         var message = replaceColorAndFormat(event.message)
         val player = event.player
         val profile = of(player)
-        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
         if (handleDialogs(profile, message)) return
         if (mainConfig.lockChat && !player.hasPermission("activecraft.lockchat.bypass")) {
             event.isCancelled = true
@@ -49,7 +49,7 @@ class MessageListener : Listener {
             // call event
             val acChatEvent = PlayerChatEvent(profile, message, event.isAsynchronous)
             Bukkit.getPluginManager().callEvent(acChatEvent)
-            if (acChatEvent.isCancelled) return
+            if (acChatEvent.cancelled) return
             if (!mainConfig.useCustomChatFormat) return
             message = acChatEvent.message
             var format = acCoreMessageSupplier
@@ -63,7 +63,7 @@ class MessageListener : Listener {
         }
     }
 
-    private fun handleDialogs(profile: Profilev2, message: String): Boolean {
+    private fun handleDialogs(profile: Profile, message: String): Boolean {
         val dialogManager = profile.dialogManager
         val dialogScope = dialogManager.activeDialogScope ?: return false
         dialogScope.answer(message)

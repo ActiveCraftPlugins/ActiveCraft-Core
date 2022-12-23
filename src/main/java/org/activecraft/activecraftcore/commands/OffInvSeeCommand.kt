@@ -1,40 +1,30 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.offinvsee.OffInvSeeGui;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.offinvsee.OffInvSeeGui;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.guicreator.GuiNavigator.Companion.push
+import org.activecraft.activecraftcore.guis.offinvsee.OffInvSeeGui
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.bukkit.Sound
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class OffInvSeeCommand extends ActiveCraftCommand {
-
-    public OffInvSeeCommand(ActiveCraftPlugin plugin) {
-        super("offinvsee",  plugin);
+class OffInvSeeCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("offinvsee", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+        val player = getPlayer(sender)
+        val target = getPlayer(args[0])
+        push(player, OffInvSeeGui(player, target).build())
+        player.playSound(player.location, Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f)
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-        Player player = getPlayer(sender);
-        Player target = getPlayer(args[0]);
-        GuiNavigator.push(player, new OffInvSeeGui(player, target).build());
-        player.playSound(player.getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1, 1);
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getProfileNames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getProfileNames() : null;
-    }
 }

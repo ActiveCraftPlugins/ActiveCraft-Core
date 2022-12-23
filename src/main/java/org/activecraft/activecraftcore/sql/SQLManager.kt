@@ -15,20 +15,20 @@ class SQLManager {
     fun init() {
         // TODO: das ganze mit mysql oder so noch networkübergreifend machen
         // connect to sqlite database
-        val mainConfig = ActiveCraftCore.mainConfig
+        val mainConfig = ActiveCraftCore.INSTANCE.mainConfig
         val dialect: DatabaseDialect
         try {
             dialect = DatabaseDialect.valueOf(mainConfig.databaseDialect!!.uppercase())
         } catch (e: IllegalArgumentException) {
-            throw StartupException("Invalid database dialect. Check your \"config.yml\"")
+            throw StartupException(true, "Invalid database dialect. Check your \"config.yml\"")
         } catch (e: NullPointerException) {
-            throw StartupException("Invalid database dialect. Check your \"config.yml\"")
+            throw StartupException(true, "Invalid database dialect. Check your \"config.yml\"")
         }
 
         try {
             database = when (dialect) {
                 DatabaseDialect.SQLITE -> Database.connect(
-                    url = "jdbc:sqlite:${ActiveCraftCore.dataFolder}/${mainConfig.databaseLocalPath}",
+                    url = "jdbc:sqlite:${ActiveCraftCore.INSTANCE.dataFolder}/${mainConfig.databaseLocalPath}",
                     driver = "org.sqlite.JDBC"
                 )
 
@@ -40,7 +40,7 @@ class SQLManager {
                 )
             }
         } catch (e: Exception) {
-            throw StartupException(e.message)
+            throw StartupException(true, e.message)
         }
 
         transaction {
@@ -57,7 +57,7 @@ class SQLManager {
                     WarnsTable
                 )
             } catch (e: Exception) {
-                throw StartupException(e.message)
+                throw StartupException(true, e.message)
             }
         }
     }

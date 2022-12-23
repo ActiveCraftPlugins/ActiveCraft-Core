@@ -1,10 +1,8 @@
 package org.activecraft.activecraftcore.modules
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.commands.accMessage
 import org.activecraft.activecraftcore.exceptions.ModuleException
 import org.activecraft.activecraftcore.exceptions.OperationFailureException
-import org.activecraft.activecraftcore.messages.Errors
 import org.activecraft.activecraftcore.utils.WebReader.aCVersionMap
 import org.activecraft.activecraftcore.utils.WebReader.downloadFile
 import org.activecraft.activecraftcore.utils.WebReader.readAsMap
@@ -24,7 +22,7 @@ object ModuleManager {
     init {
         updateModules()
         Bukkit.getScheduler().runTaskTimer(
-            ActiveCraftCore,
+            ActiveCraftCore.INSTANCE,
             Runnable { updateModules() },
             (20 * 60 * 60).toLong(),
             (20 * 60 * 60).toLong()
@@ -74,7 +72,7 @@ object ModuleManager {
         for (f in pluginsDir.listFiles()!!) {
             if (!f.name.endsWith(".jar")) continue
             val desc: PluginDescriptionFile = try {
-                ActiveCraftCore.pluginLoader.getPluginDescription(f)
+                ActiveCraftCore.INSTANCE.pluginLoader.getPluginDescription(f)
             } catch (ignored: InvalidDescriptionException) {
                 throw ModuleException(moduleName, ModuleException.ErrorType.NOT_INSTALLED)
             }
@@ -155,7 +153,7 @@ object ModuleManager {
         for (f in pluginsDir.listFiles()!!) {
             if (!f.name.endsWith(".jar")) continue
             val desc: PluginDescriptionFile = try {
-                ActiveCraftCore.pluginLoader.getPluginDescription(f)
+                ActiveCraftCore.INSTANCE.pluginLoader.getPluginDescription(f)
             } catch (ignored: InvalidDescriptionException) {
                 throw ModuleException(moduleName, ModuleException.ErrorType.NOT_INSTALLED)
             }
@@ -167,8 +165,7 @@ object ModuleManager {
 
     @Throws(ModuleException::class)
     fun getModule(moduleName: String): Module {
-        return modules.stream()
-            .filter { module: Module -> module.name == moduleName }
-            .findFirst().orElseThrow { ModuleException(moduleName, ModuleException.ErrorType.DOES_NOT_EXIST) }
+        return modules.firstOrNull() { module: Module -> module.name == moduleName }
+            ?: throw ModuleException(moduleName, ModuleException.ErrorType.DOES_NOT_EXIST)
     }
 }

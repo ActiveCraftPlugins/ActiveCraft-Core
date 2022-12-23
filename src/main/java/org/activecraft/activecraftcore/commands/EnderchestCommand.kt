@@ -1,37 +1,30 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Sound
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class EnderchestCommand extends ActiveCraftCommand {
-
-    public EnderchestCommand(ActiveCraftPlugin plugin) {
-        super("enderchest",  plugin);
+class EnderchestCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("enderchest", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        assertCommandPermission(sender, type.code())
+        val player = getPlayer(sender)
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        messageFormatter.setTarget(getProfile(target))
+        isTargetSelf(sender, target)
+        player.openInventory(target.enderChest)
+        player.playSound(target.location, Sound.BLOCK_ENDER_CHEST_OPEN, 1f, 1f)
+        sendMessage(sender, this.cmdMsg(type.code()))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        checkPermission(sender, type.code());
-        Player player = getPlayer(sender);
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        messageFormatter.setTarget(getProfile(target));
-        isTargetSelf(sender, target);
-        player.openInventory(target.getEnderChest());
-        player.playSound(target.getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1f, 1f);
-        sendMessage(sender, this.cmdMsg(type.code()));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

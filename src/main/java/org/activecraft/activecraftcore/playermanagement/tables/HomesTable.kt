@@ -1,7 +1,7 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
 import org.activecraft.activecraftcore.playermanagement.Home
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.StatementType
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -20,7 +20,7 @@ object HomesTable : Table("homes") {
         return Home(name = row[name], location = LocationsTable.locationFromId(row[locationId]) ?: return null)
     }
 
-    fun saveHome(profile: Profilev2, home: Home) {
+    fun saveHome(profile: Profile, home: Home) {
         fun writeHome(updateBuilder: UpdateBuilder<Int>) {
             if (updateBuilder.type == StatementType.INSERT) {
                 updateBuilder[HomesTable.ownerId] = profile.uuid
@@ -42,15 +42,15 @@ object HomesTable : Table("homes") {
         }
     }
 
-    fun deleteHome(profile: Profilev2, homeName: String) {
+    fun deleteHome(profile: Profile, homeName: String) {
         transaction {
             deleteWhere { (ownerId eq profile.uuid) and (name eq homeName) }
         }
     }
 
-    fun homeExistsInDatabase(profile: Profilev2, home: Home) = getHomesForProfile(profile).any { it.name == home.name }
+    fun homeExistsInDatabase(profile: Profile, home: Home) = getHomesForProfile(profile).any { it.name == home.name }
 
-    fun getHomesForProfile(profile: Profilev2) =
+    fun getHomesForProfile(profile: Profile) =
         transaction {
             select { ownerId eq profile.uuid }
                 .mapNotNull { toHome(it) }

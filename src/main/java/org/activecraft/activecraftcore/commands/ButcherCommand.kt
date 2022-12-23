@@ -1,47 +1,37 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.*;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.*
 
-import java.util.List;
-
-public class ButcherCommand extends ActiveCraftCommand {
-
-    public ButcherCommand(ActiveCraftPlugin plugin) {
-        super("butcher",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        Player player = getPlayer(sender);
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 0);
-        List<Entity> entities = player.getNearbyEntities(200, 500, 200).stream()
-                .filter(e -> e instanceof Monster || e instanceof Flying || e instanceof Slime)
-                .toList();
-        if(entities.size() == 0) {
-            sendMessage(sender, this.rawCmdMsg("no-mobs"), true);
-            return;
+class ButcherCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("butcher", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val player = getPlayer(sender)
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 0)
+        val entities = player.getNearbyEntities(200.0, 500.0, 200.0)
+            .filter { it is Monster || it is Flying || it is Slime }
+        if (entities.isEmpty()) {
+            sendWarningMessage(sender, rawCmdMsg("no-mobs"))
+            return
         }
-
-        int killed = 0;
-        for (Entity e : entities) {
-            ((Damageable) e).setHealth(0);
-            killed += 1;
+        var killed = 0
+        for (e in entities) {
+            (e as Damageable).health = 0.0
+            killed += 1
         }
-        messageFormatter.addReplacement("amount", killed + "");
-        sendMessage(sender, this.cmdMsg("killed-mobs"));
+        messageFormatter.addFormatterPattern("amount", killed.toString())
+        sendMessage(sender, this.cmdMsg("killed-mobs"))
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

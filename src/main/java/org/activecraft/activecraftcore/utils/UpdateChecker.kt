@@ -5,7 +5,6 @@ import org.bukkit.plugin.Plugin
 import java.io.IOException
 import java.net.URL
 import java.util.*
-import java.util.function.Consumer
 
 // From: https://www.spigotmc.org/wiki/creating-an-update-checker-that-checks-for-updates
 class UpdateChecker(private val plugin: Plugin, private val resourceId: Int) {

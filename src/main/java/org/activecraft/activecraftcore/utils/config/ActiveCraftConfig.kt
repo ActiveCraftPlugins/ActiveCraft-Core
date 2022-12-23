@@ -33,7 +33,6 @@ abstract class ActiveCraftConfig(@JvmField val fileConfig: FileConfig) {
         reload()
     }
 
-    @JvmOverloads
     fun set(path: String, value: Any?, reload: Boolean = true) {
         fileConfig[path] = value
         fileConfig.saveConfig()

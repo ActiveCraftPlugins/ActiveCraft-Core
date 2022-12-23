@@ -4,7 +4,6 @@ package org.activecraft.activecraftcore.utils
 
 import java.util.*
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 
 private const val IPV4_REGEX = "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
         "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
@@ -18,10 +17,6 @@ fun isValidInet4Address(ip: String?): Boolean {
     return matcher.matches()
 }
 
-fun combineArray(args: Array<String>, start: Int): String {
-    return combineArray(args, start, args.size, " ")
-}
-
 fun combineArray(args: Array<String>, start: Int, splitter: String): String {
     return combineArray(args, start, args.size, splitter)
 }
@@ -31,10 +26,6 @@ fun combineArray(args: Array<String>, start: Int = 0, stop: Int = args.size, spl
     val resultBuilder = StringBuilder()
     for (i in start until stop) resultBuilder.append(if (i != start) splitter + args[i] else args[i])
     return resultBuilder.toString()
-}
-
-fun combineList(args: List<String>, start: Int): String {
-    return combineList(args, start, args.size, " ")
 }
 
 fun combineList(args: List<String>, splitter: String): String {
@@ -52,7 +43,7 @@ fun combineList(args: List<String>, start: Int = 0, stop: Int = args.size, split
     return resultBuilder.toString()
 }
 
-fun remove(target: String, vararg replaced: String?): String {
+fun strip(target: String, vararg replaced: String?): String {
     var target = target
     for (s in replaced) target = target.replace(s!!, "")
     return target

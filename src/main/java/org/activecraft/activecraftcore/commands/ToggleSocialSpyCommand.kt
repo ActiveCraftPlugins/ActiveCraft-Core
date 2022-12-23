@@ -1,36 +1,24 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class ToggleSocialSpyCommand extends ActiveCraftCommand {
-
-    // TODO: 11.06.2022 testen mit 2 person
-
-    public ToggleSocialSpyCommand(ActiveCraftPlugin plugin) {
-        super("togglesocialspy",  plugin);
+class ToggleSocialSpyCommand  // TODO: 11.06.2022 testen mit 2 person
+    (plugin: ActiveCraftPlugin?) : ActiveCraftCommand("togglesocialspy", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val player = getPlayer(sender)
+        val profile = getProfile(player)
+        profile.receiveSocialspy = !profile.receiveSocialspy
+        sendMessage(sender, this.cmdMsg((if (profile.receiveSocialspy) "en" else "dis") + "abled"))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        Player player = getPlayer(sender);
-        Profilev2 profile = getProfile(player);
-        profile.setReceiveSocialspy(!profile.canReceiveSocialspy());
-        sendMessage(sender, this.cmdMsg((profile.canReceiveSocialspy() ? "en" : "dis") + "abled"));
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return  null;
-    }
-
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

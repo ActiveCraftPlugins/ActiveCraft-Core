@@ -21,6 +21,9 @@ interface CollectionUtils {
     }
 
     // joinArray
+    fun joinArray(args: Array<String>): String {
+        return joinArray(args, 0, args.size, " ")
+    }
     fun joinArray(args: Array<String>, start: Int): String {
         return joinArray(args, start, args.size, " ")
     }
@@ -40,7 +43,7 @@ interface CollectionUtils {
 
     // joinCollection
     fun joinCollection(args: Collection<String>): String {
-        return joinList(args.stream().toList())
+        return joinList(args.toList())
     }
 
     fun joinCollection(args: Collection<String>, splitter: String): String {

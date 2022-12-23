@@ -1,36 +1,30 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class FeedCommand extends ActiveCraftCommand {
-
-    public FeedCommand(ActiveCraftPlugin plugin) {
-        super("feed",  plugin);
+class FeedCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("feed", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        assertCommandPermission(sender, type.code())
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        messageFormatter.setTarget(getProfile(target))
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(sender, target)) sendSilentMessage(
+            target,
+            this.cmdMsg("target-message")
+        )
+        target.foodLevel = 20
+        sendMessage(sender, this.cmdMsg(type.code()))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        checkPermission(sender, type.code());
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        messageFormatter.setTarget(getProfile(target));
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, target))
-                sendSilentMessage(target, this.cmdMsg("target-message"));
-        target.setFoodLevel(20);
-        sendMessage(sender, this.cmdMsg(type.code()));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

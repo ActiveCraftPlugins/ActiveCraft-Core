@@ -1,8 +1,8 @@
 package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.messages.MessageFormatter
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.utils.TimeUtils.getRemainingAsString
 import org.bukkit.BanList
 import org.bukkit.Bukkit
@@ -17,7 +17,7 @@ class LoginListener : Listener {
         val ipAddress = e.address.toString().replace("/", "")
         var ipBanned = false
         val ipBanList = Bukkit.getBanList(BanList.Type.IP)
-        val activeCraftCoreMessage = ActiveCraftCore.activeCraftMessagev2!!
+        val activeCraftCoreMessage = ActiveCraftCore.INSTANCE.activeCraftMessage!!
         val msgFormatter = MessageFormatter(activeCraftCoreMessage)
         for (banEntry in ipBanList.banEntries) {
             if (banEntry.target == ipAddress) {
@@ -26,7 +26,7 @@ class LoginListener : Listener {
             }
         }
         val nameBanList = Bukkit.getBanList(BanList.Type.NAME)
-        val profile = Profilev2.of(e.player.name)
+        val profile = Profile.of(e.player.name)
         val messageSupplier = profile?.getMessageSupplier(activeCraftCoreMessage)
             ?: activeCraftCoreMessage.getDefaultMessageSupplier()!!
         if (e.player.isBanned) {

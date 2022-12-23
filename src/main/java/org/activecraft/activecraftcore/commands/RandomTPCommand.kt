@@ -1,75 +1,71 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.teleport
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import java.util.*
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-public class RandomTPCommand extends ActiveCraftCommand {
-
-    public RandomTPCommand(ActiveCraftPlugin plugin) {
-        super("randomtp",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        boolean isLimited = (args.length == 1 && isInt(args[0])) || args.length >= 2;
-        CommandTargetType type = switch (args.length) {
-            case 0 -> CommandTargetType.SELF;
-            case 1 -> isLimited ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-            default -> CommandTargetType.OTHERS;
-        };
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        args = Arrays.copyOfRange(args, type == CommandTargetType.OTHERS ? 1 : 0, args.length);
-        checkPermission(sender, type.code());
-        int range = (int) target.getWorld().getWorldBorder().getSize()/2;
-        if (isLimited)
-            range = parseInt(args[0]);
-        Location tpLoc = randomLocation(target, range);
-        World world = tpLoc.getWorld();
-        for (int i = 0; i < 69420; i++) {
-            Block block = world.getBlockAt(tpLoc.getBlockX(),
-                    world.getHighestBlockYAt(tpLoc.getBlockX(), tpLoc.getBlockZ()),
-                    tpLoc.getBlockZ());
-            if (block.getType() != Material.LAVA) break;
-            tpLoc = randomLocation(target, range);
+class RandomTPCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("randomtp", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        val isLimited = args.size == 1 && isInt(args[0]) || args.size >= 2
+        val type = when (args.size) {
+            0 -> CommandTargetType.SELF
+            1 -> if (isLimited) CommandTargetType.SELF else CommandTargetType.OTHERS
+            else -> CommandTargetType.OTHERS
         }
-        LocationUtils.teleport(target, tpLoc);
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        args = args.copyOfRange(if (type == CommandTargetType.OTHERS) 1 else 0, args.size)
+        assertCommandPermission(sender, type.code())
+        var range = target.world.worldBorder.size.toInt() / 2
+        if (isLimited) range = parseInt(args[0])
+        var tpLoc = randomLocation(target, range)
+        val world = tpLoc.world
+        for (i in 0..69419) {
+            val block = world.getBlockAt(
+                tpLoc.blockX,
+                world.getHighestBlockYAt(tpLoc.blockX, tpLoc.blockZ),
+                tpLoc.blockZ
+            )
+            if (block.type != Material.LAVA) break
+            tpLoc = randomLocation(target, range)
+        }
+        teleport(target, tpLoc)
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    private Location randomLocation(Player player, int range) {
-        Random random = new Random();
-        int randomNumX = random.nextInt(range);
-        int randomNumZ = random.nextInt(range);
 
-        int isNegative = random.nextInt(4);
-        switch (isNegative) {
-            case 1 -> randomNumX *= -1;
-            case 2 -> randomNumZ *= -1;
-            case 3 -> {
-                randomNumX *= -1;
-                randomNumZ *= -1;
+    private fun randomLocation(player: Player, range: Int): Location {
+        val random = Random()
+        var randomNumX = random.nextInt(range)
+        var randomNumZ = random.nextInt(range)
+        when (random.nextInt(4)) {
+            1 -> randomNumX *= -1
+            2 -> randomNumZ *= -1
+            3 -> {
+                randomNumX *= -1
+                randomNumZ *= -1
             }
         }
-        return new Location(player.getWorld(), randomNumX, player.getWorld().getHighestBlockYAt(randomNumX, randomNumZ) + 1, randomNumZ,
-                player.getLocation().getYaw(), player.getLocation().getPitch());
+        return Location(
+            player.world,
+            randomNumX.toDouble(),
+            (player.world.getHighestBlockYAt(randomNumX, randomNumZ) + 1).toDouble(),
+            randomNumZ.toDouble(),
+            player.location.yaw,
+            player.location.pitch
+        )
     }
 }

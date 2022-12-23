@@ -1,36 +1,28 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.NotHoldingItemException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.NotHoldingItemException;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.NotHoldingItemException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class MoreCommand extends ActiveCraftCommand {
-
-    public MoreCommand(ActiveCraftPlugin plugin) {
-        super("more",  plugin);
+class MoreCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("more", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val player = getPlayer(sender)
+        val itemStack = player.inventory.itemInMainHand
+        assertHoldingItem(player, NotHoldingItemException.ExpectedItem.ANY)
+        val amount = if (args.isEmpty()) itemStack.maxStackSize else parseInt(args[0]).coerceAtMost(127)
+        itemStack.amount = amount
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        Player player = getPlayer(sender);
-        ItemStack is = player.getInventory().getItemInMainHand();
-        checkHoldingItem(player, NotHoldingItemException.ExpectedItem.ANY);
-        int amount = args.length == 0 ? is.getMaxStackSize() : Math.min(parseInt(args[0]), 127);
-        is.setAmount(amount);
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ): List<String>? {
+        return null
     }
 }

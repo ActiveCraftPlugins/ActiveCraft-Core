@@ -1,52 +1,42 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.NotHoldingItemException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.NotHoldingItemException;
-import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.NotHoldingItemException
+import org.bukkit.Material
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.inventory.ItemStack
 
-import java.util.List;
-
-public class HatCommand extends ActiveCraftCommand {
-
-    public HatCommand(ActiveCraftPlugin plugin) {
-        super("hat",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-
-        Player player = getPlayer(sender);
-        ItemStack handitem = player.getInventory().getItemInMainHand();
-        ItemStack helmetitem = player.getInventory().getHelmet();
+class HatCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("hat", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val player = getPlayer(sender)
+        val handitem = player.inventory.itemInMainHand
+        var helmetitem = player.inventory.helmet
         if (helmetitem == null) {
-            helmetitem = new ItemStack(Material.AIR);
+            helmetitem = ItemStack(Material.AIR)
         }
-        ItemStack emptyHand = new ItemStack(Material.AIR);
-        if (!(handitem.getType() == Material.AIR && helmetitem.getType() == Material.AIR)) {
-            player.getInventory().setHelmet(handitem);
-            player.getInventory().setItemInMainHand(emptyHand);
-            player.getInventory().addItem(helmetitem);
-            sendMessage(sender, this.cmdMsg("hat"));
-        } else if (handitem.getType() != Material.AIR) {
-            player.getInventory().setHelmet(handitem);
-            player.getInventory().setItemInMainHand(emptyHand);
-            sendMessage(sender, this.cmdMsg("hat"));
+        val emptyHand = ItemStack(Material.AIR)
+        if (!(handitem.type == Material.AIR && helmetitem.type == Material.AIR)) {
+            player.inventory.helmet = handitem
+            player.inventory.setItemInMainHand(emptyHand)
+            player.inventory.addItem(helmetitem)
+            sendMessage(sender, this.cmdMsg("hat"))
+        } else if (handitem.type != Material.AIR) {
+            player.inventory.helmet = handitem
+            player.inventory.setItemInMainHand(emptyHand)
+            sendMessage(sender, this.cmdMsg("hat"))
         } else {
-            throw new NotHoldingItemException(player, NotHoldingItemException.ExpectedItem.ANY);
+            throw NotHoldingItemException(player, NotHoldingItemException.ExpectedItem.ANY)
         }
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

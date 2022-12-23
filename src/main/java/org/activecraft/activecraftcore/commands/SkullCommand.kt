@@ -1,40 +1,33 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import java.util.*
 
-import java.util.Arrays;
-import java.util.List;
-
-public class SkullCommand extends ActiveCraftCommand {
-
-    public SkullCommand(ActiveCraftPlugin plugin) {
-        super("skull",  plugin);
+class SkullCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("skull", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        args = args.copyOfRange(if (type == CommandTargetType.OTHERS) 1 else 0, args.size)
+        assertCommandPermission(sender, type.code())
+        val amount = if (args.size >= 2) parseInt(args[0]) else 1
+        val cmdString = "give " + target.name + " minecraft:player_head{SkullOwner:\"" + target.name + "\"}"
+        for (i in amount downTo 1) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdString)
+        messageFormatter.addFormatterPattern("amount", amount.toString())
+        messageFormatter.setTarget(getProfile(target))
+        sendMessage(sender, cmdMsg(type.code() + if (args.size >= 2) ".multiple" else ""))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        args = Arrays.copyOfRange(args, type == CommandTargetType.OTHERS ? 1 : 0, args.length);
-        checkPermission(sender, type.code());
-        int amount = args.length >= 2 ? parseInt(args[0]) : 1;
-        String cmdString = "give " + target.getName() + " minecraft:player_head{SkullOwner:\"" + target.getName() + "\"}";
-        for (int i = amount; i > 0; i--)
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdString);
-        messageFormatter.addReplacement("amount", amount + "");
-        messageFormatter.setTarget(getProfile(target));
-        sendMessage(sender, cmdMsg(type.code() + (args.length >= 2 ? ".multiple" : "")));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

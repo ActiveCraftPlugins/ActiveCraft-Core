@@ -1,45 +1,36 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class BackCommand extends ActiveCraftCommand {
-
-    public BackCommand(ActiveCraftPlugin plugin) {
-        super("back",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        Profilev2 profile = getProfile(target);
-        messageFormatter.setTarget(profile);
-        checkPermission(sender, type.code());
-        Location lastLoc = profile.getLocationManager().getLastLocation(target.getWorld());
+class BackCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("back", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        val profile = getProfile(target)
+        messageFormatter.setTarget(profile)
+        assertCommandPermission(sender, type.code())
+        val lastLoc = profile.locationManager.getLastLocation(target.world)
         if (lastLoc == null) {
-            sendMessage(sender, this.rawCmdMsg("no-return-location-" + type.code()), true);
-            return;
+            sendWarningMessage(sender, rawCmdMsg("no-return-location-" + type.code()))
+            return
         }
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, target))
-                sendSilentMessage(sender, this.cmdMsg("target-message"));
-        target.teleport(lastLoc);
-        sendMessage(sender, this.cmdMsg(type.code()));
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(sender, target)) sendSilentMessage(
+            sender,
+            this.cmdMsg("target-message")
+        )
+        target.teleport(lastLoc)
+        sendMessage(sender, this.cmdMsg(type.code()))
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
+
 }

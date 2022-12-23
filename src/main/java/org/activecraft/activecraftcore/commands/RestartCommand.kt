@@ -1,79 +1,68 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import com.destroystokyo.paper.Title;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.messages.MessageFormatter;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.messages.MessageFormatter;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import com.destroystokyo.paper.Title
+import org.activecraft.activecraftcore.ActiveCraftCore
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Bukkit
+import org.bukkit.Sound
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 
-import java.util.List;
+class RestartCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("restart-server", plugin!!) {
+    private var runnable: BukkitRunnable? = null
+    private var time = 0
 
-public class RestartCommand extends ActiveCraftCommand {
-
-    public RestartCommand(ActiveCraftPlugin plugin) {
-        super("restart-server",  plugin);
-    }
-
-    private BukkitRunnable runnable;
-    private int time;
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        if (args.length != 0 && args[0].equalsIgnoreCase("cancel")) {
-            cancelTimer(sender);
-            return;
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        if (args.isNotEmpty() && args[0].equals("cancel", ignoreCase = true)) {
+            cancelTimer(sender)
+            return
         }
-        time = args.length == 0 ? 30 : parseInt(args[0]);
-        if (runnable != null && !runnable.isCancelled())
-            runnable.cancel();
-
-        runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
+        time = if (args.isEmpty()) 30 else parseInt(args[0])
+        if (runnable != null && !runnable!!.isCancelled) runnable!!.cancel()
+        runnable = object : BukkitRunnable() {
+            override fun run() {
                 if (time == 0) {
-                    cancel();
-                    Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(cmdMsg("message")));
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spigot:restart");
-                    return;
+                    cancel()
+                    Bukkit.getOnlinePlayers().forEach { player: Player -> player.kickPlayer(cmdMsg("message")) }
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "spigot:restart")
+                    return
                 }
-                for (Player target : Bukkit.getOnlinePlayers()) {
-                    target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 0.5f);
-                    Title title = new Title(cmdMsg("title", new MessageFormatter("time", time + "")));
-                    target.sendTitle(title);
+                for (target in Bukkit.getOnlinePlayers()) {
+                    target.playSound(target.location, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 0.5f)
+                    val title: Title =
+                        Title(cmdMsg("title", newMessageFormatter().addFormatterPattern("time", time.toString() + "")))
+                    target.sendTitle(title)
                     try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Thread.sleep(250)
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
                     }
-                    target.playSound(target.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 0.5f);
+                    target.playSound(target.location, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 0.5f)
                 }
-                time--;
+                time--
             }
-        };
-        runnable.runTaskTimer(ActiveCraftCore.getInstance(), 0, 20);
+        }
+        runnable?.runTaskTimer(ActiveCraftCore.INSTANCE, 0, 20)
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? List.of("cancel") : null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) listOf("cancel") else null
 
-    private void cancelTimer(CommandSender sender) {
-        if (runnable == null || runnable.isCancelled()) return;
-        Title title = new Title(cmdMsg("title", new MessageFormatter("time", "--")));
-        Bukkit.getOnlinePlayers().forEach(p -> p.sendTitle(title));
-        runnable.cancel();
-        sendMessage(sender, cmdMsg("cancel"));
+
+    private fun cancelTimer(sender: CommandSender) {
+        if (runnable == null || runnable!!.isCancelled) return
+        val title = Title(cmdMsg("title", newMessageFormatter().addFormatterPattern("time", "--")))
+        Bukkit.getOnlinePlayers().forEach { it.sendTitle(title) }
+        runnable!!.cancel()
+        sendMessage(sender, cmdMsg("cancel"))
     }
 }

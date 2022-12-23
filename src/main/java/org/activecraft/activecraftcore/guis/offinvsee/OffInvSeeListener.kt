@@ -1,27 +1,22 @@
-package org.activecraft.activecraftcore.guis.offinvsee;
+package org.activecraft.activecraftcore.guis.offinvsee
 
-import org.activecraft.activecraftcore.guicreator.Gui;
-import org.activecraft.activecraftcore.guicreator.Gui;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
+import org.activecraft.activecraftcore.guicreator.Gui.Companion.ofInventory
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryCloseEvent
 
-public class OffInvSeeListener implements Listener {
-
-
+class OffInvSeeListener : Listener {
     @EventHandler
-    public void onInvClick(InventoryCloseEvent event) {
-        Inventory inventory = event.getInventory();
-        Gui gui = Gui.ofInventory(inventory);
-        if (gui == null) return;
-        if (!(gui.getGuiCreator() instanceof OffInvSeeGui offInvSeeGui)) return;
-        Player player = offInvSeeGui.getPlayer();
-        player.getInventory().setHelmet(inventory.getItem(11));
-        player.getInventory().setChestplate(inventory.getItem(12));
-        player.getInventory().setLeggings(inventory.getItem(13));
-        player.getInventory().setBoots(inventory.getItem(14));
-        player.getInventory().setItemInOffHand(inventory.getItem(16));
+    fun onInvClick(event: InventoryCloseEvent) {
+        val inventory = event.inventory
+        val gui = ofInventory(inventory) ?: return
+        if (gui.guiCreator !is OffInvSeeGui) return
+        val player: Player = gui.guiCreator.player
+        player.inventory.helmet = inventory.getItem(11)
+        player.inventory.chestplate = inventory.getItem(12)
+        player.inventory.leggings = inventory.getItem(13)
+        player.inventory.boots = inventory.getItem(14)
+        player.inventory.setItemInOffHand(inventory.getItem(16))
     }
 }

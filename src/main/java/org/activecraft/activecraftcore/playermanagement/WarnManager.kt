@@ -3,22 +3,22 @@ package org.activecraft.activecraftcore.playermanagement
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerWarnAddEvent
 import org.activecraft.activecraftcore.events.PlayerWarnRemoveEvent
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
+import org.activecraft.activecraftcore.messages.MessageFormatter
 import org.activecraft.activecraftcore.playermanagement.tables.WarnsTable
 import org.activecraft.activecraftcore.utils.CharPool
 import org.activecraft.activecraftcore.utils.generateRandomString
 import org.bukkit.Bukkit
 import java.time.LocalDateTime
 
-class WarnManager(private val profile: Profilev2) : ProfileManager {
+class WarnManager(private val profile: Profile) : ProfileManager {
 
     var warns: Set<Warn> = emptySet()
-    private val messageSupplier = profile.getMessageSupplier(ActiveCraftCore.activeCraftMessagev2!!)  // das hier ist richtig
-    //private val messageSupplier = ActiveCraftCore.activeCraftMessagev2?.getDefaultMessageSupplier() // das hier ist falsch
+    private val messageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE.activeCraftMessage!!)  // das hier ist richtig
+    //private val messageSupplier = ActiveCraftCore.INSTANCE.activeCraftMessagev2?.getDefaultMessageSupplier() // das hier ist falsch
     private val allWarns: Set<Warn>
         get() {
             val allWarns: MutableSet<Warn> = mutableSetOf()
-            ActiveCraftCore.profiles.values.forEach { allWarns.addAll(it.warnManager.warns) }
+            ActiveCraftCore.INSTANCE.profiles.values.forEach { allWarns.addAll(it.warnManager.warns) }
             return allWarns.toSet()
         }
 
@@ -51,7 +51,7 @@ class WarnManager(private val profile: Profilev2) : ProfileManager {
             Warn(id, reason, localDateTime, source)
         )
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
 
         val warn = event.warn
         val formatter = MessageFormatter(messageSupplier.activeCraftMessage)
@@ -76,7 +76,7 @@ class WarnManager(private val profile: Profilev2) : ProfileManager {
         //call event
         val event = PlayerWarnRemoveEvent(profile, warn)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
 
         profile.timesWarned--
         warns = warns - warn

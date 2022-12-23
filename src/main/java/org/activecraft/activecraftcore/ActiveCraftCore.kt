@@ -11,7 +11,7 @@ import org.activecraft.activecraftcore.modules.Module
 import org.activecraft.activecraftcore.modules.ModuleManager
 import org.activecraft.activecraftcore.playermanagement.OfflinePlayerActionScheduler.initialize
 import org.activecraft.activecraftcore.playermanagement.Playerlist
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable.loadAllProfiles
 import org.activecraft.activecraftcore.sql.SQLManager
@@ -28,17 +28,25 @@ import java.util.function.Consumer
 
 val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")
 
-object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
-    val profiles = HashMap<UUID, Profilev2>()
+class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
+    val profiles: MutableMap<UUID, Profile> = mutableMapOf()
     val guiManager = GuiManager()
+    val profileMenuList: MutableMap<Player, ProfileMenu> = mutableMapOf()
     lateinit var mainConfig: MainConfig
     lateinit var locationsConfig: LocationsConfig
     lateinit var warpsConfig: WarpsConfig
     lateinit var portalsConfig: PortalsConfig
     lateinit var playerlist: Playerlist
-    private val profileMenuList = HashMap<Player, ProfileMenu>()
     private val sqlManager = SQLManager()
     private val features = HashMap<Feature, Boolean>()
+
+    companion object {
+        lateinit var INSTANCE: ActiveCraftCore
+    }
+
+    init {
+        INSTANCE = this
+    }
 
     override fun onPluginEnabled() {
         // connect to database
@@ -104,7 +112,7 @@ object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
 
     override fun onPluginDisabled() {
         Bukkit.getOnlinePlayers().forEach { player: Player ->
-            Profilev2.of(player).locationManager.setLastLocation(
+            Profile.of(player).locationManager.setLastLocation(
                 player.world,
                 player.location,
                 true
@@ -119,7 +127,7 @@ object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
     private fun startTimer() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, {
             for (player in Bukkit.getOnlinePlayers()) {
-                val profile = Profilev2.of(player)
+                val profile = Profile.of(player)
                 var playtime = profile.playtime
                 playtime++
                 if (!profile.isAfk) {
@@ -159,7 +167,7 @@ object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
     private fun createProfiles() {
         playerlist.load()
         profiles.clear()
-        loadAllProfiles().forEach(Consumer { profile: Profilev2 -> profiles[profile.uuid] = profile })
+        loadAllProfiles().forEach(Consumer { profile: Profile -> profiles[profile.uuid] = profile })
     }
 
     override fun registerConfigs() {
@@ -190,91 +198,15 @@ object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
 
         // guis
         pluginManager.addListeners(OffInvSeeListener(), ProfileMenuListeners())
-        //Bukkit.getPluginCommand("atestcommand")!!.setExecutor(ATestCommand()) // TODO: 30.08.2022 remove test
-        pluginManager.addCommands(
-            ACLanguageCommand(this),  //new ACModulesCommand(this),
-            //new ACReloadCommand(this),
-            //new ACVersionCommand(this),
-            //new BackCommand(this),
-            AfkCommand(this),  //new BookCommand(this),
-            //new BowCommand(this),
-            //new BreakCommand(this),
-            //new BroadCastCommand(this),
-            //new ButcherCommand(this),
-            //new ClearInvCommand(this),
-            //new ColorNickCommand(this),
-            //new CommandStickCommand(this),
-            //new DrainCommand(this),
-            //new EditSignCommand(this),
-            //new EffectsCommand(this),
-            //new EnchantCommand(this),
-            //new EnderchestCommand(this),
-            //new ExplodeCommand(this),
-            //new FeedCommand(this),
-            //new FireBallCommand(this),
-            //new FireWorkCommand(this),
-            //new FlyCommand(this),
-            //new FlyspeedCommand(this),
-            //new GodCommand(this),
-            //new HatCommand(this),
-            //new HealCommand(this),
-            //new InvseeCommand(this),
-            //new ItemCommand(this),
-            //new KickAllCommand(this),
-            //new KickCommand(this),
-            //new KnockbackStickCommand(this),
-            //new LanguageCommand(this),
-            //new LastCoordsCommand(this),
-            //new LastOnlineCommand(this),
-            //new LeatherColorCommand(this),
-            //new LockChatCommand(this),
-            //new LogCommand(this),
-            //new MoreCommand(this),
-            //new MsgCommand(this),
-            //new NickCommand(this),
-            //new OffInvSeeCommand(this),
-            //new OpItemsCommand(this),
-            //new PingCommand(this),
-            PlayerlistCommand(this) //new PlayTimeCommand(this),
-            //new PortalCommand(this),
-            //new ProfileCommand(this),
-            //new RamCommand(this),
-            //new RandomTPCommand(this),
-            //new RealNameCommand(this),
-            //new RepairCommand(this),
-            //new ReplyCommand(this),
-            //new RestartCommand(this),
-            //new SetspawnCommand(this),
-            //new SkullCommand(this),
-            //new SpawnCommand(this),
-            //new SpawnerCommand(this),
-            //new StaffChatCommand(this),
-            //new StrikeCommand(this),
-            //new SudoCommand(this),
-            //new SuicideCommand(this),
-            //new SummonCommand(this),
-            //new TableMenuCommand(this),
-            //new ToggleSocialSpyCommand(this),
-            //new TopCommand(this),
-            //new TpAllCommand(this),
-            //new TpCommand(this),
-            //new TphereCommand(this),
-            //new VanishCommand(this),
-            //new VerifyCommand(this),
-            //new WalkspeedCommand(this),
-            //new WarnCommand(this),
-            //new WeatherCommand(this),
-            //new WhereAmICommand(this),
-            //new WhoIsCommand(this),
-            //new XpCommand(this)
-        )
 
         // commands
-        pluginManager.addCommands( //new ACLanguageCommand(this),
+        pluginManager.addCommands(
+            ACLanguageCommand(this),
             ACModulesCommand(this),
             ACReloadCommand(this),
             ACVersionCommand(this),
-            BackCommand(this),  //new AfkCommand(this),
+            BackCommand(this),
+            AfkCommand(this),
             BookCommand(this),
             BowCommand(this),
             BreakCommand(this),
@@ -313,7 +245,8 @@ object ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
             NickCommand(this),
             OffInvSeeCommand(this),
             OpItemsCommand(this),
-            PingCommand(this),  //new PlayerlistCommand(this),
+            PingCommand(this),
+            PlayerlistCommand(this),
             PlayTimeCommand(this),
             PortalCommand(this),
             ProfileCommand(this),

@@ -1,14 +1,12 @@
 package org.activecraft.activecraftcore.guicreator
 
-import lombok.Data
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.bukkit.inventory.Inventory
 import java.util.*
 
-@Data
-class Gui(@JvmField val inventory: Inventory, private val guiCreator: GuiCreator) {
+class Gui(@JvmField val inventory: Inventory, val guiCreator: GuiCreator) {
     private val name: String? = null
-    private var id: Int
+    var id: Int
 
     init {
         val random = Random()
@@ -24,22 +22,12 @@ class Gui(@JvmField val inventory: Inventory, private val guiCreator: GuiCreator
         id = randInt
     }
 
-    fun setId(id: Int) {
-        guiManager.unregister(this.id)
-        this.id = id
-        guiManager.register(this)
-    }
-
     fun rebuild(): Gui {
         return guiCreator.build()
     }
 
-    fun getId(): Int {
-        return id
-    }
-
     companion object {
-        private val guiManager: GuiManager = ActiveCraftCore.guiManager
+        private val guiManager: GuiManager = ActiveCraftCore.INSTANCE.guiManager
         @JvmStatic
         fun ofInventory(inventory: Inventory?): Gui? {
             return guiManager.getGuiOfInventory(inventory!!)

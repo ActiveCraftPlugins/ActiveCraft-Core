@@ -1,49 +1,47 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.teleport
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class TopCommand extends ActiveCraftCommand {
-
-    public TopCommand(ActiveCraftPlugin plugin) {
-        super("top",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        messageFormatter.setTarget(getProfile(target));
-        checkPermission(sender, type.code());
-        int xBlock = target.getLocation().getBlockX();
-        int zBlock = target.getLocation().getBlockZ();
-        double x = target.getLocation().getX();
-        double z = target.getLocation().getZ();
-        Location loc = new Location(target.getWorld(), x, target.getWorld().getHighestBlockYAt(xBlock, zBlock), z, target.getLocation().getYaw(), target.getLocation().getPitch());
-        if (loc.getBlock().getType() == Material.LAVA) {
-            sendMessage(sender, this.rawCmdMsg("not-safe"), true);
-            return;
+class TopCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("top", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        messageFormatter.setTarget(getProfile(target))
+        assertCommandPermission(sender, type.code())
+        val xBlock = target.location.blockX
+        val zBlock = target.location.blockZ
+        val x = target.location.x
+        val z = target.location.z
+        val loc = Location(
+            target.world,
+            x,
+            target.world.getHighestBlockYAt(xBlock, zBlock).toDouble(),
+            z,
+            target.location.yaw,
+            target.location.pitch
+        )
+        if (loc.block.type == Material.LAVA) {
+            sendWarningMessage(sender, rawCmdMsg("not-safe"))
+            return
         }
-        loc.setY(loc.getBlockY() + 1);
-        if (!isTargetSelf(sender, target))
-            sendSilentMessage(target, this.cmdMsg("target-message"));
-        LocationUtils.teleport(target, loc);
-        sendMessage(sender, this.cmdMsg(type.code()));
+        loc.y = (loc.blockY + 1).toDouble()
+        if (!isTargetSelf(sender, target)) sendSilentMessage(target, this.cmdMsg("target-message"))
+        teleport(target, loc)
+        sendMessage(sender, this.cmdMsg(type.code()))
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
+
 }

@@ -3,11 +3,11 @@ package org.activecraft.activecraftcore.listener
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.manager.VanishManager.hideAll
 import org.activecraft.activecraftcore.manager.VanishManager.setVanished
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
+import org.activecraft.activecraftcore.messages.MessageFormatter
+import org.activecraft.activecraftcore.messages.MessageSupplier
 import org.activecraft.activecraftcore.playermanagement.Playerlist
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.createIfNotExists
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.createIfNotExists
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.activecraft.activecraftcore.playermanagement.tables.ProfilesTable.writeToDatabase
 import org.activecraft.activecraftcore.utils.config.MainConfig
 import org.bukkit.Bukkit
@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent
 import java.time.LocalDateTime
 
 class JoinQuitListener : Listener {
-    var mainConfig: MainConfig = ActiveCraftCore.mainConfig
+    var mainConfig: MainConfig = ActiveCraftCore.INSTANCE.mainConfig
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerWorldChange(event: PlayerTeleportEvent) {
         val player = event.player
@@ -32,10 +32,10 @@ class JoinQuitListener : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val playerlist: Playerlist = ActiveCraftCore.playerlist
+        val playerlist: Playerlist = ActiveCraftCore.INSTANCE.playerlist
         playerlist.addPlayerIfAbsent(player)
         val profile = createIfNotExists(player)
-        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
         profile.timesJoined = profile.timesJoined + 1
         playerlist.updateIfChanged(player)
         if (profile.locationManager.lastLocationBeforeQuit != null) player.teleport(profile.locationManager.lastLocationBeforeQuit!!)
@@ -68,7 +68,7 @@ class JoinQuitListener : Listener {
         val player = event.player
         val playerLocation = player.location
         val profile = of(player)
-        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
         profile.lastOnline = LocalDateTime.now()
         profile.locationManager.setLastLocation(playerLocation.world, playerLocation, true)
         profile.bypassLockdown = player.hasPermission("lockdown.bypass")

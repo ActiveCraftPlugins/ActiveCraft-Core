@@ -1,7 +1,7 @@
 package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,7 +13,7 @@ class RespawnListener : Listener {
         val player = event.player
         val profile = of(player)
         Bukkit.getScheduler()
-            .runTaskLater(ActiveCraftCore.instance, Runnable { profile.effectManager.updateEffects() }, 1)
+            .runTaskLater(ActiveCraftCore.INSTANCE, Runnable { profile.effectManager.updateEffects() }, 1)
         if (!profile.isFly) return
         player.allowFlight = true
     }

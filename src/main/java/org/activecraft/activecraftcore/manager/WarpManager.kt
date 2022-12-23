@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerWarpEvent
 import org.activecraft.activecraftcore.events.WarpCreateEvent
 import org.activecraft.activecraftcore.events.WarpDeleteEvent
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -14,14 +14,14 @@ import org.bukkit.permissions.PermissionDefault
 
 object WarpManager {
     @JvmStatic
-    fun getWarp(name: String) = ActiveCraftCore.warpsConfig.warps[name]
+    fun getWarp(name: String) = ActiveCraftCore.INSTANCE.warpsConfig.warps[name]
 
     @JvmStatic
     fun createWarp(name: String, location: Location) {
         //call event
         val event = WarpCreateEvent(location, name)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
 
         //add permissions
         val childMap: MutableMap<String, Boolean> = HashMap()
@@ -44,7 +44,7 @@ object WarpManager {
         )
 
         //add warp to config
-        ActiveCraftCore.warpsConfig.set(event.warpName, event.location, true)
+        ActiveCraftCore.INSTANCE.warpsConfig.set(event.warpName, event.location, true)
     }
 
     @JvmStatic
@@ -52,14 +52,14 @@ object WarpManager {
         //call event
         val event = WarpDeleteEvent(getWarp(name) ?: return, name)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
 
         //remove permissions
         Bukkit.getPluginManager().removePermission("activecraft.warp.self.$name")
         Bukkit.getPluginManager().removePermission("activecraft.warp.others.$name")
 
         //add warp to config
-        ActiveCraftCore.warpsConfig.set(event.warpName, null, true)
+        ActiveCraftCore.INSTANCE.warpsConfig.set(event.warpName, null, true)
     }
 
     @JvmStatic
@@ -67,7 +67,7 @@ object WarpManager {
         //call event
         val event = PlayerWarpEvent(of(player), getWarp(warpName) ?: return, warpName!!)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
         //teleport
         player.teleport(event.location)
         player.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f)

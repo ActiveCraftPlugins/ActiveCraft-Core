@@ -5,12 +5,11 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.EndGateway
-import java.util.function.Predicate
 
 object PortalManager {
     @JvmStatic
     fun create(name: String, x: Int, y: Int, z: Int, world: World, toX: Int, toY: Int, toZ: Int, toWorld: World) {
-        ActiveCraftCore.portalsConfig.set(
+        ActiveCraftCore.INSTANCE.portalsConfig.set(
             name,
             mapOf(
                 "x" to x,
@@ -35,18 +34,18 @@ object PortalManager {
 
     @JvmStatic
     fun destroy(name: String) {
-        val (_, portalX, portalY, portalZ, world) = ActiveCraftCore.portalsConfig.portals[name]!!
+        val (_, portalX, portalY, portalZ, world) = ActiveCraftCore.INSTANCE.portalsConfig.portals[name]!!
         val block = world.getBlockAt(portalX, portalY, portalZ)
         block.type = Material.AIR
-        ActiveCraftCore.portalsConfig.set(name, null, true)
+        ActiveCraftCore.INSTANCE.portalsConfig.set(name, null, true)
     }
 
     @JvmStatic
     fun clean() {
-        ActiveCraftCore.portalsConfig.portals.values
+        ActiveCraftCore.INSTANCE.portalsConfig.portals.values
             .filter {
                 it.world.getBlockAt(it.x, it.y, it.z).type == Material.END_GATEWAY
             }
-            .forEach { portal -> ActiveCraftCore.portalsConfig.set(portal.name, null, true) }
+            .forEach { portal -> ActiveCraftCore.INSTANCE.portalsConfig.set(portal.name, null, true) }
     }
 }

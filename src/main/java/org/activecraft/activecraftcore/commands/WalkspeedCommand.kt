@@ -1,46 +1,37 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidNumberException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidNumberException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidNumberException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class WalkspeedCommand extends ActiveCraftCommand {
-
-    public WalkspeedCommand(ActiveCraftPlugin plugin) {
-        super("walkspeed",  plugin);
+class WalkspeedCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("walkspeed", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        val type = if (args.size == 1) CommandTargetType.SELF else CommandTargetType.OTHERS
+        assertCommandPermission(sender, type.code())
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        args = trimArray(args, if (type == CommandTargetType.OTHERS) 1 else 0)
+        val profile = getProfile(target)
+        val level = parseFloat(args[0])
+        if (level in 0.0..20.0) throw InvalidNumberException(args[0])
+        messageFormatter.setTarget(profile)
+        messageFormatter.addFormatterPattern("amount", level.toString())
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(sender, target)) sendSilentMessage(
+            target,
+            cmdMsg("target-message")
+        )
+        target.walkSpeed = level / 20
+        sendMessage(sender, this.cmdMsg(type.code()))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 1 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        checkPermission(sender, type.code());
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        args = trimArray(args, type == CommandTargetType.OTHERS ? 1 : 0);
-        Profilev2 profile = getProfile(target);
-        float level = parseFloat(args[0]);
-        if (level >= 0 && level <= 20)
-            throw new InvalidNumberException(args[0]);
-        messageFormatter.setTarget(profile);
-        messageFormatter.addReplacement("amount", level + "");
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, target))
-                sendSilentMessage(target, cmdMsg("target-message"));
-        target.setWalkSpeed(level / 20);
-        sendMessage(sender, this.cmdMsg(type.code()));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

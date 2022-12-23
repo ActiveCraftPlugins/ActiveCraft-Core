@@ -1,36 +1,27 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.effectgui.EffectGui;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.guicreator.GuiNavigator;
-import org.activecraft.activecraftcore.guis.effectgui.EffectGui;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.guicreator.GuiNavigator.Companion.push
+import org.activecraft.activecraftcore.guis.effectgui.EffectGui
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class EffectsCommand extends ActiveCraftCommand {
-
-    public EffectsCommand(ActiveCraftPlugin plugin) {
-        super("effects",  plugin);
+class EffectsCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("effects", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val player = getPlayer(sender)
+        val target = if (args.isEmpty()) player else getPlayer(args[0])
+        val effectGui = EffectGui(player, target)
+        push(player, effectGui.potionEffectGui.build())
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        Player player = getPlayer(sender);
-        Player target = args.length == 0 ? player : getPlayer(args[0]);
-        EffectGui effectGui = new EffectGui(player, target);
-        GuiNavigator.push(player, effectGui.getPotionEffectGui().build());
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

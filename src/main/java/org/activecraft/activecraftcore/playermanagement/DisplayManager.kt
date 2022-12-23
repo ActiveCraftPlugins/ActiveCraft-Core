@@ -5,7 +5,7 @@ import org.activecraft.activecraftcore.playermanagement.tables.TagsTable
 import org.activecraft.activecraftcore.utils.config.Feature
 import org.bukkit.entity.Player
 
-class DisplayManager(val profile: Profilev2) : ProfileManager {
+class DisplayManager(val profile: Profile) : ProfileManager {
 
     var suffixTags: Set<String> = emptySet()
         private set
@@ -59,8 +59,9 @@ class DisplayManager(val profile: Profilev2) : ProfileManager {
         val player: Player = profile.player ?: return
         val appliedTags = suffixTags.sortedDescending()
 
-        val middleDisplayname = profile.rawNickname + (if (suffixTags.isNotEmpty()) " " else "") + suffixTags.joinToString(" ")
-        val prefixEnabled = ActiveCraftCore.isFeatureEnabled(Feature.PREFIX)
+        val middleDisplayname =
+            profile.rawNickname + (if (suffixTags.isNotEmpty()) " " else "") + suffixTags.joinToString(" ")
+        val prefixEnabled = ActiveCraftCore.INSTANCE.isFeatureEnabled(Feature.PREFIX)
         val displayedPrefix = prefix + if (prefix == "") "" else " "
         val displayname = (if (prefixEnabled) displayedPrefix else "") + profile.colorNick + middleDisplayname
 
@@ -70,9 +71,7 @@ class DisplayManager(val profile: Profilev2) : ProfileManager {
 
     fun getNickname(): String {
         val displayedPrefix = prefix + if (prefix == "") "" else " "
-        return (if (ActiveCraftCore.instance
-                .isFeatureEnabled(Feature.PREFIX)
-        ) displayedPrefix else "") + profile.colorNick + profile.rawNickname
+        return (if (ActiveCraftCore.INSTANCE.isFeatureEnabled(Feature.PREFIX)) displayedPrefix else "") + profile.colorNick + profile.rawNickname
     }
 
 }

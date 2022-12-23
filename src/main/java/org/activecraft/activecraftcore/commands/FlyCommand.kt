@@ -1,41 +1,33 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class FlyCommand extends ActiveCraftCommand {
-
-    public FlyCommand(ActiveCraftPlugin plugin) {
-        super("fly",  plugin);
+class FlyCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("fly", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        val type = if (args.isEmpty()) CommandTargetType.SELF else CommandTargetType.OTHERS
+        assertCommandPermission(sender, type.code())
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        val profile = getProfile(target)
+        messageFormatter.setTarget(profile)
+        val enable = !profile.isFly
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(sender, target)) sendSilentMessage(
+            target,
+            this.cmdMsg((if (enable) "en" else "dis") + "able-target-message")
+        )
+        target.allowFlight = enable
+        profile.isFly = enable
+        sendMessage(sender, this.cmdMsg((if (enable) "en" else "dis") + "able-" + type.code()))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length == 0 ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        checkPermission(sender, type.code());
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        Profilev2 profile = getProfile(target);
-        messageFormatter.setTarget(profile);
-        boolean enable = !profile.isFly();
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, target))
-                sendSilentMessage(target, this.cmdMsg((enable ? "en" : "dis") + "able-target-message"));
-        target.setAllowFlight(enable);
-        profile.setFly(enable);
-        sendMessage(sender, this.cmdMsg((enable ? "en" : "dis") + "able-" + type.code()));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
 }

@@ -1,65 +1,75 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.activecraft.activecraftcore.ActiveCraftCore
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Color
+import org.bukkit.FireworkEffect
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Firework
+import org.bukkit.scheduler.BukkitRunnable
+import java.util.*
 
-import java.util.List;
-import java.util.Random;
-
-public class FireWorkCommand extends ActiveCraftCommand {
-
-    public FireWorkCommand(ActiveCraftPlugin plugin) {
-        super("firework",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        Player player = getPlayer(sender);
-        BukkitRunnable runnable = new BukkitRunnable() {
-            int counter = args.length == 2 ? parseInt(args[0]) : 1;
-            final int amount = args.length == 1 ? parseInt(args[0]) : 1;
-            @Override
-            public void run() {
-                for (int i = amount; i > 0; i--) {
-                    int idx = new Random().nextInt(FireworkEffect.Type.values().length);
-                    FireworkEffect.Type randomtype = FireworkEffect.Type.values()[idx];
-
-                    Color[] colors = {Color.GREEN, Color.AQUA, Color.BLUE, Color.GRAY, Color.ORANGE, Color.RED, Color.WHITE, Color.BLACK, Color.FUCHSIA, Color.LIME, Color.MAROON, Color.NAVY, Color.OLIVE, Color.PURPLE, Color.SILVER, Color.TEAL, Color.YELLOW};
-                    Color randomColor = colors[new Random().nextInt(colors.length)];
-                    Color randomColor2 = colors[new Random().nextInt(colors.length)];
-
-                    Random r = new Random();
-                    FireworkEffect effect = FireworkEffect.builder().flicker(r.nextBoolean()).with(randomtype).withColor(randomColor).withFade(randomColor2).trail(r.nextBoolean()).build();
-
-                    Firework fw = (Firework) player.getWorld().spawnEntity(player.getLocation(), EntityType.FIREWORK);
-                    FireworkMeta fwm = fw.getFireworkMeta();
-                    fwm.addEffect(effect);
-                    fwm.setPower(r.nextInt(2) + 1);
-                    fw.setFireworkMeta(fwm);
+class FireWorkCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("firework", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val player = getPlayer(sender)
+        val runnable: BukkitRunnable = object : BukkitRunnable() {
+            var counter = if (args.size == 2) parseInt(args[0]) else 1
+            val amount = if (args.size == 1) parseInt(args[0]) else 1
+            override fun run() {
+                for (i in amount downTo 1) {
+                    val idx = Random().nextInt(FireworkEffect.Type.values().size)
+                    val randomtype = FireworkEffect.Type.values()[idx]
+                    val colors = arrayOf(
+                        Color.GREEN,
+                        Color.AQUA,
+                        Color.BLUE,
+                        Color.GRAY,
+                        Color.ORANGE,
+                        Color.RED,
+                        Color.WHITE,
+                        Color.BLACK,
+                        Color.FUCHSIA,
+                        Color.LIME,
+                        Color.MAROON,
+                        Color.NAVY,
+                        Color.OLIVE,
+                        Color.PURPLE,
+                        Color.SILVER,
+                        Color.TEAL,
+                        Color.YELLOW
+                    )
+                    val randomColor = colors[Random().nextInt(colors.size)]
+                    val randomColor2 = colors[Random().nextInt(colors.size)]
+                    val r = Random()
+                    val effect =
+                        FireworkEffect.builder().flicker(r.nextBoolean()).with(randomtype).withColor(randomColor)
+                            .withFade(randomColor2).trail(r.nextBoolean()).build()
+                    val fw = player.world.spawnEntity(player.location, EntityType.FIREWORK) as Firework
+                    val fwm = fw.fireworkMeta
+                    fwm.addEffect(effect)
+                    fwm.power = r.nextInt(2) + 1
+                    fw.fireworkMeta = fwm
                 }
-                counter--;
-                if (counter == 0) cancel();
+                counter--
+                if (counter == 0) cancel()
             }
-        };
-        runnable.runTaskTimer(ActiveCraftCore.getInstance(), 0, args.length == 2 ? parseInt(args[1]) : 20);
+        }
+        runnable.runTaskTimer(
+            ActiveCraftCore.INSTANCE,
+            0,
+            (if (args.size == 2) parseInt(args[1]) else 20).toLong()
+        )
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

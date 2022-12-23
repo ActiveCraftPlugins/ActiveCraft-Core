@@ -1,8 +1,8 @@
 package org.activecraft.activecraftcore.playermanagement.dialog
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 
-class DialogManager(val profile: Profilev2) {
+class DialogManager(val profile: Profile) {
 
     var activeDialogScope: DialogScope? = null
         private set

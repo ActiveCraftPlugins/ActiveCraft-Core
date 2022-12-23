@@ -1,8 +1,7 @@
 package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.messages.Errors
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -11,8 +10,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 class VanillaCommandListener : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerExecuteCommand(event: PlayerCommandPreprocessEvent) {
-        val profile = Profilev2.of(event.player)
-        val messageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+        val profile = Profile.of(event.player)
+        val messageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
         val message = event.message.replace("/", "")
         val args: Array<String?>
         if (message.contains(" ")) {

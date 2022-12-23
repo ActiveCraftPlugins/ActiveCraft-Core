@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.playermanagement.tables.LastLocationsTabl
 import org.bukkit.Location
 import org.bukkit.World
 
-class LocationManager(val profile: Profilev2) : ProfileManager {
+class LocationManager(val profile: Profile) : ProfileManager {
 
     var lastLocations: Map<World, Location> = emptyMap()
         private set

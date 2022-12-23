@@ -2,8 +2,8 @@ package org.activecraft.activecraftcore.commands.util
 
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.exceptions.InvalidPlayerException
-import org.activecraft.activecraftcore.exceptions.NoPlayerException
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.exceptions.NotAPlayerException
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -16,36 +16,24 @@ interface PlayerUtils {
 
     fun getBukkitPlayernames() = Bukkit.getOnlinePlayers().map { it.name }
 
-    fun getProfileNames() = ActiveCraftCore.getInstance().profiles.values.map { it.name }
+    fun getProfileNames() = ActiveCraftCore.INSTANCE.profiles.values.map { it.name }
 
     @Throws(InvalidPlayerException::class)
-     fun getPlayer(input: String): Player? {
-        if (Bukkit.getPlayer(input) == null) throw InvalidPlayerException(
-            input
-        )
-        return Bukkit.getPlayer(input)
+     fun getPlayer(input: String): Player {
+        return Bukkit.getPlayer(input) ?: throw InvalidPlayerException(input)
     }
 
-     fun isInt(s: String): Boolean {
-        try {
-            val d = s.toInt()
-        } catch (e: NumberFormatException) {
-            return false
-        }
-        return true
-    }
-
-    @Throws(NoPlayerException::class)
+    @Throws(NotAPlayerException::class)
      fun getPlayer(sender: CommandSender): Player {
-        if (sender !is Player) throw NoPlayerException(
+        if (sender !is Player) throw NotAPlayerException(
             sender.name
         )
         return sender
     }
 
-    @Throws(NoPlayerException::class)
+    @Throws(NotAPlayerException::class)
     fun getOfflinePlayer(sender: CommandSender): OfflinePlayer {
-        if (sender !is OfflinePlayer) throw NoPlayerException(
+        if (sender !is OfflinePlayer) throw NotAPlayerException(
             sender.name
         )
         return sender
@@ -67,19 +55,19 @@ interface PlayerUtils {
     }
 
     @Throws(InvalidPlayerException::class)
-     fun getProfile(playername: String): Profilev2 {
-        return Profilev2.of(playername) ?: throw InvalidPlayerException(
+     fun getProfile(playername: String): Profile {
+        return Profile.of(playername) ?: throw InvalidPlayerException(
             playername
         )
     }
 
     @Throws(InvalidPlayerException::class)
-     fun getProfile(sender: CommandSender): Profilev2 {
+     fun getProfile(sender: CommandSender): Profile {
         return getProfile(sender.name)
     }
 
     @Throws(InvalidPlayerException::class)
-     fun getProfile(player: Player): Profilev2 {
+     fun getProfile(player: Player): Profile {
         return getProfile(player.name)
     }
     

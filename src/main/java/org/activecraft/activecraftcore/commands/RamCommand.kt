@@ -1,38 +1,32 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import kotlin.math.pow
 
-import java.util.List;
-
-public class RamCommand extends ActiveCraftCommand {
-
-    public RamCommand(ActiveCraftPlugin plugin) {
-        super("ram",  plugin);
+class RamCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("ram", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        val runtime = Runtime.getRuntime()
+        val divisor = 32.0.pow(4.0)
+        val used = ((runtime.totalMemory() - runtime.freeMemory()) / divisor).toLong()
+        val max = (runtime.totalMemory() / divisor).toLong()
+        val free = (runtime.freeMemory() / divisor).toLong()
+        messageFormatter.addFormatterPatterns(
+            "freememory" to free.toString(),
+            "usedmemory" to used.toString(),
+            "maxmemory" to max.toString()
+        )
+        sendMessage(sender, this.cmdMsg("ram"))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        Runtime runtime = Runtime.getRuntime();
-        double divisor = Math.pow(32, 4);
-        long used = (long) (((runtime.totalMemory() - runtime.freeMemory()))/divisor);
-        long max = (long) ((runtime.totalMemory())/divisor);
-        long free = (long) (runtime.freeMemory()/divisor);
-        messageFormatter.addReplacements(
-                "freememory", free + "",
-                "usedmemory", used + "",
-                "maxmemory", max + ""
-        );
-        sendMessage(sender, this.cmdMsg("ram"));
-    }
-
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = null
 }

@@ -1,48 +1,44 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.manager.NickManager;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ColorUtils;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ColorUtils;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.manager.NickManager.nick
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.activecraft.activecraftcore.utils.replaceColorAndFormat
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class NickCommand extends ActiveCraftCommand {
-
-    public NickCommand(ActiveCraftPlugin plugin) {
-        super("nick", plugin);
+class NickCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("nick", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        assertArgsLength(args, ComparisonType.GREATER, 0)
+        val type = if (args.size == 1 || of(args[0]) == null) CommandTargetType.SELF else CommandTargetType.OTHERS
+        if (type == CommandTargetType.SELF) assertIsPlayer(sender)
+        val profile = if (type == CommandTargetType.SELF) getProfile(sender) else getProfile(args[0])
+        messageFormatter.setTarget(profile)
+        args = trimArray(args, if (type == CommandTargetType.SELF) 0 else 1)
+        assertCommandPermission(sender, type.code())
+        var nickname = joinArray(args)
+        nickname = replaceColorAndFormat(nickname)
+        messageFormatter.addFormatterPattern("nickname", nickname)
+        if (type == CommandTargetType.OTHERS) if (!isTargetSelf(
+                sender,
+                profile.name
+            ) && profile.player != null
+        ) sendSilentMessage(
+            profile.player!!, cmdMsg("target-message")
+        )
+        sendMessage(sender, cmdMsg(type.code()))
+        nick(profile, nickname)
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkArgsLength(args, ComparisonType.GREATER, 0);
-        CommandTargetType type = (args.length == 1 || Profilev2.of(args[0]) == null) ? CommandTargetType.SELF : CommandTargetType.OTHERS;
-        if (type == CommandTargetType.SELF) checkIsPlayer(sender);
-        Profilev2 profile = type == CommandTargetType.SELF ? getProfile(sender) : getProfile(args[0]);
-        messageFormatter.setTarget(profile);
-        args = trimArray(args, type == CommandTargetType.SELF ? 0 : 1);
-        checkPermission(sender, type.code());
-        String nickname = concatArray(args);
-        nickname = ColorUtils.replaceColorAndFormat(nickname);
-        messageFormatter.addReplacement("nickname", nickname);
-        if (type == CommandTargetType.OTHERS)
-            if (!isTargetSelf(sender, profile.getName()) && profile.getPlayer() != null)
-                sendSilentMessage(profile.getPlayer(), cmdMsg("target-message"));
-        sendMessage(sender, cmdMsg(type.code()));
-        NickManager.nick(profile, nickname);
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getProfileNames() else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getProfileNames() : null;
-    }
 }

@@ -1,142 +1,127 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidNumberException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidNumberException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidNumberException
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class TpCommand extends ActiveCraftCommand {
-
-    // TODO: 11.06.2022 bitte nochmal durchtesten
-
-    public TpCommand(ActiveCraftPlugin plugin) {
-        super("tp",  plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        // really dirty fix to make /locate tp work
-        if (args[0].equalsIgnoreCase("@s")) {
-            String[] newArray = new String[args.length - 1];
-            System.arraycopy(args, 1, newArray, 0, args.length - 1);
-            args = newArray;
+class TpCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("tp", plugin!!) {// TODO: 11.06.2022 bitte nochmal durchtesten
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        // filthy fix to make /locate tp work
+        var args = args
+        if (args[0].equals("@s", ignoreCase = true)) {
+            args = args.copyOfRange(1, args.lastIndex)
         }
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-        CommandTargetType type = switch (args.length) {
-            case 1, 3 -> CommandTargetType.SELF;
-            default -> CommandTargetType.OTHERS;
-        };
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
-        Profilev2 profile = getProfile(target);
-        checkPermission(sender, type.code());
-        switch (args.length) {
-            case 1, 2 -> {
-                Player destPlayer = getPlayer(args[args.length - 1]);
-                Profilev2 destProfilev2 = getProfile(destPlayer);
-                if (args.length == 2)
-                    isTargetSelf(sender, target, true);
-                target.teleport(destPlayer.getLocation());
-                target.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+        val type = when (args.size) {
+            1, 3 -> CommandTargetType.SELF
+            else -> CommandTargetType.OTHERS
+        }
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
+        val profile = getProfile(target)
+        assertCommandPermission(sender, type.code())
+        when (args.size) {
+            1, 2 -> {
+                val destPlayer = getPlayer(args[args.size - 1])
+                val destProfile = getProfile(destPlayer)
+                if (args.size == 2) isTargetSelf(sender, target, true)
+                target.teleport(destPlayer.location)
+                target.playSound(target.location, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f)
                 messageFormatter
-                        .setTarget(profile)
-                        .addReplacements(
-                        "t1_playername", profile.getName(), "t1_displayname", profile.getNickname(),
-                        "t2_playername", destProfilev2.getName(), "t2_displayname", destProfilev2.getNickname()
-                );
-                sendMessage(sender, this.cmdMsg((args.length == 2 ? "player-" : "") + "to-player"));
+                    .setTarget(profile)
+                    .addFormatterPatterns(
+                        "t1_playername" to profile.name, "t1_displayname" to profile.nickname,
+                        "t2_playername" to destProfile.name, "t2_displayname" to destProfile.nickname
+                    )
+                sendMessage(sender, this.cmdMsg((if (args.size == 2) "player-" else "") + "to-player"))
             }
-            default -> {
-                if (args.length >= 4)
-                    isTargetSelf(sender, target, true);
-                double x = getCoordX(target, args[type == CommandTargetType.SELF ? 0 : 1]);
-                double y = getCoordY(target, args[type == CommandTargetType.SELF ? 1 : 2]);
-                double z = getCoordZ(target, args[type == CommandTargetType.SELF ? 2 : 3]);
-                target.teleport(new Location(target.getWorld(), x, y, z));
-                messageFormatter.setTarget(profile);
-                messageFormatter.addReplacement("coords", x + ", " + y + ", " + z);
-                sendMessage(sender, this.cmdMsg((args.length == 4 ? "player-" : "") + "to-coords"));
-                target.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
+
+            else -> {
+                if (args.size >= 4) isTargetSelf(sender, target, true)
+                val x = getCoordX(target, args[if (type == CommandTargetType.SELF) 0 else 1])
+                val y = getCoordY(target, args[if (type == CommandTargetType.SELF) 1 else 2])
+                val z = getCoordZ(target, args[if (type == CommandTargetType.SELF) 2 else 3])
+                target.teleport(Location(target.world, x, y, z))
+                messageFormatter.setTarget(profile)
+                messageFormatter.addFormatterPattern("coords", "$x, $y, $z")
+                sendMessage(sender, this.cmdMsg((if (args.size == 4) "player-" else "") + "to-coords"))
+                target.playSound(target.location, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f)
             }
         }
     }
 
-    private double getCoordX(Player target, String input) throws InvalidNumberException {
-        return input.equals("~") ? target.getLocation().getX() : parseDouble(input);
+    @Throws(InvalidNumberException::class)
+    private fun getCoordX(target: Player, input: String): Double {
+        return if (input == "~") target.location.x else parseDouble(input)
     }
 
-    private double getCoordY(Player target, String input) throws InvalidNumberException {
-        return input.equals("~") ? target.getLocation().getY() : parseDouble(input);
+    @Throws(InvalidNumberException::class)
+    private fun getCoordY(target: Player, input: String): Double {
+        return if (input == "~") target.location.y else parseDouble(input)
     }
 
-    private double getCoordZ(Player target, String input) throws InvalidNumberException {
-        return input.equals("~") ? target.getLocation().getZ() : parseDouble(input);
+    @Throws(InvalidNumberException::class)
+    private fun getCoordZ(target: Player, input: String): Double {
+        return if (input == "~") target.location.z else parseDouble(input)
     }
 
-    private void addTargetBlockX(ArrayList<String> list, Player player) {
-        list.add(isValidTargetBlock(player) ? player.getTargetBlock(10).getLocation().getBlockX() + "" : "~");
+    private fun addTargetBlockX(list: MutableList<String>, player: Player) {
+        list.add(if (isValidTargetBlock(player)) player.getTargetBlock(10)!!.location.blockX.toString() + "" else "~")
     }
 
-    private void addTargetBlockY(ArrayList<String> list, Player player) {
-        list.add(isValidTargetBlock(player) ? player.getTargetBlock(10).getLocation().getBlockY() + "" : "~");
+    private fun addTargetBlockY(list: MutableList<String>, player: Player) {
+        list.add(if (isValidTargetBlock(player)) player.getTargetBlock(10)!!.location.blockY.toString() + "" else "~")
     }
 
-    private void addTargetBlockZ(ArrayList<String> list, Player player) {
-        list.add(isValidTargetBlock(player) ? player.getTargetBlock(10).getLocation().getBlockZ() + "" : "~");
+    private fun addTargetBlockZ(list: MutableList<String>, player: Player) {
+        list.add(if (isValidTargetBlock(player)) player.getTargetBlock(10)!!.location.blockZ.toString() + "" else "~")
     }
 
-    private boolean isValidTargetBlock(Player player) {
-        Block targetBlock = player.getTargetBlock(10);
-        return targetBlock != null && !(targetBlock.getBlockData().getMaterial().equals(Material.AIR));
+    private fun isValidTargetBlock(player: Player): Boolean {
+        val targetBlock = player.getTargetBlock(10)
+        return targetBlock != null && targetBlock.blockData.material != Material.AIR
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        ArrayList<String> list = new ArrayList<>();
-        Player player = (Player) sender;
-
-        if (args[0].equalsIgnoreCase("@s")) {
-            String[] newArray = new String[args.length - 1];
-            System.arraycopy(args, 1, newArray, 0, args.length - 1);
-            args = newArray;
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        var args = args
+        val list: MutableList<String> = mutableListOf()
+        val player = sender as Player
+        if (args[0].equals("@s", ignoreCase = true)) {
+            args = args.copyOfRange(1, args.lastIndex)
         }
-
-        if (args.length == 1) {
-            addTargetBlockX(list, player);
-            list.addAll(getBukkitPlayernames());
+        if (args.size == 1) {
+            addTargetBlockX(list, player)
+            list.addAll(getBukkitPlayernames())
         }
         if (Bukkit.getPlayer(args[0]) == null) {
-            if (args.length == 2) {
-                addTargetBlockY(list, player);
-            } else if (args.length == 3) {
-                addTargetBlockZ(list, player);
+            if (args.size == 2) {
+                addTargetBlockY(list, player)
+            } else if (args.size == 3) {
+                addTargetBlockZ(list, player)
             }
         } else if (sender.hasPermission("tp.others")) {
-            switch (args.length) {
-                case 2 -> {
-                    addTargetBlockX(list, player);
-                    list.addAll(getBukkitPlayernames());
+            when (args.size) {
+                2 -> {
+                    addTargetBlockX(list, player)
+                    list.addAll(getBukkitPlayernames())
                 }
-                case 3 -> addTargetBlockY(list, player);
-                case 4 -> addTargetBlockZ(list, player);
+                3 -> addTargetBlockY(list, player)
+                4 -> addTargetBlockZ(list, player)
             }
         }
-        return list;
+        return list
     }
 }

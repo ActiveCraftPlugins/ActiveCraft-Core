@@ -1,68 +1,54 @@
-package org.activecraft.activecraftcore.guis.profilemenu.inventory;
+package org.activecraft.activecraftcore.guis.profilemenu.inventory
 
-import org.activecraft.activecraftcore.guicreator.GuiCreator;
-import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults;
-import org.activecraft.activecraftcore.guicreator.GuiItem;
-import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu;
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter;
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import org.activecraft.activecraftcore.guicreator.GuiCreator;
-import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults;
-import org.activecraft.activecraftcore.guicreator.GuiItem;
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier;
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.guicreator.GuiCreator
+import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults
+import org.activecraft.activecraftcore.guicreator.GuiItem
+import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.messages.PlayerMessageFormatter
+import org.bukkit.Material
+import org.bukkit.entity.Player
 
-@Getter
-@EqualsAndHashCode(callSuper = false)
-@ToString
-public class StorageProfile extends GuiCreator {
+class StorageProfile(private val profileMenu: ProfileMenu) : GuiCreator(
+    identifier = "storage_profile",
+    rows = 3,
+    title = profileMenu.messageSupplier.getMessage(
+        PREFIX + "title"
+    )
+) {
+    private val player: Player = profileMenu.player
+    private val target: Player = profileMenu.target
+    private var invSeeStack: GuiItem? = null
+    private var offInvStack: GuiItem? = null
+    private var enderchestStack: GuiItem? = null
+    private val messageSupplier: MessageSupplier = profileMenu.messageSupplier
 
-    private final ProfileMenu profileMenu;
-    private final Player player, target;
-    private GuiItem invSeeStack, offInvStack, enderchestStack;
-    private static final String PREFIX = "profile.storage-gui.";
-    private final MessageSupplier messageSupplier;
-
-    public StorageProfile(ProfileMenu profileMenu) {
-        super("storage_profile", 3, profileMenu.getMessageSupplier().getMessage(PREFIX + "title"));
-        this.profileMenu = profileMenu;
-        this.messageSupplier = profileMenu.getMessageSupplier();
-        this.player = profileMenu.getPlayer();
-        this.target = profileMenu.getTarget();
-        refresh();
-        profileMenu.setStorageProfile(this);
+    init {
+        refresh()
     }
 
-    @Override
-    public void refresh() {
+    override fun refresh() {
+        fillBackground(true)
+        setItem(profileMenu.defaultGuiCloseItem, 22)
+        setItem(profileMenu.defaultGuiBackItem, 21)
+        setItem(profileMenu.playerHead, 4)
+        val msgFormatter = PlayerMessageFormatter(GuiCreatorDefaults.acCoreMessage!!)
+        msgFormatter.setTarget(profileMenu.profile)
+        invSeeStack = GuiItem(Material.CHEST)
+            .setDisplayName(messageSupplier.getFormatted(PREFIX + "inventory", msgFormatter))
+            .addClickListener { player.performCommand("invsee " + profileMenu.target.name) }
+        setItem(invSeeStack, 12, player, "activecraft.invsee")
+        enderchestStack = GuiItem(Material.ENDER_CHEST)
+            .setDisplayName(messageSupplier.getFormatted(PREFIX + "enderchest", msgFormatter))
+            .addClickListener { player.performCommand("enderchest " + profileMenu.target.name) }
+        setItem(enderchestStack, 14, player, "activecraft.enderchest.others")
+        offInvStack = GuiItem(Material.SHIELD)
+            .setDisplayName(messageSupplier.getFormatted(PREFIX + "armorinv", msgFormatter))
+            .addClickListener { player.performCommand("offinvsee " + profileMenu.target.name) }
+        setItem(offInvStack, 13)
+    }
 
-        fillBackground(true);
-        setItem(profileMenu.getDefaultGuiCloseItem(), 22);
-        setItem(profileMenu.getDefaultGuiBackItem(), 21);
-        setItem(profileMenu.getPlayerHead(), 4);
-        PlayerMessageFormatter msgFormatter = new PlayerMessageFormatter(GuiCreatorDefaults.acCoreMessage);
-        msgFormatter.setTarget(profileMenu.getProfile());
-
-        invSeeStack = new GuiItem(Material.CHEST)
-                .setDisplayName(messageSupplier.getFormatted(PREFIX + "inventory", msgFormatter))
-                .addClickListener(guiClickEvent -> player.performCommand("invsee " + profileMenu.getTarget().getName()));
-        setItem(invSeeStack, 12, player, "activecraft.invsee");
-
-
-        enderchestStack = new GuiItem(Material.ENDER_CHEST)
-                .setDisplayName(messageSupplier.getFormatted(PREFIX + "enderchest", msgFormatter))
-                .addClickListener(guiClickEvent -> player.performCommand("enderchest " + profileMenu.getTarget().getName()));
-        setItem(enderchestStack, 14, player, "activecraft.enderchest.others");
-
-
-        offInvStack = new GuiItem(Material.SHIELD)
-                .setDisplayName(messageSupplier.getFormatted(PREFIX + "armorinv", msgFormatter))
-                .addClickListener(guiClickEvent -> player.performCommand("offinvsee " + profileMenu.getTarget().getName()));
-        setItem(offInvStack, 13);
+    companion object {
+        private const val PREFIX = "profile.storage-gui."
     }
 }

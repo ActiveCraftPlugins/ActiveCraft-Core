@@ -1,11 +1,11 @@
 package org.activecraft.activecraftcore.playermanagement
 
-import org.activecraft.activecraftcore.messagesv2.ActiveCraftMessage
-import org.activecraft.activecraftcore.messagesv2.Language
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
+import org.activecraft.activecraftcore.messages.ActiveCraftMessage
+import org.activecraft.activecraftcore.messages.Language
+import org.activecraft.activecraftcore.messages.MessageSupplier
 import org.activecraft.activecraftcore.playermanagement.tables.PreferredLanguagesTable
 
-class LanguageManager(val profile: Profilev2) : ProfileManager {
+class LanguageManager(val profile: Profile) : ProfileManager {
 
     var preferredLanguages: Map<ActiveCraftMessage, Language> = emptyMap()
         private set

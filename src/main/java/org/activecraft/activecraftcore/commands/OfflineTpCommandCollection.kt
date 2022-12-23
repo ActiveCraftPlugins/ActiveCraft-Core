@@ -1,75 +1,57 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.LocationUtils;
-import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.teleport
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class OfflineTpCommandCollection extends ActiveCraftCommandCollection {
-
-    public OfflineTpCommandCollection(ActiveCraftPlugin plugin) {
-        super(
-                new OfflineTpCommand(plugin),
-                new OfflineTphereCommand(plugin)
-        );
-    }
-
-    public static class OfflineTpCommand extends ActiveCraftCommand {
-
-        public OfflineTpCommand(ActiveCraftPlugin plugin) {
-            super("offlinetp", plugin);
-        }
-
-        @Override
-        public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-            Player player = getPlayer(sender);
-            checkPermission(sender);
-            Profilev2 profile = getProfile(args[0]);
-            Location lastLoc = profile.getLocationManager().getLastLocationBeforeQuit();
+class OfflineTpCommandCollection(plugin: ActiveCraftPlugin?) : ActiveCraftCommandCollection(
+    OfflineTpCommand(plugin),
+    OfflineTphereCommand(plugin)
+) {
+    class OfflineTpCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("offlinetp", plugin!!) {
+        @Throws(ActiveCraftException::class)
+        public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+            val player = getPlayer(sender)
+            assertCommandPermission(sender)
+            val profile = getProfile(args[0])
+            val lastLoc = profile.locationManager.lastLocationBeforeQuit
             if (lastLoc == null) {
-                sendMessage(sender, getActiveCraftMessage().getMessage("command.lastcoords.never-quit-server"));
-                return;
+                sendMessage(sender, activeCraftMessage.getMessage("command.lastcoords.never-quit-server"))
+                return
             }
-            messageFormatter.setTarget(profile);
-            LocationUtils.teleport(player, lastLoc);
-            sendMessage(sender, this.cmdMsg("offlinetp"));
+            messageFormatter.setTarget(profile)
+            teleport(player, lastLoc)
+            sendMessage(sender, this.cmdMsg("offlinetp"))
         }
 
-        @Override
-        public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-            return args.length == 1 ? getProfileNames() : null;
-        }
+        public override fun onTab(
+            sender: CommandSender,
+            command: Command,
+            alias: String,
+            args: Array<String>
+        ) = if (args.size == 1) getProfileNames() else null
+
     }
 
-    public static class OfflineTphereCommand extends ActiveCraftCommand {
-
-        public OfflineTphereCommand(ActiveCraftPlugin plugin) {
-            super("offlinetphere", plugin);
+    class OfflineTphereCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("offlinetphere", plugin!!) {
+        @Throws(ActiveCraftException::class)
+        public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+            val player = getPlayer(sender)
+            assertCommandPermission(sender)
+            val profile = getProfile(args[0])
+            profile.locationManager.setLastLocation(player.world, player.location, true)
+            messageFormatter.setTarget(profile)
+            sendMessage(sender, this.cmdMsg("offlinetphere"))
         }
 
-        @Override
-        public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-            Player player = getPlayer(sender);
-            checkPermission(sender);
-            Profilev2 profile = getProfile(args[0]);
-            profile.getLocationManager().setLastLocation(player.getWorld(), player.getLocation(), true);
-            messageFormatter.setTarget(profile);
-            sendMessage(sender, this.cmdMsg("offlinetphere"));
-        }
+        public override fun onTab(
+            sender: CommandSender,
+            command: Command,
+            alias: String,
+            args: Array<String>
+        ) = if (args.size == 1) getProfileNames() else null
 
-        @Override
-        public List<String> onTab(CommandSender sender, Command command, String alias, String[] args) {
-            return args.length == 1 ? getProfileNames() : null;
-        }
     }
 }

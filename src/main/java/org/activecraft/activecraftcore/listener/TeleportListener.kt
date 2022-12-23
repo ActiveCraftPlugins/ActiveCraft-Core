@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.listener
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

@@ -4,9 +4,9 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerBanEvent
 import org.activecraft.activecraftcore.events.PlayerIpBanEvent
 import org.activecraft.activecraftcore.events.PlayerUnbanEvent
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.messages.MessageFormatter
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.utils.TimeUtils.getRemainingAsString
 import org.activecraft.activecraftcore.utils.isValidInet4Address
 import org.bukkit.BanEntry
@@ -28,18 +28,18 @@ sealed interface BanManager {
 
         @JvmStatic
         fun ban(target: String, reason: String?, expires: Date?, source: String?) {
-            Bukkit.getScheduler().runTask(ActiveCraftCore, Runnable {
+            Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
                 val event = PlayerIpBanEvent(target, true, reason, expires, source)
                 Bukkit.getPluginManager().callEvent(event)
-                if (!event.isCancelled) {
+                if (!event.cancelled) {
                     Bukkit.getBanList(BanList.Type.IP).addBan(target, reason, expires, source)
                     for (player in Bukkit.getOnlinePlayers()) {
                         if (player.address.address.toString().replace("/", "") == target) {
-                            val profile = Profilev2.of(player)
+                            val profile = Profile.of(player)
                             val messageSupplier: MessageSupplier =
-                                profile.getMessageSupplier(ActiveCraftCore)!!
+                                profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
                             profile.timesIpBanned += 1
-                            Bukkit.getScheduler().runTask(ActiveCraftCore, Runnable {
+                            Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
                                 val expirationString = if (getRemainingAsString(expires).equals(
                                         "never",
                                         ignoreCase = true
@@ -57,7 +57,11 @@ sealed interface BanManager {
                                             + "\n \n" + expirationString
                                             + "\n" + messageSupplier.getFormatted(
                                         "command.banscreen.reason",
-                                        MessageFormatter(messageSupplier.activeCraftMessage, "reason", reason!!)
+                                        MessageFormatter(
+                                            messageSupplier.activeCraftMessage,
+                                            "reason",
+                                            reason ?: messageSupplier.reasons.moderatorBanned
+                                        )
                                     )
                                 )
                             })
@@ -79,7 +83,7 @@ sealed interface BanManager {
             val entry = Bukkit.getBanList(BanList.Type.IP).getBanEntry(target!!) ?: return
             val event = PlayerIpBanEvent(target, false, entry.reason, entry.expiration, entry.source)
             Bukkit.getPluginManager().callEvent(event)
-            if (event.isCancelled) return
+            if (event.cancelled) return
             Bukkit.getBanList(BanList.Type.IP).pardon(target)
         }
 
@@ -107,17 +111,17 @@ sealed interface BanManager {
         }
 
         @JvmStatic
-        fun ban(target: String?, reason: String?, expires: Date?, source: String?) {
-            Bukkit.getScheduler().runTask(ActiveCraftCore, Runnable {
-                val event = PlayerBanEvent(target, reason!!, expires, source!!)
+        fun ban(target: String, reason: String?, expires: Date?, source: String?) {
+            Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
+                val event = PlayerBanEvent(target, reason, expires, source)
                 Bukkit.getPluginManager().callEvent(event)
-                if (!event.isCancelled) {
-                    Bukkit.getBanList(BanList.Type.NAME).addBan(target!!, reason, expires, source)
+                if (!event.cancelled) {
+                    Bukkit.getBanList(BanList.Type.NAME).addBan(target, reason, expires, source)
                     if (Bukkit.getPlayer(target) == null) return@Runnable
-                    val profile = Profilev2.of(target) ?: return@Runnable
+                    val profile = Profile.of(target) ?: return@Runnable
                     profile.timesBanned += 1
-                    Bukkit.getScheduler().runTask(ActiveCraftCore, Runnable {
-                        val messageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+                    Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
+                        val messageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
                         val expirationString =
                             if (getRemainingAsString(expires).equals("never", ignoreCase = true)) {
                                 messageSupplier.getMessage("command.banscreen.expiration-permanent")
@@ -136,7 +140,11 @@ sealed interface BanManager {
                                     + "\n \n" + expirationString
                                     + "\n" + messageSupplier.getFormatted(
                                 "command.banscreen.reason",
-                                MessageFormatter(messageSupplier.activeCraftMessage, "reason", reason)
+                                MessageFormatter(
+                                    messageSupplier.activeCraftMessage,
+                                    "reason",
+                                    reason ?: messageSupplier.reasons.moderatorBanned
+                                )
                             )
                         )
                     })
@@ -150,11 +158,11 @@ sealed interface BanManager {
         }
 
         @JvmStatic
-        fun unban(target: String?) {
+        fun unban(target: String) {
             val event = PlayerUnbanEvent(target)
             Bukkit.getPluginManager().callEvent(event)
-            if (event.isCancelled) return
-            Bukkit.getBanList(BanList.Type.NAME).pardon(target!!)
+            if (event.cancelled) return
+            Bukkit.getBanList(BanList.Type.NAME).pardon(target)
         }
 
         fun unban(target: Player) {

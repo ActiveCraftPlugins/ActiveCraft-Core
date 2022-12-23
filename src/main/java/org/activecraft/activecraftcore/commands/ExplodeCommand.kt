@@ -1,52 +1,70 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import java.lang.Boolean
+import kotlin.Array
+import kotlin.String
+import kotlin.Throws
 
-import java.util.List;
-
-public class ExplodeCommand extends ActiveCraftCommand {
-
-    public ExplodeCommand(ActiveCraftPlugin plugin) {
-        super("explode",  plugin);
-    }
-
-    private static final float DEFAULT_POWER = 4f;
-    private static final boolean DEFAULT_FIRE = true;
-    private static final boolean DEFAULT_BREAK_BLOCKS = true;
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        CommandTargetType type = args.length != 0 && Bukkit.getPlayer(args[0]) != null ? CommandTargetType.OTHERS : CommandTargetType.SELF;
-        checkPermission(sender, type.code());
-        Player target = type == CommandTargetType.SELF ? getPlayer(sender) : getPlayer(args[0]);
+class ExplodeCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("explode", plugin) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        var args = args
+        val type =
+            if (args.isNotEmpty() && Bukkit.getPlayer(args[0]) != null) CommandTargetType.OTHERS else CommandTargetType.SELF
+        assertCommandPermission(sender, type.code())
+        val target = if (type == CommandTargetType.SELF) getPlayer(sender) else getPlayer(args[0])
         if (type == CommandTargetType.OTHERS) {
-            isTargetSelf(sender, target);
-            args = trimArray(args, 1);
+            isTargetSelf(sender, target)
+            args = trimArray(args, 1)
         }
-        switch (args.length) {
-            case 0 -> target.getWorld().createExplosion(target.getLocation(), DEFAULT_POWER, DEFAULT_FIRE, DEFAULT_BREAK_BLOCKS);
-            case 1 -> target.getWorld().createExplosion(target.getLocation(), parseFloat(args[0]), DEFAULT_FIRE, DEFAULT_BREAK_BLOCKS);
-            case 2 -> target.getWorld().createExplosion(target.getLocation(), parseFloat(args[0]), Boolean.parseBoolean(args[1]), DEFAULT_BREAK_BLOCKS);
-            default -> target.getWorld().createExplosion(target.getLocation(), parseFloat(args[0]), Boolean.parseBoolean(args[1]), Boolean.parseBoolean(args[2]));
+        when (args.size) {
+            0 -> target.world.createExplosion(target.location, DEFAULT_POWER, DEFAULT_FIRE, DEFAULT_BREAK_BLOCKS)
+            1 -> target.world.createExplosion(target.location, parseFloat(args[0]), DEFAULT_FIRE, DEFAULT_BREAK_BLOCKS)
+            2 -> target.world.createExplosion(
+                target.location,
+                parseFloat(args[0]),
+                Boolean.parseBoolean(args[1]),
+                DEFAULT_BREAK_BLOCKS
+            )
+
+            else -> target.world.createExplosion(
+                target.location, parseFloat(args[0]), Boolean.parseBoolean(
+                    args[1]
+                ), Boolean.parseBoolean(args[2])
+            )
         }
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1)
-            return getBukkitPlayernames();
-        return switch (args.length) {
-            case 2 -> Bukkit.getPlayer(args[0]) == null ? List.of("true", "false") : null;
-            case 3 -> List.of("true", "false");
-            case 4 -> Bukkit.getPlayer(args[0]) != null ? List.of("true", "false") : null;
-            default -> null;
-        };
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): List<String>? {
+        return if (args.size == 1) getBukkitPlayernames() else when (args.size) {
+            2 -> if (Bukkit.getPlayer(args[0]) == null) listOf(
+                "true",
+                "false"
+            ) else null
+
+            3 -> listOf("true", "false")
+            4 -> if (Bukkit.getPlayer(args[0]) != null) listOf(
+                "true",
+                "false"
+            ) else null
+
+            else -> null
+        }
+    }
+
+    companion object {
+        private const val DEFAULT_POWER = 4f
+        private const val DEFAULT_FIRE = true
+        private const val DEFAULT_BREAK_BLOCKS = true
     }
 }

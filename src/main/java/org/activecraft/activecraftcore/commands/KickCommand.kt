@@ -1,39 +1,32 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.messages.MessageFormatter;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.messages.MessageFormatter;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class KickCommand extends ActiveCraftCommand {
-
-    public KickCommand(ActiveCraftPlugin plugin) {
-        super("kick", plugin);
-    }
-
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        checkArgsLength(args, ComparisonType.GREATER_EQUAL, 1);
-        Player target = getPlayer(args[0]);
-        messageFormatter.setTarget(getProfile(target));
+class KickCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("kick", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
+        val target = getPlayer(args[0])
+        messageFormatter.setTarget(getProfile(target))
         target.kickPlayer(
-                this.cmdMsg((args.length == 1 ? "default" : "custom") + "-message",
-                        new MessageFormatter("reason", concatArray(args, 1))));
-        sendMessage(sender, this.cmdMsg(args.length == 1 ? "default" : "custom"));
+            this.cmdMsg(
+                (if (args.size == 1) "default" else "custom") + "-message",
+                newMessageFormatter().addFormatterPattern("reason", joinArray(args, 1))
+            )
+        )
+        sendMessage(sender, this.cmdMsg(if (args.size == 1) "default" else "custom"))
     }
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? getBukkitPlayernames() : null;
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) getBukkitPlayernames() else null
+
 }

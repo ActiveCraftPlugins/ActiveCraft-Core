@@ -1,10 +1,12 @@
 package org.activecraft.activecraftcore.commands.util
 
 import org.activecraft.activecraftcore.exceptions.InvalidArgumentException
+import org.activecraft.activecraftcore.exceptions.NotAPlayerException
 import org.activecraft.activecraftcore.exceptions.NotHoldingItemException
 import org.activecraft.activecraftcore.utils.ComparisonType
-import org.activecraft.activecraftcore.utils.IntegerUtils
+import org.activecraft.activecraftcore.utils.compareInt
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -44,8 +46,14 @@ interface AssertionUtils {
 
 
     @Throws(InvalidArgumentException::class)
-    fun assertArgsLength(args: Array<String>, compType: ComparisonType?, i2: Int): Boolean {
-        if (!IntegerUtils.compareInt(args.size, compType, i2)) throw InvalidArgumentException()
+    fun assertArgsLength(args: Array<String>, compType: ComparisonType, i2: Int): Boolean {
+        if (!compareInt(args.size, compType, i2)) throw InvalidArgumentException()
         return true
+    }
+
+    @Throws(NotAPlayerException::class)
+    fun assertIsPlayer(sender: CommandSender) {
+        if (sender !is Player)
+            throw NotAPlayerException(sender.name)
     }
 }

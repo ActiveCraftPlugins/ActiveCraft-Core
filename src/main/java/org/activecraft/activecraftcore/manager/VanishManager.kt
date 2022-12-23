@@ -3,33 +3,33 @@ package org.activecraft.activecraftcore.manager
 import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.events.PlayerVanishEvent
 import org.activecraft.activecraftcore.exceptions.OperationFailureException
-import org.activecraft.activecraftcore.messagesv2.MessageFormatter
-import org.activecraft.activecraftcore.messagesv2.MessageSupplier
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.messages.MessageFormatter
+import org.activecraft.activecraftcore.messages.MessageSupplier
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.utils.anyEquals
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.util.function.Consumer
 
 object VanishManager {
     // TODO: 12.06.2022 TESTEN RICHTIG WICHTIG
     private var vanished: MutableList<Player> = mutableListOf()
 
     fun isVanished(player: Player) = player in vanished
+
     @JvmStatic
-    fun setVanished(profile: Profilev2, hide: Boolean, silent: Boolean) {
+    fun setVanished(profile: Profile, hide: Boolean, silent: Boolean) {
         setVanished(profile, hide, null, silent)
     }
 
     @JvmStatic
-    fun setVanished(profile: Profilev2, hide: Boolean, source: CommandSender?, silent: Boolean) {
+    fun setVanished(profile: Profile, hide: Boolean, source: CommandSender?, silent: Boolean) {
         val targetPlayer = profile.player ?: throw OperationFailureException()
         val event = PlayerVanishEvent(profile, hide)
         Bukkit.getPluginManager().callEvent(event)
-        if (event.isCancelled) return
+        if (event.cancelled) return
         profile.isVanished = hide
-        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore)!!
+        val acCoreMessageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!
         val tagFormat =
             acCoreMessageSupplier.getMessage("command.vanish.tag", acCoreMessageSupplier.colorScheme.secondary)
         if (hide) {
@@ -43,9 +43,9 @@ object VanishManager {
             if (targetPlayer == onlinePlayer) continue
             if (!onlinePlayer.hasPermission("activecraft.vanish.see")) {
                 if (hide) {
-                    onlinePlayer.hidePlayer(ActiveCraftCore.instance, targetPlayer)
+                    onlinePlayer.hidePlayer(ActiveCraftCore.INSTANCE, targetPlayer)
                 } else {
-                    onlinePlayer.showPlayer(ActiveCraftCore.instance, targetPlayer)
+                    onlinePlayer.showPlayer(ActiveCraftCore.INSTANCE, targetPlayer)
                 }
             }
         }
@@ -78,6 +78,6 @@ object VanishManager {
 
     @JvmStatic
     fun hideAll(player: Player) {
-        vanished.forEach(Consumer { player1: Player? -> player.hidePlayer(ActiveCraftCore.instance, player1!!) })
+        vanished.forEach { player.hidePlayer(ActiveCraftCore.INSTANCE, it) }
     }
 }

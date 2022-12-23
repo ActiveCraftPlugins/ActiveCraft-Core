@@ -1,8 +1,5 @@
 package org.activecraft.activecraftcore.guicreator
 
-import lombok.Data
-import lombok.EqualsAndHashCode
-import org.activecraft.activecraftcore.events.ActiveCraftEvent
 import org.activecraft.activecraftcore.events.CancellableActiveCraftEvent
 import org.activecraft.activecraftcore.guicreator.Gui.Companion.ofInventory
 import org.bukkit.entity.HumanEntity
@@ -14,8 +11,6 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryView
 
-@Data
-@EqualsAndHashCode(callSuper = false)
 class GuiClickEvent(val currentItem: GuiItem, invClickEvent: InventoryClickEvent) : CancellableActiveCraftEvent() {
     val click: ClickType = invClickEvent.click
     val slot: Int = invClickEvent.slot

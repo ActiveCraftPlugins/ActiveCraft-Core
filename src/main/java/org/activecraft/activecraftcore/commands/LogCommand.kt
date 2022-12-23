@@ -1,43 +1,31 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidArgumentException
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.activecraft.activecraftcore.utils.anyEqualsIgnoreCase
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class LogCommand extends ActiveCraftCommand {
-
-    public LogCommand(ActiveCraftPlugin plugin) {
-        super("log",  plugin);
+class LogCommand(plugin: ActiveCraftPlugin?) : ActiveCraftCommand("log", plugin!!) {
+    @Throws(ActiveCraftException::class)
+    public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+        assertCommandPermission(sender)
+        assertArgsLength(args, ComparisonType.EQUAL, 1)
+        val profile = getProfile(sender)
+        messageFormatter.setTarget(profile)
+        if (!anyEqualsIgnoreCase(args[0], "on", "off")) throw InvalidArgumentException()
+        val enable = args[0].equals("on", ignoreCase = true)
+        profile.receiveLog = enable
+        sendMessage(sender, this.cmdMsg(if (enable) "enable" else "disable"))
     }
 
-    @Override
-    public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-        checkPermission(sender);
-        checkArgsLength(args, ComparisonType.EQUAL, 1);
-        Profilev2 profile = getProfile(sender);
-        messageFormatter.setTarget(profile);
-        if (!StringUtils.anyEqualsIgnoreCase(args[0], "on", "off"))
-            throw new InvalidArgumentException();
-        boolean enable = args[0].equalsIgnoreCase("on");
-        profile.setReceiveLog(enable);
-        sendMessage(sender, this.cmdMsg(enable ? "enable" : "disable"));
-    }
+    public override fun onTab(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ) = if (args.size == 1) listOf("on", "off") else null
 
-    @Override
-    public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-        return args.length == 1 ? List.of("on", "off") : null;
-    }
 }

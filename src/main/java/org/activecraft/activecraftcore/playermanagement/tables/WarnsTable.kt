@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.playermanagement.Warn
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -21,7 +21,6 @@ object WarnsTable : Table("warns") {
     fun toWarn(row: ResultRow): Warn {
         return Warn(
             id = row[id],
-            //Profilev2.of(row[profileId])!!, // TODO: mit exception abfangen
             row[reason],
             row[created],
             row[warnSource]
@@ -30,7 +29,7 @@ object WarnsTable : Table("warns") {
 
     fun warnExists(id: String) = transaction { select { WarnsTable.id eq id }.any() }
 
-    fun saveWarn(profile: Profilev2, warn: Warn) {
+    fun saveWarn(profile: Profile, warn: Warn) {
         fun writeWarn(warn: Warn, updateBuilder: UpdateBuilder<Int>) {
             if (updateBuilder.type == StatementType.INSERT) {
                 updateBuilder[id] = warn.id
@@ -53,7 +52,7 @@ object WarnsTable : Table("warns") {
         }
     }
 
-    fun getWarnsForProfile(profile: Profilev2) =
+    fun getWarnsForProfile(profile: Profile) =
         transaction { select { profileId eq profile.uuid }.map { toWarn(it) }.toMutableSet() }
 
 

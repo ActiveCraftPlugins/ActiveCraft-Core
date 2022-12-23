@@ -1,8 +1,6 @@
 package org.activecraft.activecraftcore.events
 
-import lombok.Data
-import lombok.EqualsAndHashCode
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.ChatColor
 
-data class ColornickEvent(val profile: Profilev2, var newColor: ChatColor, ) : CancellableActiveCraftEvent()
+data class ColornickEvent(val profile: Profile, var newColor: ChatColor, ) : CancellableActiveCraftEvent()

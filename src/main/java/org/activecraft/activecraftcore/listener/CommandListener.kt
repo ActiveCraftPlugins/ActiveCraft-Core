@@ -1,8 +1,8 @@
 package org.activecraft.activecraftcore.listener
 
 import org.activecraft.activecraftcore.ActiveCraftCore
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter
-import org.activecraft.activecraftcore.playermanagement.Profilev2.Companion.of
+import org.activecraft.activecraftcore.messages.PlayerMessageFormatter
+import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -15,7 +15,7 @@ class CommandListener : Listener {
         val executingPlayer = event.player
         val executingPlayerProfile = of(executingPlayer)
         val eventMessage = event.message
-        val accoreMessage = ActiveCraftCore.activeCraftMessagev2
+        val accoreMessage = ActiveCraftCore.INSTANCE.activeCraftMessage
         for (player in Bukkit.getOnlinePlayers()) {
             val profile = of(player)
             if (!profile.receiveLog) continue

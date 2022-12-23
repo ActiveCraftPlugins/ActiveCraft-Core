@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
@@ -13,10 +13,12 @@ object PrefixesTable : Table("prefixes") {
     val profileId = uuid("profile_id") references ProfilesTable.uuid
     val prefix = text("prefix")
 
-    fun getPrefixForProfile(profile: Profilev2) =
+    override val primaryKey = PrimaryKey(id, name = "prefixes_pk")
+
+    fun getPrefixForProfile(profile: Profile) =
         transaction { select { profileId eq profile.uuid }.map { it[prefix] }.firstOrNull() }
 
-    fun setPrefixForProfile(profile: Profilev2, prefix: String) {
+    fun setPrefixForProfile(profile: Profile, prefix: String) {
         transaction {
             if (getPrefixForProfile(profile) == null) {
                 insert {

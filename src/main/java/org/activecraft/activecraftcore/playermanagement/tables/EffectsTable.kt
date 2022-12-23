@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.playermanagement.tables
 
-import org.activecraft.activecraftcore.playermanagement.Profilev2
+import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.utils.config.Effect
 import org.bukkit.potion.PotionEffectType
 import org.jetbrains.exposed.sql.*
@@ -14,7 +14,6 @@ object EffectsTable : Table("effects") {
     val profileId = uuid("profile_id").references(ref = ProfilesTable.uuid, onUpdate = ReferenceOption.CASCADE)
     val effectType = text("effect_type")
     val active = bool("active")
-
     @OptIn(ExperimentalUnsignedTypes::class)
     val amplifier = ubyte("amplifier")
 
@@ -26,12 +25,12 @@ object EffectsTable : Table("effects") {
         )
     }
 
-    private fun effectInDatabase(profile: Profilev2, effect: Effect) =
+    private fun effectInDatabase(profile: Profile, effect: Effect) =
         transaction {
             select { (profileId eq profile.uuid) and (effectType eq effect.effectType.name.lowercase()) }.any()
         }
 
-    fun saveEffect(profile: Profilev2, effect: Effect) {
+    fun saveEffect(profile: Profile, effect: Effect) {
         fun writeEffect(updateBuilder: UpdateBuilder<Int>) {
             if (updateBuilder.type == StatementType.INSERT) {
                 updateBuilder[profileId] = profile.uuid
@@ -53,7 +52,7 @@ object EffectsTable : Table("effects") {
         }
     }
 
-    fun getEffectsForProfile(profile: Profilev2) =
+    fun getEffectsForProfile(profile: Profile) =
         transaction { select { profileId eq profile.uuid }.mapNotNull { toEffect(it) }.toMutableSet() }
 
 }

@@ -1,100 +1,77 @@
-package org.activecraft.activecraftcore.commands;
+package org.activecraft.activecraftcore.commands
 
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.manager.LockdownManager;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.activecraft.activecraftcore.ActiveCraftCore;
-import org.activecraft.activecraftcore.ActiveCraftPlugin;
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException;
-import org.activecraft.activecraftcore.exceptions.InvalidArgumentException;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.utils.ComparisonType;
-import org.activecraft.activecraftcore.utils.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.activecraft.activecraftcore.ActiveCraftCore
+import org.activecraft.activecraftcore.ActiveCraftPlugin
+import org.activecraft.activecraftcore.exceptions.ActiveCraftException
+import org.activecraft.activecraftcore.exceptions.InvalidArgumentException
+import org.activecraft.activecraftcore.manager.LockdownManager.lockdown
+import org.activecraft.activecraftcore.utils.ComparisonType
+import org.activecraft.activecraftcore.utils.anyEqualsIgnoreCase
+import org.bukkit.ChatColor
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public class LockdownCommandCollection extends ActiveCraftCommandCollection {
-
-    public LockdownCommandCollection(ActiveCraftPlugin plugin) {
-        super(
-                new LockdownCommand(plugin),
-                new LockdownbypassCommand(plugin)
-        );
-    }
-
-    public static class LockdownCommand extends ActiveCraftCommand {
-
-        public LockdownCommand(ActiveCraftPlugin plugin) {
-            super("lockdown", plugin);
-        }
-
-        @Override
-        public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-            checkPermission(sender);
-            checkArgsLength(args, ComparisonType.EQUAL, 1);
-            if (!StringUtils.anyEqualsIgnoreCase(args[0], "enable", "disable"))
-                throw new InvalidArgumentException();
-            boolean enable = args[0].equalsIgnoreCase("enable");
-            boolean lockedDown = ActiveCraftCore.getInstance().getMainConfig().isLockedDown();
+class LockdownCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollection(
+    LockdownCommand(plugin),
+    LockdownbypassCommand(plugin)
+) {
+    class LockdownCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("lockdown", plugin) {
+        @Throws(ActiveCraftException::class)
+        public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+            assertCommandPermission(sender)
+            assertArgsLength(args, ComparisonType.EQUAL, 1)
+            if (!anyEqualsIgnoreCase(args[0], "enable", "disable")) throw InvalidArgumentException()
+            val enable = args[0].equals("enable", ignoreCase = true)
+            val lockedDown: Boolean = ActiveCraftCore.INSTANCE.mainConfig.lockedDown
             if (lockedDown && enable) {
-                sendMessage(sender, this.rawCmdMsg("already-enabled"), true);
-                return;
+                sendWarningMessage(sender, rawCmdMsg("already-enabled"),)
+                return
             } else if (!lockedDown && !enable) {
-                sendMessage(sender, this.rawCmdMsg("not-enabled"), true);
-                return;
+                sendWarningMessage(sender, rawCmdMsg("not-enabled"),)
+                return
             }
-            LockdownManager.lockdown(enable);
-            sendMessage(sender, this.cmdMsg((enable ? "en" : "dis") + "abled"));
+            lockdown(enable)
+            sendMessage(sender, this.cmdMsg((if (enable) "en" else "dis") + "abled"))
         }
 
-        @Override
-        public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-            return args.length == 1 ? List.of("enable", "disable") : null;
-        }
+        public override fun onTab(
+            sender: CommandSender,
+            command: Command,
+            label: String,
+            args: Array<String>
+        ) = if (args.size == 1) listOf("enable", "disable") else null
+
     }
 
-    public static class LockdownbypassCommand extends ActiveCraftCommand {
-
-        public LockdownbypassCommand(ActiveCraftPlugin plugin) {
-            super("lockdownbypass", plugin);
-        }
-
-        @Override
-        public void runCommand(CommandSender sender, Command command, String label, String[] args) throws ActiveCraftException {
-            checkPermission(sender, "allow");
-            checkArgsLength(args, ComparisonType.EQUAL, 2);
-            Profilev2 profile = getProfile(args[0]);
-            messageFormatter.setTarget(profile);
-            if (!StringUtils.anyEqualsIgnoreCase(args[1], "true", "false"))
-                throw new InvalidArgumentException();
-            boolean allow = args[1].equalsIgnoreCase("true");
-            boolean canBypass = profile.canBypassLockdown();
+    class LockdownbypassCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("lockdownbypass", plugin) {
+        @Throws(ActiveCraftException::class)
+        public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
+            assertCommandPermission(sender, "allow")
+            assertArgsLength(args, ComparisonType.EQUAL, 2)
+            val profile = getProfile(args[0])
+            messageFormatter.setTarget(profile)
+            if (!anyEqualsIgnoreCase(args[1], "true", "false")) throw InvalidArgumentException()
+            val allow = args[1].equals("true", ignoreCase = true)
+            val canBypass = profile.bypassLockdown
             if (canBypass && allow) {
-                sendMessage(sender, this.cmdMsg("already-allowed", ChatColor.GRAY), true);
-                return;
+                sendWarningMessage(sender, this.cmdMsg("already-allowed", ChatColor.GRAY))
+                return
             } else if (!canBypass && !allow) {
-                sendMessage(sender, this.cmdMsg("not-allowed", ChatColor.GRAY), true);
-                return;
+                sendWarningMessage(sender, this.cmdMsg("not-allowed", ChatColor.GRAY))
+                return
             }
-            profile.setBypassLockdown(allow);
-            sendMessage(sender, this.cmdMsg((allow ? "" : "dis") + "allow"));
+            profile.bypassLockdown = allow
+            sendMessage(sender, this.cmdMsg((if (allow) "" else "dis") + "allow"))
         }
 
-        @Override
-        public List<String> onTab(CommandSender sender, Command command, String label, String[] args) {
-            if (args.length == 1)
-                return getBukkitPlayernames();
-            if (args.length == 2)
-                return List.of("true", "false");
-            return null;
+        public override fun onTab(
+            sender: CommandSender,
+            command: Command,
+            label: String,
+            args: Array<String>
+        ): List<String>? {
+            if (args.size == 1) return getBukkitPlayernames()
+            return if (args.size == 2) listOf("true", "false") else null
         }
     }
 }

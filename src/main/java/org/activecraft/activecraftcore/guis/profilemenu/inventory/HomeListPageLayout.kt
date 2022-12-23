@@ -1,99 +1,91 @@
-package org.activecraft.activecraftcore.guis.profilemenu.inventory;
+package org.activecraft.activecraftcore.guis.profilemenu.inventory
 
-import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults;
-import org.activecraft.activecraftcore.guicreator.GuiItem;
-import org.activecraft.activecraftcore.guicreator.GuiPageLayout;
-import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu;
-import org.activecraft.activecraftcore.messagesv2.ColorScheme;
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults;
-import org.activecraft.activecraftcore.guicreator.GuiItem;
-import org.activecraft.activecraftcore.guicreator.GuiPageLayout;
-import org.activecraft.activecraftcore.messagesv2.ColorScheme;
-import org.activecraft.activecraftcore.messagesv2.PlayerMessageFormatter;
-import org.activecraft.activecraftcore.playermanagement.Profilev2;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults
+import org.activecraft.activecraftcore.guicreator.GuiItem
+import org.activecraft.activecraftcore.guicreator.GuiPageLayout
+import org.activecraft.activecraftcore.guis.profilemenu.ProfileMenu
+import org.activecraft.activecraftcore.messages.ColorScheme
+import org.activecraft.activecraftcore.messages.PlayerMessageFormatter
+import org.activecraft.activecraftcore.playermanagement.Profile
+import org.bukkit.Material
+import org.bukkit.entity.Player
 
-import java.util.ArrayList;
-import java.util.List;
+class HomeListPageLayout(private val profileMenu: ProfileMenu) : GuiPageLayout(
+    identifier = "home_list_profile",
+    rows = 6,
+    title = profileMenu.messageSupplier.getMessage(PREFIX + "title")
+) {
+    private val player: Player = profileMenu.player
+    private val target: Player = profileMenu.target
+    private val profile: Profile = profileMenu.profile
+    private val colorScheme: ColorScheme = profileMenu.colorScheme
+    override val maxPages: Int
+        get() = chunkedHomeList.size
 
-public class HomeListPageLayout extends GuiPageLayout {
-
-    private final ProfileMenu profileMenu;
-    private final Player player, target;
-    private final Profilev2 profile;
-    private static final String PREFIX = "profile.homelist.";
-    private ColorScheme colorScheme;
-
-    public HomeListPageLayout(ProfileMenu profileMenu) {
-        super("home_list_profile", 6, profileMenu.getMessageSupplier().getMessage(PREFIX + "title"));
-        this.profileMenu = profileMenu;
-        this.colorScheme = profileMenu.getColorScheme();
-        this.player = profileMenu.getPlayer();
-        this.target = profileMenu.getTarget();
-        profile = profileMenu.getProfile();
-        profileMenu.setHomeListPageLayout(this);
-    }
-
-    public List<List<String>> getChunkedHomeList() {
-        List<List<String>> chunked = new ArrayList<>();
-        int chunkSize = 35;
-        List<String> keyList = new ArrayList<>(profile.getHomeManager().getHomes().keySet());
-        int i = 0;
-        while (keyList.size() > 0) {
-            for (int j = 0; j < chunkSize; j++) {
-                if (keyList.size() == 0) break;
-                if (j == 0) chunked.add(new ArrayList<>());
-                chunked.get(i).add(keyList.get(0));
-                keyList.remove(0);
+    val chunkedHomeList: List<MutableList<String>>
+        get() {
+            val chunked: MutableList<MutableList<String>> = ArrayList()
+            val chunkSize = 35
+            val keyList: MutableList<String> = profile.homeManager.homes.keys.toMutableList()
+            var i = 0
+            while (keyList.size > 0) {
+                for (j in 0 until chunkSize) {
+                    if (keyList.size == 0) break
+                    if (j == 0) chunked.add(ArrayList())
+                    chunked[i].add(keyList[0])
+                    keyList.removeAt(0)
+                }
+                i++
             }
-            i++;
+            return chunked
         }
-        return chunked;
-    }
 
-    @Override
-    public int getMaxPages() {
-        return getChunkedHomeList().size();
-    }
-
-    @Override
-    public void refreshPage() {
-        List<String> chunkedHomeList = getChunkedHomeList().get(currentPage);
-        PlayerMessageFormatter msgFormatter = new PlayerMessageFormatter(GuiCreatorDefaults.acCoreMessage).setTarget(profile);
-        guiPage.setItem(profileMenu.getDefaultGuiCloseItem(),49)
-                .setItem(profileMenu.getPlayerHead(), 4)
-                .setItem(profileMenu.getDefaultGuiBackItem(), 48)
-                .fillBackground(true);
-        if (chunkedHomeList.size() == 0) {
-            guiPage.setItem(new GuiItem(Material.BARRIER).setDisplayName(profile.getMessageSupplier(GuiCreatorDefaults.acCoreMessage)
-                    .getFormatted(PREFIX + "no-homes", msgFormatter)), 22);
-            return;
-        }
-        int i = 10;
-        for (String homeName : chunkedHomeList) {
-            Location loc = profile.getHomeManager().getHomes().get(homeName).getLocation();
-            World.Environment environment = loc.getWorld().getEnvironment();
+    override fun refreshPage() {
+        val chunkedHomeList: List<String> = chunkedHomeList[currentPage]
+        val msgFormatter = PlayerMessageFormatter(GuiCreatorDefaults.acCoreMessage!!).setTarget(profile)
+        guiPage.setItem(profileMenu.defaultGuiCloseItem, 49)
+            .setItem(profileMenu.playerHead, 4)
+            .setItem(profileMenu.defaultGuiBackItem, 48)
+            .fillBackground(true)
+        if (chunkedHomeList.isEmpty()) {
             guiPage.setItem(
-                    new GuiItem(switch (environment.getId()) {
-                        case 1 -> Material.END_STONE;
-                        case -1 -> Material.NETHERRACK;
-                        default -> Material.GRASS_BLOCK;
-                    })
-                            .setDisplayName(homeName)
-                            .setLore(
-                                    colorScheme.primaryAccent() + loc.getWorld().getName() + colorScheme.primary()
-                                            + ", " + colorScheme.primaryAccent() + loc.getBlockX() + colorScheme.primary()
-                                            + ", " + colorScheme.primaryAccent() + loc.getBlockY() + colorScheme.primary()
-                                            + ", " + colorScheme.primaryAccent() + loc.getBlockZ())
-                            .addClickListener(guiClickEvent -> player.performCommand("home " + target.getName() + " " + homeName)), i);
-            if (i % 9 != 7 && i % 9 != 0) i++;
-            else i += 3;
-            if (i >= 44) break;
+                GuiItem(Material.BARRIER).setDisplayName(
+                    profile.getMessageSupplier(
+                        GuiCreatorDefaults.acCoreMessage
+                    )
+                        .getFormatted(PREFIX + "no-homes", msgFormatter)
+                ), 22
+            )
+            return
         }
+        var i = 10
+        for (homeName in chunkedHomeList) {
+            val loc = profile.homeManager.homes[homeName]!!.location
+            val environment = loc.world.environment
+            guiPage.setItem(
+                GuiItem(
+                    when (environment.id) {
+                        1 -> Material.END_STONE
+                        -1 -> Material.NETHERRACK
+                        else -> Material.GRASS_BLOCK
+                    }
+                )
+                    .setDisplayName(homeName)
+                    .setLore(
+                        colorScheme.primaryAccent.toString() + loc.world.name + colorScheme.primary
+                                + ", " + colorScheme.primaryAccent + loc.blockX + colorScheme.primary
+                                + ", " + colorScheme.primaryAccent + loc.blockY + colorScheme.primary
+                                + ", " + colorScheme.primaryAccent + loc.blockZ
+                    )
+                    .addClickListener { player.performCommand("home " + target.name + " " + homeName) },
+                i
+            )
+            if (i % 9 != 7 && i % 9 != 0) i++ else i += 3
+            if (i >= 44) break
+        }
+    }
+
+    companion object {
+        private const val PREFIX = "profile.homelist."
     }
 }

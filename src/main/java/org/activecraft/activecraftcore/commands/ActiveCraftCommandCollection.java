@@ -3,8 +3,8 @@ package org.activecraft.activecraftcore.commands;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ActiveCraftCommandCollection extends HashSet<ActiveCraftCommandv2> {
-    public ActiveCraftCommandCollection(ActiveCraftCommandv2... activeCraftCommands) {
+public abstract class ActiveCraftCommandCollection extends HashSet<ActiveCraftCommand> {
+    public ActiveCraftCommandCollection(ActiveCraftCommand... activeCraftCommands) {
         addAll(Set.of(activeCraftCommands));
     }
 }
