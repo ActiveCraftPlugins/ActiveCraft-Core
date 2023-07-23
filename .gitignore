@@ -4,6 +4,8 @@ Server/
 server
 target
 
+build
+.gradle
 
 *.ini
 *.iml

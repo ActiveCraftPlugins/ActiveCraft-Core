@@ -1,7 +1,7 @@
 name: ActiveCraft-Core
 version: ${project.version}
 main: org.activecraft.activecraftcore.ActiveCraftCore
-api-version: 1.17
+api-version: 1.20
 authors: [ CPlaiz, Silencio ]
 description: The heart of all ActiveCraft Plugins
 website: cplaiz.github.io/ActiveCraft-Core/
