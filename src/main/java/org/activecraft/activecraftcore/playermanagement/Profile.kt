@@ -45,16 +45,11 @@ class Profile(val uuid: UUID, build: Profile.() -> Unit) {
     var isGodmode: Boolean = false
     var isFly: Boolean = false
     var isMuted: Boolean = false
-    var isDefaultmuted: Boolean = ActiveCraftCore.INSTANCE.mainConfig.isDefaultMuteEnabled
     var isVanished: Boolean = false
     var receiveLog: Boolean = false
-        @JvmName("canReceiveLog") get
     var bypassLockdown: Boolean = false
-        @JvmName("canBypassLockdown") get
     var receiveSocialspy: Boolean = false
-        @JvmName("canReceiveSocialspy") get
     var editSign: Boolean = false
-        @JvmName("canEditSign") get
     val warnManager: WarnManager
     val homeManager: HomeManager
     val effectManager: EffectManager
@@ -85,19 +80,14 @@ class Profile(val uuid: UUID, build: Profile.() -> Unit) {
         get() = Bukkit.getOfflinePlayer(uuid)
 
     companion object {
-        @JvmStatic
         fun of(uuid: UUID?) = ActiveCraftCore.INSTANCE.profiles[uuid]
 
-        @JvmStatic
         fun of(profileName: String) = of(ActiveCraftCore.INSTANCE.playerlist.getUUIDByPlayername(profileName))
 
-        @JvmStatic
         fun of(player: Player) = of(player.uniqueId)!!
 
-        @JvmStatic
         fun of(sender: CommandSender) = of(sender.name)
 
-        @JvmStatic
         fun createIfNotExists(player: Player): Profile {
             ActiveCraftCore.INSTANCE.playerlist.addPlayerIfAbsent(player)
 

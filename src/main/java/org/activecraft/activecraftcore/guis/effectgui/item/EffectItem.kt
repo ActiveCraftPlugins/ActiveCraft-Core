@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionEffectType
 
-class EffectItem @JvmOverloads constructor(
+class EffectItem constructor(
     material: Material,
     val effectType: PotionEffectType,
     private val effectGui: EffectGui,

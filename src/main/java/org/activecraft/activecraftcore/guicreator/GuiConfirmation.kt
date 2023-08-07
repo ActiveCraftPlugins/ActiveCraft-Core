@@ -6,7 +6,7 @@ import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults.confirmatio
 import org.bukkit.Material
 
 // TODO: 21.08.2022 keine items angezeigt
-class GuiConfirmation @JvmOverloads constructor(
+class GuiConfirmation constructor(
     identifier: String, title: String = confirmationTitle(), confirmItemDisplayname: String =
         confirmItemDisplayname(), cancelItemDisplayname: String = cancelItemDisplayname()
 ) : GuiCreator(GuiCreatorDefaults.CONFIRMATION_PREFIX + identifier, 3, null, title) {

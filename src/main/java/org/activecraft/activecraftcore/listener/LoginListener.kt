@@ -4,6 +4,7 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.activecraft.activecraftcore.messages.MessageFormatter
 import org.activecraft.activecraftcore.playermanagement.Profile
 import org.activecraft.activecraftcore.utils.TimeUtils.getRemainingAsString
+import org.bukkit.BanEntry
 import org.bukkit.BanList
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -16,7 +17,7 @@ class LoginListener : Listener {
     fun onLogin(e: PlayerLoginEvent) {
         val ipAddress = e.address.toString().replace("/", "")
         var ipBanned = false
-        val ipBanList = Bukkit.getBanList(BanList.Type.IP)
+        val ipBanList = Bukkit.getBanList<BanList<*>>(BanList.Type.IP)
         val activeCraftCoreMessage = ActiveCraftCore.INSTANCE.activeCraftMessage!!
         val msgFormatter = MessageFormatter(activeCraftCoreMessage)
         for (banEntry in ipBanList.banEntries) {
@@ -25,7 +26,7 @@ class LoginListener : Listener {
                 break
             }
         }
-        val nameBanList = Bukkit.getBanList(BanList.Type.NAME)
+        val nameBanList = Bukkit.getBanList<BanList<*>>(BanList.Type.NAME)
         val profile = Profile.of(e.player.name)
         val messageSupplier = profile?.getMessageSupplier(activeCraftCoreMessage)
             ?: activeCraftCoreMessage.getDefaultMessageSupplier()!!

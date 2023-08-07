@@ -7,7 +7,6 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 
 object NickManager {
-    @JvmStatic
     fun nick(profile: Profile, nickname: String) {
         val event = NickEvent(profile, nickname)
         Bukkit.getPluginManager().callEvent(event)
@@ -16,7 +15,6 @@ object NickManager {
         profile.displayManager.updateDisplayname()
     }
 
-    @JvmStatic
     fun colornick(profile: Profile, color: ChatColor) {
         val event = ColornickEvent(profile, color)
         Bukkit.getPluginManager().callEvent(event)

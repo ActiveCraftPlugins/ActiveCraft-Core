@@ -13,7 +13,6 @@ open class GuiItem : ItemStack {
         protected set
     val clickListenerList: MutableList<(GuiClickEvent) -> Unit> = mutableListOf()
 
-    @JvmOverloads
     constructor(material: Material, stackSize: Int = 1) : super(material, stackSize)
     constructor(itemStack: ItemStack) : super(itemStack.type) {
         this.itemMeta = itemStack.itemMeta

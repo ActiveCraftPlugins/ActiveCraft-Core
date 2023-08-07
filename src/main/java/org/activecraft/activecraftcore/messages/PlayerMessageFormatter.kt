@@ -7,7 +7,6 @@ import org.bukkit.entity.Player
 
 class PlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage) : MessageFormatter(activeCraftMessage) {
 
-    @JvmOverloads
     constructor(
         activeCraftMessage: ActiveCraftMessage,
         sender: CommandSender,
@@ -17,7 +16,6 @@ class PlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage) : MessageFo
         setSender(sender, nameColor, afterNameColor)
     }
 
-    @JvmOverloads
     constructor(
         activeCraftMessage: ActiveCraftMessage,
         target: Profile,
@@ -27,7 +25,6 @@ class PlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage) : MessageFo
        setTarget(target, nameColor, afterNameColor)
     }
 
-    @JvmOverloads
     fun setSender(
         sender: CommandSender,
         nameColor: ChatColor? = activeCraftMessage.colorScheme.primaryAccent,
@@ -52,7 +49,6 @@ class PlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage) : MessageFo
         return this
     }
 
-    @JvmOverloads
     fun setTarget(
         target: Profile,
         nameColor: ChatColor? = activeCraftMessage.colorScheme.primaryAccent,
@@ -75,7 +71,6 @@ class PlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage) : MessageFo
         )
     ) as PlayerMessageFormatter
 
-    @JvmOverloads
     fun setTarget(
         target: String,
         nameColor: ChatColor? = activeCraftMessage.colorScheme.primaryAccent,

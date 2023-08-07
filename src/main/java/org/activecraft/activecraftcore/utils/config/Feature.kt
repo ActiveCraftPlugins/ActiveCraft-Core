@@ -8,7 +8,6 @@ enum class Feature(private val identifier: String) {
     fun identifier() = identifier
 
     companion object {
-        @JvmStatic
         fun fromIdentifier(identifier: String): Feature? {
             return values().find { it.identifier == identifier }
         }

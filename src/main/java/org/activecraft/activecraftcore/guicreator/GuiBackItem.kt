@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults.backItemDis
 import org.bukkit.Material
 import org.bukkit.entity.Player
 
-class GuiBackItem @JvmOverloads constructor(
+class GuiBackItem constructor(
     displayName: String = backItemDisplayname(),
     material: Material = Material.ARROW
 ) : GuiItem(material) {

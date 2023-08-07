@@ -21,7 +21,6 @@ fun combineArray(args: Array<String>, start: Int, splitter: String): String {
     return combineArray(args, start, args.size, splitter)
 }
 
-@JvmOverloads
 fun combineArray(args: Array<String>, start: Int = 0, stop: Int = args.size, splitter: String = " "): String {
     val resultBuilder = StringBuilder()
     for (i in start until stop) resultBuilder.append(if (i != start) splitter + args[i] else args[i])
@@ -36,7 +35,6 @@ fun combineList(args: List<String>, start: Int, splitter: String): String {
     return combineList(args, start, args.size, splitter)
 }
 
-@JvmOverloads
 fun combineList(args: List<String>, start: Int = 0, stop: Int = args.size, splitter: String = " "): String {
     val resultBuilder = StringBuilder()
     for (i in start until stop) resultBuilder.append(if (i != start) splitter + args[i] else args[i])

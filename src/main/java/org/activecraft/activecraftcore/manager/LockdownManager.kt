@@ -6,7 +6,6 @@ import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.Bukkit
 
 object LockdownManager {
-    @JvmStatic
     fun lockdown(lockdown: Boolean) {
         val event = LockdownEvent(lockdown)
         Bukkit.getPluginManager().callEvent(event)

@@ -9,7 +9,7 @@ import org.activecraft.activecraftcore.playermanagement.Profile.Companion.of
 import org.bukkit.Material
 import org.bukkit.potion.PotionEffectType
 
-class LevelChangerItem @JvmOverloads constructor(
+class LevelChangerItem constructor(
     material: Material,
     stackSize: Int,
     levelChangerGui: LevelChangerGui,

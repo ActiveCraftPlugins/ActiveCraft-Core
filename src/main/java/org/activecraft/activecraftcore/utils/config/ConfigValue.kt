@@ -10,12 +10,10 @@ class ConfigValue<T> constructor(
 
     private var value: T = defaultValue
 
-    @JvmSynthetic
     operator fun getValue(thisRef: Any, property: KProperty<*>): T {
         return getValue()
     }
 
-    @JvmSynthetic
     operator fun setValue(thisRef: Any, property: KProperty<*>, newValue: T) {
         setValue(newValue)
     }

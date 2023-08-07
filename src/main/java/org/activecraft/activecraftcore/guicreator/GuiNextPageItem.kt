@@ -5,7 +5,7 @@ import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults.nextPageIte
 import org.activecraft.activecraftcore.messages.ColorScheme
 import org.bukkit.Material
 
-class GuiNextPageItem @JvmOverloads constructor(
+class GuiNextPageItem constructor(
     guiPageLayout: GuiPageLayout,
     material: Material = Material.ARROW,
     displayName: String = nextPageItemDisplayname(),

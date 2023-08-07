@@ -5,7 +5,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.activecraft.activecraftcore.ActiveCraftPlugin
-import org.activecraft.activecraftcore.exceptions.ActiveCraftException
 import org.activecraft.activecraftcore.manager.BanManager
 import org.activecraft.activecraftcore.manager.BanManager.IP.isBanned
 import org.activecraft.activecraftcore.utils.ComparisonType
@@ -25,7 +24,6 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
     BanlistCommand(plugin)
 ) {
     class BanCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("ban", plugin) {
-        @Throws(ActiveCraftException::class)
         public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
             assertCommandPermission(sender)
             assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
@@ -54,7 +52,6 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
     }
 
     class UnbanCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("unban", plugin) {
-        @Throws(ActiveCraftException::class)
         public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
             assertCommandPermission(sender)
             assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
@@ -72,12 +69,11 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
             command: Command,
             label: String,
             args: Array<String>
-        ) = if (args.size == 1 && BanManager.Name.bans.isEmpty()) BanManager.Name.bans.map { it.target } else null
+        ): List<String> = if (args.size == 1 && BanManager.Name.bans.isEmpty()) BanManager.Name.bans.map { it.target } else emptyList()
 
     }
 
     class BanIpCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("ban-ip", plugin, "banip", "banip") {
-        @Throws(ActiveCraftException::class)
         public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
             assertCommandPermission(sender)
             assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
@@ -123,7 +119,6 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
 
     class UnbanIpCommand(plugin: ActiveCraftPlugin) :
         ActiveCraftCommand("unban-ip", plugin, "unbanip", "unbanip") {
-        @Throws(ActiveCraftException::class)
         public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
             assertCommandPermission(sender)
             assertArgsLength(args, ComparisonType.GREATER_EQUAL, 1)
@@ -141,11 +136,10 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
             command: Command,
             label: String,
             args: Array<String>
-        ) = if (args.size == 1 && BanManager.Name.bans.isEmpty()) BanManager.IP.bans.map { it.target } else null
+        ): List<String> = if (args.size == 1 && BanManager.Name.bans.isEmpty()) BanManager.IP.bans.map { it.target } else emptyList()
     }
 
     class BanlistCommand(plugin: ActiveCraftPlugin) : ActiveCraftCommand("banlist", plugin) {
-        @Throws(ActiveCraftException::class)
         public override fun runCommand(sender: CommandSender, command: Command, label: String, args: Array<String>) {
             assertCommandPermission(sender)
             if (BanManager.Name.bans.isEmpty() && BanManager.IP.bans.isEmpty()) {
@@ -153,6 +147,7 @@ class BanCommandCollection(plugin: ActiveCraftPlugin) : ActiveCraftCommandCollec
                 return
             }
             val componentBuilder = ComponentBuilder()
+            val bans = BanManager.IP.bans
             val tempBanListName = BanManager.Name.bans.map { it.target }.sorted()
             val tempBanListIP = BanManager.IP.bans.map { it.target }.sorted()
             for (i in tempBanListName.indices) {

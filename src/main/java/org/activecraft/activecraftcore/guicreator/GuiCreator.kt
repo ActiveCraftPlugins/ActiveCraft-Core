@@ -9,16 +9,14 @@ import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import org.bukkit.permissions.Permissible
 
-abstract class GuiCreator @JvmOverloads constructor(
+abstract class GuiCreator constructor(
     val identifier: String,
     rows: Int,
     protected val holder: InventoryHolder? = null,
     protected val title: String = guiTitle()
 ) {
-    @JvmField
     protected val activeCraftCoreMessage = ActiveCraftCore.INSTANCE.activeCraftMessage
     protected val inventory: Inventory
-    @JvmField
     protected val rows: Int
     protected var backgroundFilled = false
     protected var backgroundItem: GuiItem
@@ -93,7 +91,6 @@ abstract class GuiCreator @JvmOverloads constructor(
     }
 
     companion object {
-        @JvmStatic
         fun ofInventory(inventory: Inventory): GuiCreator? {
             return Gui.ofInventory(inventory)?.guiCreator
         }

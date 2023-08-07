@@ -195,8 +195,6 @@ commands:
     description: Opens a profile inventory for quick player management.
   lastcoords:
     description: Get a player's last coords
-  verify:
-    description: Verifies a player.
   tpall:
     description: Teleports all players.
   summon:
@@ -750,9 +748,6 @@ permissions:
     default: op
   activecraft.lastcoords:
     description: Gets the last coords of a player in a give world.
-    default: op
-  activecraft.verify:
-    description: Verifies a player.
     default: op
   activecraft.ban:
     description: Permission to ban a player.

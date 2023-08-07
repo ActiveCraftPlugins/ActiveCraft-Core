@@ -14,13 +14,11 @@ class GuiNavigator {
 
     companion object {
         private val playerGuiStack = HashMap<Player, Stack<Gui>>()
-        @JvmStatic
         fun push(player: Player, gui: Gui) {
             getGuiStack(player).push(gui)
             player.openInventory(gui.inventory)
         }
 
-        @JvmStatic
         fun pushReplacement(player: Player, gui: Gui) {
             getGuiStack(player).pop()
             getGuiStack(player).push(gui)
@@ -33,7 +31,6 @@ class GuiNavigator {
             player.openInventory(gui.inventory)
         }
 
-        @JvmStatic
         fun pop(player: Player): Gui {
             getGuiStack(player).pop()
             val topGui = getGuiStack(player).peek()
@@ -41,7 +38,6 @@ class GuiNavigator {
             return topGui
         }
 
-        @JvmStatic
         fun getGuiStack(player: Player): Stack<Gui> {
             return playerGuiStack.getOrPut(player) { Stack() }
         }

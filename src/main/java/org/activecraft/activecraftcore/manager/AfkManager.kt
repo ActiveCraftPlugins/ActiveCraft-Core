@@ -12,7 +12,6 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 
 object AfkManager {
-    @JvmStatic
     fun setAfk(player: Player, afk: Boolean) {
         val profile = Profile.of(player) ?: throw OperationFailureException()
         val messageSupplier: MessageSupplier = profile.getMessageSupplier(ActiveCraftCore.INSTANCE)!!

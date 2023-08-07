@@ -12,13 +12,7 @@ tpa-timer: true
 spawn-timer: true
 home-timer: true
 warp-timer: true
-
-# Default Mute
-default-mute:
-  # When activated, players who join for the first time cannot speak in chat.
-  enabled: false
-  # Set the time a new player should be muted for.
-  duration: 10 #in minutes | -1 to allow only manual verification
+# TODO: time
 
 # Vanish Settings
 vanish-tag:

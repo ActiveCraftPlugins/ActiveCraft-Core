@@ -16,7 +16,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo
 class DeathListener : Listener {
 
     companion object {
-        @JvmStatic
         val suiciders: MutableList<Player> = mutableListOf()
     }
 

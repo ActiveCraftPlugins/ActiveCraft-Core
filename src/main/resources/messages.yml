@@ -61,7 +61,6 @@ en:
     cancelled-message: 'Cancelling dialogue...'
     invalid-answer: 'Invalid Answer!'
   misc:
-    default-mute-remove: 'Your default mute has been removed. You are now able to talk.'
     file-not-found: 'File config %filename% does not exist. Creating a new one...'
     same-ip: '%t1_displayname% shares the IP %ip% with %t2_displayname%.'
   gui:
@@ -221,8 +220,6 @@ en:
   chat:
     chat-format: '%s_displayname%§f: %message%'
     muted: 'You are muted!'
-    defaulmuted: 'You are new to this server so you cannot write in chat. Please contact a staff member to verify you.'
-    defaultmuted-time: 'Otherwise you will be unmuted automatically in %time% minutes.'
   command:
     afk:
       tag: '[AFK]'
@@ -534,10 +531,6 @@ en:
       now-invisible-self: 'You are now invisible.'
       now-visible-others: '%t_displayname% is now visible.'
       now-invisible-others: '%t_displayname% is now invisible.'
-    verify:
-      verify: 'Verified %t_displayname%.'
-      target-message: 'You have been verified. You are now able to talk.'
-      not-default-muted: 'Player already is verified!'
     walkspeed:
       self: 'Walk speed set to %amount%.'
       others: 'Walk speed set to %amount% for %t_displayname%.'
@@ -690,7 +683,6 @@ de:
     cancelled-message: 'Dialog abbrechen...'
     invalid-answer: 'Üngültige Antwort!'
   misc:
-    default-mute-remove: 'Deine standardmäßige Stummschaltung wurde aufgehoben. Du kannst nun sprechen.'
     file-not-found: 'Die Datei %filename% existiert nicht. Erstelle eine neue...'
     same-ip: '%t1-displayname% teilt die IP %ip% mit %t2-displayname%.'
   gui:
@@ -1163,10 +1155,6 @@ de:
       now-invisible-self: 'Du bist nun unsichtbar.'
       now-visible-others: '%t_displayname% ist nun sichtbar.'
       now-invisible-others: '%t_displayname% ist nun unstichtbar.'
-    verify:
-      verify: 'Du hast %t_displayname% verifiziert.'
-      target-message: 'Du wurdest verifiziert. Du kannst nun im Chat schreiben.'
-      not-default-muted: 'Dieser Spieler ist bereits verifiziert!'
     walkspeed:
       self: 'Laufgeschwindigkeit zu %amount% gesetzt.'
       others: 'Laufgeschwindigkeit zu %amount% für %t_displayname% gesetzt.'
@@ -1316,7 +1304,6 @@ sv:
     cancelled-message: 'Avbryter dialogen...'
     invalid-answer: 'Ogiltigt svar!'
   misc:
-    default-mute-remove: 'Din standard mute är nu borttagen. Du kan nu prata.'
     file-not-found: 'Fil config  %filename% finns inte. Skapar en ny...'
     same-ip: '%t1_displayname% delar IP %ip% med %t2_displayname%.'
   gui:
@@ -1476,8 +1463,6 @@ sv:
   chat:
     chat-format: '%s_displayname%§f: %message%'   # translation pending
     muted: 'You are muted!'   # translation pending
-    defaulmuted: 'You are new to this server so you cannot write in chat. Please contact a staff member to verify you.'   # translation pending
-    defaultmuted-time: 'Otherwise you will be unmuted automatically after %time% minutes."   # translation pending'
   command:
     afk:
       tag: '[AFK]'
@@ -1789,10 +1774,6 @@ sv:
       now-invisible-self: 'Du är nu osynlig.'
       now-visible-others: '%t_displayname% är nu synlig.'
       now-invisible-others: '%t_displayname% är nu osynlig.'
-    verify:
-      verify: 'Verifierade %t_displayname%.'
-      target-message: 'Du är nu verifierad. Du kan nu prata.'
-      not-default-muted: 'Spelaren är redan verifierad!'
     walkspeed:
       self: 'Gång hastighet satt till %amount%.'
       others: 'Gång hastighet satt till %amount% för %t_displayname%.'

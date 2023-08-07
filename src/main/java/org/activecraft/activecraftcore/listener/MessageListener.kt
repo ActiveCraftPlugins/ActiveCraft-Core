@@ -29,21 +29,8 @@ class MessageListener : Listener {
             return
         }
         val muted = profile.isMuted
-        val defaultMuted = profile.isDefaultmuted
         if (muted) {
             player.sendMessage(acCoreMessageSupplier.getMessage("chat.muted"))
-            event.isCancelled = true
-        } else if (defaultMuted && mainConfig.isDefaultMuteEnabled) {
-            player.sendMessage(acCoreMessageSupplier.getMessage("chat.defaultmuted"))
-            if (mainConfig.defaultMuteDuration >= 0) {
-                val timeUntilUnmute = mainConfig.defaultMuteDuration - profile.playtime
-                player.sendMessage(
-                    acCoreMessageSupplier.getFormatted(
-                        "chat.defaultmuted",
-                        MessageFormatter(acCoreMessageSupplier.activeCraftMessage, "time", "" + timeUntilUnmute)
-                    )
-                )
-            }
             event.isCancelled = true
         } else {
             // call event

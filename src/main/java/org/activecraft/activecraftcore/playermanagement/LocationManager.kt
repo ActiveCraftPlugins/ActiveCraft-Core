@@ -24,7 +24,6 @@ class LocationManager(val profile: Profile) : ProfileManager {
         lastLocations.forEach { LastLocationsTable.saveLastLocation(profile, it.key, it.value, it.value == lastLocationBeforeQuit) }
     }
 
-    @JvmOverloads
     fun setLastLocation(world: World, location: Location, isLastBeforeQuit: Boolean = false) {
         if (isLastBeforeQuit)
             lastLocationBeforeQuit = location

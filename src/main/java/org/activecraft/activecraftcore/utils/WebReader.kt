@@ -11,7 +11,6 @@ import java.nio.channels.Channels
 object WebReader {
     var acVersionMap = mutableMapOf<String, Int>()
     var lastACVersionUpdate: Long = 0
-    @JvmStatic
     val aCVersionMap: Map<String, Int>
         get() {
             if (System.currentTimeMillis() - lastACVersionUpdate < 600000) return acVersionMap
@@ -26,7 +25,6 @@ object WebReader {
             return map.also { acVersionMap = it }
         }
 
-    @JvmStatic
     @Throws(IOException::class)
     fun readAsMap(url: URL): Map<*, *> {
         return ObjectMapper().readValue(url, Map::class.java)
@@ -52,7 +50,6 @@ object WebReader {
         return buffer.toString()
     }
 
-    @JvmStatic
     @Throws(IOException::class)
     fun downloadFile(url: URL, localFilename: String?) {
         val readableByteChannel = Channels.newChannel(url.openStream())

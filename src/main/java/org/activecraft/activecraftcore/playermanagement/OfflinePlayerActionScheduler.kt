@@ -10,13 +10,11 @@ object OfflinePlayerActionScheduler {
     private var initialized = false
     private val offlineQueue = HashMap<Profile, Queue<() -> Unit>>()
 
-    @JvmStatic
     fun schedule(profile: Profile, action: Profile.() -> Unit) {
         offlineQueue.computeIfAbsent(profile) { LinkedList() }
         offlineQueue[profile]!!.offer { profile.action() }
     }
 
-    @JvmStatic
     fun initialize() {
         if (initialized) return
         initialized = true
@@ -32,7 +30,6 @@ object OfflinePlayerActionScheduler {
         runnable.runTaskTimer(ActiveCraftCore.INSTANCE, 0, 40)
     }
 
-    @JvmStatic
     private fun execute(profile: Profile) {
         while (!offlineQueue[profile]!!.isEmpty() && offlineQueue[profile]!!.peek() != null) {
             offlineQueue[profile]!!.poll()!!()

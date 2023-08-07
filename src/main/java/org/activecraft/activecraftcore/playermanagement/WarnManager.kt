@@ -34,7 +34,6 @@ class WarnManager(private val profile: Profile) : ProfileManager {
         warns.forEach { WarnsTable.saveWarn(profile, it) }
     }
 
-    @JvmOverloads
     fun add(reason: String = messageSupplier.getMessage("command.warn.default-reason"), source: String = "unknown") {
         val localDateTime = LocalDateTime.now()
 

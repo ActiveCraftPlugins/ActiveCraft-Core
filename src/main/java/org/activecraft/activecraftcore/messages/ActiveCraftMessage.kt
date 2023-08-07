@@ -6,7 +6,7 @@ import org.activecraft.activecraftcore.utils.config.FileConfig
 import org.bukkit.ChatColor
 import java.io.File
 
-class ActiveCraftMessage @JvmOverloads constructor(
+class ActiveCraftMessage constructor(
     val plugin: ActiveCraftPlugin,
     private val messageConfigFilePath: String = "messages.yml"
 ) {
@@ -37,7 +37,6 @@ class ActiveCraftMessage @JvmOverloads constructor(
     }
 
     companion object {
-        @JvmStatic
         fun getMessage(
             key: String,
             plugin: ActiveCraftPlugin,
@@ -51,7 +50,6 @@ class ActiveCraftMessage @JvmOverloads constructor(
             )
         }
 
-        @JvmStatic
         fun getRawMessage(
             key: String,
             plugin: ActiveCraftPlugin,
@@ -59,7 +57,6 @@ class ActiveCraftMessage @JvmOverloads constructor(
         ) =
             getMessage(key = key, plugin = plugin, color = null, language = language)
 
-        @JvmStatic
         fun getFormatted(
             key: String,
             plugin: ActiveCraftPlugin,
@@ -70,18 +67,15 @@ class ActiveCraftMessage @JvmOverloads constructor(
             formatter.format(getMessage(key = key, plugin = plugin, color = color, language = language))
     }
 
-    @JvmOverloads
     fun getMessage(
         key: String,
         color: ChatColor? = colorScheme.primary,
         language: Language = defaultPluginLanguage
     ) = getMessage(key = key, plugin = plugin, color = color, language = language)
 
-    @JvmOverloads
     fun getRawMessage(key: String, language: Language = defaultPluginLanguage) =
         getRawMessage(key = key, plugin = plugin, language = language)
 
-    @JvmOverloads
     fun getFormatted(
         key: String,
         color: ChatColor? = colorScheme.primary,

@@ -95,7 +95,6 @@ object ProfilesTable : Table("profiles") {
             isGodmode = row[godmode]
             isFly = row[fly]
             isMuted = row[muted]
-            isDefaultmuted = row[defaultmuted]
             isVanished = row[vanished]
             receiveLog = row[ProfilesTable.receiveLog]
             bypassLockdown = row[ProfilesTable.bypassLockdown]
@@ -127,7 +126,6 @@ object ProfilesTable : Table("profiles") {
             updateBuilder[godmode] = isGodmode
             updateBuilder[fly] = isFly
             updateBuilder[muted] = isMuted
-            updateBuilder[defaultmuted] = isDefaultmuted
             updateBuilder[vanished] = isVanished
             updateBuilder[ProfilesTable.receiveLog] = receiveLog
             updateBuilder[ProfilesTable.bypassLockdown] = bypassLockdown

@@ -13,10 +13,8 @@ import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 
 object WarpManager {
-    @JvmStatic
     fun getWarp(name: String) = ActiveCraftCore.INSTANCE.warpsConfig.warps[name]
 
-    @JvmStatic
     fun createWarp(name: String, location: Location) {
         //call event
         val event = WarpCreateEvent(location, name)
@@ -47,7 +45,6 @@ object WarpManager {
         ActiveCraftCore.INSTANCE.warpsConfig.set(event.warpName, event.location, true)
     }
 
-    @JvmStatic
     fun deleteWarp(name: String) {
         //call event
         val event = WarpDeleteEvent(getWarp(name) ?: return, name)
@@ -62,7 +59,6 @@ object WarpManager {
         ActiveCraftCore.INSTANCE.warpsConfig.set(event.warpName, null, true)
     }
 
-    @JvmStatic
     fun warp(player: Player, warpName: String) {
         //call event
         val event = PlayerWarpEvent(of(player), getWarp(warpName) ?: return, warpName!!)

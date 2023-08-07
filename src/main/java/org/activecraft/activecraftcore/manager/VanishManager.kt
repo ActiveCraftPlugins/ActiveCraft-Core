@@ -17,12 +17,10 @@ object VanishManager {
 
     fun isVanished(player: Player) = player in vanished
 
-    @JvmStatic
     fun setVanished(profile: Profile, hide: Boolean, silent: Boolean) {
         setVanished(profile, hide, null, silent)
     }
 
-    @JvmStatic
     fun setVanished(profile: Profile, hide: Boolean, source: CommandSender?, silent: Boolean) {
         val targetPlayer = profile.player ?: throw OperationFailureException()
         val event = PlayerVanishEvent(profile, hide)
@@ -76,7 +74,6 @@ object VanishManager {
         }
     }
 
-    @JvmStatic
     fun hideAll(player: Player) {
         vanished.forEach { player.hidePlayer(ActiveCraftCore.INSTANCE, it) }
     }

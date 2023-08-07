@@ -13,7 +13,7 @@ import org.bukkit.command.*
 import org.bukkit.permissions.Permissible
 import java.util.*
 
-abstract class ActiveCraftCommand @JvmOverloads constructor(
+abstract class ActiveCraftCommand constructor(
     val commandName: String,
     val plugin: ActiveCraftPlugin,
     val permission: String = commandName,
@@ -26,10 +26,8 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
         get() = plugin.activeCraftMessage
             ?: throw IllegalStateException("No instance of class ActiveCraftMessage found for ActiveCraftPlugin ${plugin.name}")
 
-    @JvmField
     protected var messageFormatter = PlayerMessageFormatter(activeCraftMessage)
 
-    @JvmField
     protected val defaultColorScheme = activeCraftMessage.colorScheme
 
     val aliases: List<String>
@@ -40,7 +38,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
     val bukkitCommand: PluginCommand?
         get() = Bukkit.getPluginCommand(commandName)
 
-    @JvmOverloads
     fun getMessageSupplier(
         sender: CommandSender = activeSender,
         activeCraftMessage: ActiveCraftMessage = this.activeCraftMessage
@@ -57,7 +54,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
     ) = isTargetSelf(sender, target.name, null, ignorePermission)
 
     @Throws(SelfTargetException::class)
-    @JvmOverloads
     protected fun isTargetSelf(
         sender: CommandSender,
         target: CommandSender,
@@ -73,7 +69,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
     ) = isTargetSelf(sender, target, this, null, ignorePermission)
 
     @Throws(SelfTargetException::class)
-    @JvmOverloads
     protected fun isTargetSelf(
         sender: CommandSender,
         target: String,
@@ -82,22 +77,18 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
     ) = isTargetSelf(sender, target, this, extendedPermission, ignorePermission)
 
     @Throws(NoPermissionException::class)
-    @JvmOverloads
     protected fun assertCommandPermission(
         permissible: Permissible,
         permissionExtension: String? = null,
         permissionPrefix: String? = plugin.permissionGroup
     ) = assertPermission(this, permissible, permissionExtension, permissionPrefix)
 
-    @JvmOverloads
     fun newMessageFormatter(activeCraftMessage: ActiveCraftMessage = this.activeCraftMessage) =
         MessageFormatter(activeCraftMessage)
 
-    @JvmOverloads
     fun newPlayerMessageFormatter(activeCraftMessage: ActiveCraftMessage = this.activeCraftMessage) =
         PlayerMessageFormatter(activeCraftMessage)
 
-    @JvmOverloads
     fun msg(
         key: String,
         color: ChatColor? = activeCraftMessage.colorScheme.primary,
@@ -105,7 +96,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
         messageFormatter: MessageFormatter = this.messageFormatter
     ) = messageSupplier.getFormatted(key = key, formatter = messageFormatter, color = color)
 
-    @JvmOverloads
     fun msg(
         key: String,
         messageSupplier: MessageSupplier,
@@ -138,7 +128,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
         color = color
     )
 
-    @JvmOverloads
     fun cmdMsg(
         key: String,
         color: ChatColor? = activeCraftMessage.colorScheme.primary,
@@ -151,7 +140,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
         messageFormatter = messageFormatter
     )
 
-    @JvmOverloads
     fun cmdMsg(
         key: String,
         messageSupplier: MessageSupplier,
@@ -184,7 +172,6 @@ abstract class ActiveCraftCommand @JvmOverloads constructor(
         color = color
     )
 
-    @JvmOverloads
     fun rawCmdMsg(key: String, messageSupplier: MessageSupplier = activeSender.getMessageSupplier(activeCraftMessage)) =
         cmdMsg(key = key, messageSupplier = messageSupplier, color = null)
 

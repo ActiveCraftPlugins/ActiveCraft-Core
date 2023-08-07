@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import java.util.logging.Level
 
-abstract class ActiveCraftPlugin @JvmOverloads constructor(
+abstract class ActiveCraftPlugin constructor(
     val spigotId: Int = 0,
     protected val bStatsId: Int = 0,
     val permissionGroup: String? = null,
@@ -56,7 +56,6 @@ abstract class ActiveCraftPlugin @JvmOverloads constructor(
     abstract fun onPluginEnabled()
     abstract fun onPluginDisabled()
 
-    @JvmOverloads
     fun log(text: String, level: Level = Level.INFO) = log(this, text, level)
 
     fun error(text: String) = log(text, Level.SEVERE)
@@ -120,34 +119,23 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
     protected abstract fun register()
 
     companion object {
-        @JvmStatic
         val installedPlugins: MutableSet<ActiveCraftPlugin> = mutableSetOf()
 
-        @JvmStatic
         fun of(name: String) = installedPlugins.find { it.name.equals(name, ignoreCase = true) }
 
-        @JvmStatic
         fun of(plugin: Plugin) = of(plugin.name)
 
-        @JvmStatic
-        @JvmOverloads
         fun log(plugin: Plugin, text: String, level: Level = Level.INFO) = plugin.logger.log(level, text)
 
-        @JvmStatic
         fun error(plugin: Plugin, text: String) = log(plugin, text, Level.SEVERE)
 
-        @JvmStatic
         fun warning(plugin: Plugin, text: String) = log(plugin, text, Level.WARNING)
 
-        @JvmStatic
-        @JvmOverloads
         fun bukkitLog(text: String, level: Level = Level.INFO) = Bukkit.getLogger().log(level, text)
 
-        @JvmStatic
         fun getActiveCraftPlugin(name: String) = installedPlugins.find { it.name == name }
 
 
-        @JvmStatic
         private fun isCompatibleVersion(version: String, minVersion: String, maxVersion: String): Boolean {
             val minSplit = minVersion.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             val maxSplit = maxVersion.split("\\.".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -178,12 +166,10 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             }
         }
 
-        @JvmStatic
         fun isDependencyPresent(dependency: String?): Boolean {
             return Bukkit.getPluginManager().isPluginEnabled(dependency!!)
         }
 
-        @JvmStatic
         fun isDependencyPresent(dependency: String?, minVersion: String): Boolean {
             return if (!Bukkit.getPluginManager().isPluginEnabled(dependency!!)) false else !isCompatibleVersion(
                 Bukkit.getPluginManager().getPlugin(dependency)!!.description.version,
@@ -192,14 +178,12 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             )
         }
 
-        @JvmStatic
         fun isDependencyPresent(dependency: String?, minVersion: String, maxVersion: String): Boolean {
             return if (!Bukkit.getPluginManager().isPluginEnabled(dependency!!)) false else !isCompatibleVersion(
                 Bukkit.getPluginManager().getPlugin(dependency)!!.description.version, minVersion, maxVersion
             )
         }
 
-        @JvmStatic
         @Throws(StartupException::class)
         protected fun disableIfDependancyMissing(
             activeCraftPlugin: ActiveCraftPlugin,
@@ -230,7 +214,6 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             }
         }
 
-        @JvmStatic
         private fun fillWithZero(target: String, max: Int): String {
             val targetBuilder = StringBuilder(target)
             for (i in target.length until max) {
@@ -239,7 +222,6 @@ Current: ${ChatColor.DARK_RED}${description.version}${ChatColor.RED} Newest: ${C
             return targetBuilder.toString()
         }
 
-        @JvmStatic
         private fun isAnyVersion(version: String) =
             version.replace(".", "").replace("0", "") == ""
 

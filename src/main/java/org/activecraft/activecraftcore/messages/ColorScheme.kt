@@ -3,7 +3,7 @@ package org.activecraft.activecraftcore.messages
 import org.activecraft.activecraftcore.ActiveCraftPlugin
 import org.bukkit.ChatColor
 
-data class ColorScheme @JvmOverloads constructor(
+data class ColorScheme constructor(
     @get:JvmName("primary")
     val primary: ChatColor = ChatColor.GOLD,
     @get:JvmName("primaryAccent")
@@ -19,7 +19,6 @@ data class ColorScheme @JvmOverloads constructor(
 ) {
 
     companion object {
-        @JvmStatic
         val default = ColorScheme()
     }
 

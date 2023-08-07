@@ -6,16 +6,14 @@ import org.activecraft.activecraftcore.messages.MessageSupplier
 import org.bukkit.entity.Player
 import org.bukkit.inventory.InventoryHolder
 
-abstract class GuiPageLayout @JvmOverloads constructor(
+abstract class GuiPageLayout constructor(
     val identifier: String,
     val rows: Int,
     val holder: InventoryHolder? = null,
     val title: String = guiTitle()
 ) {
-    @JvmField
     var guiPage: GuiPage = GuiPage(this)
     protected var messageSupplier: MessageSupplier? = null
-    @JvmField
     var currentPage = 0
 
     abstract val maxPages: Int

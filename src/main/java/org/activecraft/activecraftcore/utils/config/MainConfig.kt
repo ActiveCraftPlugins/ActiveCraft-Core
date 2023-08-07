@@ -3,7 +3,6 @@ package org.activecraft.activecraftcore.utils.config
 class MainConfig : ActiveCraftConfig(FileConfig("config.yml")) {
     // TODO: 29.08.2022 test ConfigValue stuff
 
-    var defaultMuteDuration by configValue("default-mute.duration", 0)
     var lockdownModt: String? by configValue("lockdown.modt", null)
     var oldModt: String? by configValue("lockdown.old-modt", null)
     var hiddenCommandsAfterPluginNameExceptions: List<String> by configValue(
@@ -29,7 +28,6 @@ class MainConfig : ActiveCraftConfig(FileConfig("config.yml")) {
     var socialSpyToConsole by configValue("socialspy-to-console", false)
     var isInSilentMode by configValue("silent-mode", false)
     var dropAllExp by configValue("drop-all-exp", false)
-    var isDefaultMuteEnabled by configValue("default-mute.enabled", false)
     var hideCommandsAfterPluginName by configValue("hide-commands-after-plugin-name.enabled", false)
     val sendJoinMessage by configValue("send-join-message", false)
     val sendQuitMessage by configValue("send-quit-message", false)

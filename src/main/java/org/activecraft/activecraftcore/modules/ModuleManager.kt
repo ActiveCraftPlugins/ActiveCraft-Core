@@ -55,14 +55,12 @@ object ModuleManager {
         }
     }
 
-    @JvmStatic
     @Throws(ModuleException::class)
     fun enable(moduleName: String) {
         val plugin = getLoadedPlugin(moduleName)
         Bukkit.getPluginManager().enablePlugin(plugin)
     }
 
-    @JvmStatic
     @Throws(ModuleException::class)
     fun load(moduleName: String) {
         checkNotLoaded(moduleName)
@@ -89,7 +87,6 @@ object ModuleManager {
         }
     }
 
-    @JvmStatic
     @Throws(OperationFailureException::class, ModuleException::class)
     fun install(moduleName: String) {
         var f: File? = null
@@ -109,7 +106,6 @@ object ModuleManager {
         }
     }
 
-    @JvmStatic
     @Throws(ModuleException::class)
     fun disable(moduleName: String) {
         Bukkit.getPluginManager().disablePlugin(getEnabledPlugin(moduleName))

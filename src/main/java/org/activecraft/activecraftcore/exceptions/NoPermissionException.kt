@@ -2,7 +2,7 @@ package org.activecraft.activecraftcore.exceptions
 
 import org.bukkit.permissions.Permissible
 
-open class NoPermissionException @JvmOverloads constructor (
+open class NoPermissionException constructor (
     private val permissible: Permissible,
     private val permission: String,
     private val others: Boolean = false,

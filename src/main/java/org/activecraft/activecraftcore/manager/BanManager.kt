@@ -17,22 +17,21 @@ import org.bukkit.entity.Player
 import java.util.*
 
 sealed interface BanManager {
+
     object IP {
-        @JvmStatic
         fun isBanned(target: String): Boolean {
-            for (banEntry in Bukkit.getBanList(BanList.Type.IP).banEntries) {
+            for (banEntry in Bukkit.getBanList<BanList<*>>(BanList.Type.IP).banEntries) {
                 if (target == banEntry.target) return true
             }
             return false
         }
 
-        @JvmStatic
         fun ban(target: String, reason: String?, expires: Date?, source: String?) {
             Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
                 val event = PlayerIpBanEvent(target, true, reason, expires, source)
                 Bukkit.getPluginManager().callEvent(event)
                 if (!event.cancelled) {
-                    Bukkit.getBanList(BanList.Type.IP).addBan(target, reason, expires, source)
+                    Bukkit.getBanList<BanList<*>>(BanList.Type.IP).addBan(target, reason, expires, source)
                     for (player in Bukkit.getOnlinePlayers()) {
                         if (player.address.address.toString().replace("/", "") == target) {
                             val profile = Profile.of(player)
@@ -75,48 +74,44 @@ sealed interface BanManager {
             ban(target.name, reason, expires, source)
         }
 
-        @JvmStatic
         fun unban(target: String?) {
             if (!isValidInet4Address(target)) {
                 return
             }
-            val entry = Bukkit.getBanList(BanList.Type.IP).getBanEntry(target!!) ?: return
+            val entry = Bukkit.getBanList<BanList<*>>(BanList.Type.IP).getBanEntry(target!!) ?: return
             val event = PlayerIpBanEvent(target, false, entry.reason, entry.expiration, entry.source)
             Bukkit.getPluginManager().callEvent(event)
             if (event.cancelled) return
-            Bukkit.getBanList(BanList.Type.IP).pardon(target)
+            Bukkit.getBanList<BanList<*>>(BanList.Type.IP).pardon(target)
         }
 
         fun unban(target: Player) {
             unban(target.name)
         }
 
-        @JvmStatic
         val bans: Set<BanEntry>
             get() = Bukkit.getBanList(BanList.Type.IP).banEntries
 
         fun getBanEntry(target: String?): BanEntry? {
-            return Bukkit.getBanList(BanList.Type.IP).getBanEntry(target!!)
+            return Bukkit.getBanList<BanList<*>>(BanList.Type.IP).getBanEntry(target!!)
         }
 
         fun getBanEntry(target: Player): BanEntry? {
-            return Bukkit.getBanList(BanList.Type.IP).getBanEntry(target.name)
+            return Bukkit.getBanList<BanList<*>>(BanList.Type.IP).getBanEntry(target.name)
         }
     }
 
     object Name {
-        @JvmStatic
         fun isBanned(target: String?): Boolean {
-            return Bukkit.getBanList(BanList.Type.NAME).isBanned(target!!)
+            return Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).isBanned(target!!)
         }
 
-        @JvmStatic
         fun ban(target: String, reason: String?, expires: Date?, source: String?) {
             Bukkit.getScheduler().runTask(ActiveCraftCore.INSTANCE, Runnable {
                 val event = PlayerBanEvent(target, reason, expires, source)
                 Bukkit.getPluginManager().callEvent(event)
                 if (!event.cancelled) {
-                    Bukkit.getBanList(BanList.Type.NAME).addBan(target, reason, expires, source)
+                    Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).addBan(target, reason, expires, source)
                     if (Bukkit.getPlayer(target) == null) return@Runnable
                     val profile = Profile.of(target) ?: return@Runnable
                     profile.timesBanned += 1
@@ -152,33 +147,30 @@ sealed interface BanManager {
             })
         }
 
-        @JvmStatic
         fun ban(target: Player, reason: String?, expires: Date?, source: String?) {
             ban(target.name, reason, expires, source)
         }
 
-        @JvmStatic
         fun unban(target: String) {
             val event = PlayerUnbanEvent(target)
             Bukkit.getPluginManager().callEvent(event)
             if (event.cancelled) return
-            Bukkit.getBanList(BanList.Type.NAME).pardon(target)
+            Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).pardon(target)
         }
 
         fun unban(target: Player) {
             unban(target.name)
         }
 
-        @JvmStatic
         val bans: Set<BanEntry>
-            get() = Bukkit.getBanList(BanList.Type.NAME).banEntries
+            get() = Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).banEntries
 
         fun getBanEntry(target: String?): BanEntry? {
-            return Bukkit.getBanList(BanList.Type.NAME).getBanEntry(target!!)
+            return Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).getBanEntry(target!!)
         }
 
         fun getBanEntry(target: Player): BanEntry? {
-            return Bukkit.getBanList(BanList.Type.NAME).getBanEntry(target.name)
+            return Bukkit.getBanList<BanList<*>>(BanList.Type.NAME).getBanEntry(target.name)
         }
     }
 }

@@ -1,3 +1,3 @@
 package org.activecraft.activecraftcore.exceptions
 
-class OperationFailureException @JvmOverloads constructor(message: String? = null) : ActiveCraftException(message)
+class OperationFailureException constructor(message: String? = null) : ActiveCraftException(message)

@@ -2,7 +2,7 @@ package org.activecraft.activecraftcore.utils.config
 
 import org.bukkit.plugin.Plugin
 
-abstract class ActiveCraftConfig(@JvmField val fileConfig: FileConfig) {
+abstract class ActiveCraftConfig(val fileConfig: FileConfig) {
     protected var configValues: MutableSet<ConfigValue<*>> = mutableSetOf()
     protected fun <T> configValue(configPath: String): ConfigValue<T?> {
         return configValue(configPath, null)
@@ -21,7 +21,6 @@ abstract class ActiveCraftConfig(@JvmField val fileConfig: FileConfig) {
         return configValue
     }
 
-    @JvmOverloads
     constructor(fileName: String, plugin: Plugin? = null, vararg configValues: ConfigValue<*>) : this(
         FileConfig(
             fileName,

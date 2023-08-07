@@ -7,7 +7,6 @@ import org.bukkit.World
 import org.bukkit.block.EndGateway
 
 object PortalManager {
-    @JvmStatic
     fun create(name: String, x: Int, y: Int, z: Int, world: World, toX: Int, toY: Int, toZ: Int, toWorld: World) {
         ActiveCraftCore.INSTANCE.portalsConfig.set(
             name,
@@ -32,7 +31,6 @@ object PortalManager {
         endGateway.update()
     }
 
-    @JvmStatic
     fun destroy(name: String) {
         val (_, portalX, portalY, portalZ, world) = ActiveCraftCore.INSTANCE.portalsConfig.portals[name]!!
         val block = world.getBlockAt(portalX, portalY, portalZ)
@@ -40,7 +38,6 @@ object PortalManager {
         ActiveCraftCore.INSTANCE.portalsConfig.set(name, null, true)
     }
 
-    @JvmStatic
     fun clean() {
         ActiveCraftCore.INSTANCE.portalsConfig.portals.values
             .filter {

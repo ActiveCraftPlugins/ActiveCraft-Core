@@ -54,7 +54,6 @@ open class MessageFormatter(
         }.toTypedArray()
     )
 
-    @JvmOverloads
     fun addFormatterPattern(
         target: String,
         replacement: String,
@@ -74,7 +73,6 @@ open class MessageFormatter(
 
     fun getFormatterPattern(target: String) = formatterPatterns.find { it.target == target }
 
-    @JvmOverloads
     fun format(input: String, placeholderInitializer: String = "%"): String {
         var stringToBeEdited = input
         for (formatterPattern in formatterPatterns) {
@@ -95,7 +93,6 @@ data class FormatterPattern constructor(
     var replacementColor: ChatColor?,
     var afterReplacementColor: ChatColor?
 ) {
-    @JvmOverloads
     constructor(
         target: String,
         replacement: String,
@@ -104,7 +101,6 @@ data class FormatterPattern constructor(
         afterReplacementColor: ChatColor? = acm.colorScheme.primary
     ) : this(target, replacement, replacementColor, afterReplacementColor)
 
-    @JvmOverloads
     constructor(
         targetReplacementPair: Pair<String, String>,
         acm: ActiveCraftMessage,

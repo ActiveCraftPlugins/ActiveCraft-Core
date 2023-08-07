@@ -58,17 +58,14 @@ object MessageManager {
         }
     }
 
-    @JvmStatic
     fun openConversation(sender: CommandSender, target: Profile) {
         msgPlayerStoring[sender] = target
     }
 
-    @JvmStatic
     @Throws(InvalidPlayerException::class)
     fun msgToActiveConversation(sender: CommandSender, message: String) {
         sendDM(msgPlayerStoring[sender] ?: throw InvalidPlayerException("No open conversation"), sender, message) // TODO: NoOpenConversationException
     }
 
-    @JvmStatic
     fun getMsgPartner(sender: CommandSender) = msgPlayerStoring[sender]
 }

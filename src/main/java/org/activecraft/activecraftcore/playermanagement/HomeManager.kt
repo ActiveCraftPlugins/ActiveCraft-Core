@@ -36,7 +36,6 @@ class HomeManager(private val profile: Profile) : ProfileManager {
         HomesTable.getHomesForProfile(profile).filter { it !in homes.values }.forEach { HomesTable.deleteHome(profile, it.name) }
     }
 
-    @JvmOverloads
     @Throws(MaxHomesException::class)
     fun create(name: String, location: Location, ignoreMaxHomes: Boolean = false) {
         val player: Player? = profile.player

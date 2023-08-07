@@ -20,14 +20,12 @@ class MessageSupplier(val activeCraftMessage: ActiveCraftMessage, val language: 
     val durations = Durations(this)
     val reasons = Reasons(this)
 
-    @JvmOverloads
     fun getMessage(key: String, color: ChatColor? = colorScheme.primary) =
         activeCraftMessage.getMessage(key = key, color = color, language = language)
 
     fun getRawMessage(key: String) =
         activeCraftMessage.getRawMessage(key = key, language = language)
 
-    @JvmOverloads
     fun getFormatted(key: String, formatter: MessageFormatter, color: ChatColor? = colorScheme.primary) =
         activeCraftMessage.getFormatted(key = key, color = color, formatter = formatter, language = language)
 }

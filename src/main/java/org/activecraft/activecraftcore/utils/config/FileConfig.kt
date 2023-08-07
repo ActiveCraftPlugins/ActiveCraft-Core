@@ -18,7 +18,6 @@ class FileConfig(private val folder: String, private val filename: String) : Yam
         reload()
     }
 
-    @JvmOverloads
     constructor(filename: String, plugin: Plugin? = null) : this(
         (plugin ?: ActiveCraftCore.INSTANCE).dataFolder.name,
         filename

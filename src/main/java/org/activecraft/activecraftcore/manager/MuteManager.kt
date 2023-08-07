@@ -5,7 +5,6 @@ import org.activecraft.activecraftcore.playermanagement.Profile
 import org.bukkit.Bukkit
 
 object MuteManager {
-    @JvmStatic
     fun mutePlayer(profile: Profile) {
         val event = PlayerMuteEvent(profile, false)
         Bukkit.getPluginManager().callEvent(event)
@@ -14,7 +13,6 @@ object MuteManager {
         profile.isMuted = true
     }
 
-    @JvmStatic
     fun unmutePlayer(profile: Profile) {
         val event = PlayerMuteEvent(profile, true)
         Bukkit.getPluginManager().callEvent(event)

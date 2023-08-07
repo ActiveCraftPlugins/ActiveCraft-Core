@@ -3,7 +3,6 @@ package org.activecraft.activecraftcore.utils
 import java.util.*
 
 object TimeUtils {
-    @JvmStatic
     fun addFromStringToDate(input: String?): Date? {
         var input = input ?: return null
         input = input.replace(" ", "")
@@ -78,7 +77,6 @@ object TimeUtils {
         return finalDate
     }
 
-    @JvmStatic
     fun getRemainingAsString(date: Date?): String {
         val expirationString: String
         if (date != null) {

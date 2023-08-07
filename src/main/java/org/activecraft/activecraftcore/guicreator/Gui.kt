@@ -4,7 +4,7 @@ import org.activecraft.activecraftcore.ActiveCraftCore
 import org.bukkit.inventory.Inventory
 import java.util.*
 
-class Gui(@JvmField val inventory: Inventory, val guiCreator: GuiCreator) {
+class Gui(val inventory: Inventory, val guiCreator: GuiCreator) {
     private val name: String? = null
     var id: Int
 
@@ -28,7 +28,6 @@ class Gui(@JvmField val inventory: Inventory, val guiCreator: GuiCreator) {
 
     companion object {
         private val guiManager: GuiManager = ActiveCraftCore.INSTANCE.guiManager
-        @JvmStatic
         fun ofInventory(inventory: Inventory?): Gui? {
             return guiManager.getGuiOfInventory(inventory!!)
         }

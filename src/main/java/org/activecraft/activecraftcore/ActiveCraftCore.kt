@@ -133,12 +133,6 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
                 if (!profile.isAfk) {
                     profile.playtime = playtime
                 }
-                if (mainConfig.defaultMuteDuration in 0..playtime) {
-                    if (profile.isDefaultmuted) {
-                        player.sendMessage(activeCraftMessage!!.getMessage("misc.default-mute-remove")) // TODO: 26.08.2022 zu msg supplier von profie ändern
-                        profile.isDefaultmuted = false
-                    }
-                }
             }
         }, (20 * 60).toLong(), (20 * 60).toLong())
     }
@@ -272,7 +266,6 @@ class ActiveCraftCore : ActiveCraftPlugin(95488, 12627) {
             TpCommand(this),
             TphereCommand(this),
             VanishCommand(this),
-            VerifyCommand(this),
             WalkspeedCommand(this),
             WarnCommand(this),
             WeatherCommand(this),

@@ -5,7 +5,7 @@ import org.activecraft.activecraftcore.guicreator.GuiCreatorDefaults.prevPageIte
 import org.activecraft.activecraftcore.messages.ColorScheme
 import org.bukkit.Material
 
-class GuiPrevPageItem @JvmOverloads constructor(
+class GuiPrevPageItem constructor(
     guiPageLayout: GuiPageLayout,
     material: Material = Material.ARROW,
     displayName: String = prevPageItemDisplayname(),

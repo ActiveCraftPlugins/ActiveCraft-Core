@@ -1,4 +1,4 @@
 package org.activecraft.activecraftcore.exceptions
 
-class InvalidArgumentException @JvmOverloads constructor(message: String? = "Invalid arguments.") :
+class InvalidArgumentException constructor(message: String? = "Invalid arguments.") :
     ActiveCraftException(message)

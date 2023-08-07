@@ -1,6 +1,6 @@
 package org.activecraft.activecraftcore.guicreator
 
-class GuiPage @JvmOverloads constructor(
+class GuiPage constructor(
     private val guiPageLayout: GuiPageLayout,
     private val defaultNavigationItems: Boolean = true
 ) : GuiCreator(
